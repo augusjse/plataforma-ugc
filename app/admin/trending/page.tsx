@@ -35,9 +35,10 @@ export default function TrendingPage() {
   async function fetchTrendingProducts() {
     try {
       setLoading(true);
-      const res = await fetch("/api/shopee/trending");
+      const res = await fetch("/api/shopee/trending-list");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Shopee API não configurada");
+      if (!res.ok) throw new Error(data.error || "Supabase não configurado");
+      if (!data.products?.length) throw new Error("TRENDING_EMPTY");
       setUsingMock(false);
       setProducts(
         (data.products || []).map((p: any) => ({
@@ -45,16 +46,16 @@ export default function TrendingPage() {
           name: p.name,
           price: p.price ?? 0,
           image: p.image || "https://via.placeholder.com/48",
-          shopLink: p.url,
-          // commissionRate vem como fração (0.12 = 12%) da API da Shopee
-          vendorCommission: p.commissionRate ? Math.round(p.commissionRate * 100) : 0,
-          status: "pending" as const,
+          shopLink: p.shop_link,
+          vendorCommission: Number(p.vendor_commission ?? 0),
+          status: p.status as TrendingProduct["status"],
         }))
       );
     } catch (error) {
       console.error("Erro ao buscar trending:", error);
-      setUsingMock(true);
-      setProducts([
+      const useMock = error instanceof Error && (error.message === "TRENDING_EMPTY" || error.message.includes("Supabase não configurado"));
+      setUsingMock(useMock);
+      setProducts(useMock ? [
         {
           id: "1",
           name: "Fone Bluetooth Premium com Cancelamento de Ruído",
@@ -82,7 +83,7 @@ export default function TrendingPage() {
           vendorCommission: 15,
           status: "pending",
         },
-      ]);
+      ] : []);
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,8 @@ export default function TrendingPage() {
 
   async function approveProduct(id: string) {
     try {
-      await fetch(`/api/shopee/trending/${id}/approve`, { method: "POST" });
+      const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/approve`, { method: "POST" });
+      if (!response.ok) throw new Error("Não foi possível aprovar o produto.");
       setProducts(products.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
     } catch (error) {
       console.error("Erro ao aprovar:", error);
@@ -125,7 +127,8 @@ export default function TrendingPage() {
 
   async function rejectProduct(id: string) {
     try {
-      await fetch(`/api/shopee/trending/${id}/reject`, { method: "POST" });
+      const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/reject`, { method: "POST" });
+      if (!response.ok) throw new Error("Não foi possível rejeitar o produto.");
       setProducts(products.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
     } catch (error) {
       console.error("Erro ao rejeitar:", error);
