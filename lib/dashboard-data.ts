@@ -100,7 +100,7 @@ function product(row: Record<string, unknown>, config: AdminConfig): DashboardPr
   return {
     id: String(row.id), name: String(row.name ?? "Produto"), category: String(row.category ?? ""),
     price, commissionPercent: commission, commissionValue: price * commission / 100,
-    creatorCommissionValue: price * commission * config.repasse_organico_percent / 10000, difficulty: "Médio",
+    creatorCommissionValue: price * commission * config.repasse_impulsionado_percent / 10000, difficulty: "Médio",
     image: String(row.image_url ?? row.image ?? ""), shopeeLink: String(row.shopee_url ?? ""),
     affiliateLink: String(row.affiliate_link ?? ""), status: row.status === "paused" ? "Pausado" : "Ativo",
     videoCount: 0, sales: 0,
