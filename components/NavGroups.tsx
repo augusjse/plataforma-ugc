@@ -25,6 +25,7 @@ const adminGroups: Group[] = [
       { href: "/admin/criadoras", label: "Criadoras", icon: "users" },
       { href: "/admin/usuarios", label: "Usuários", icon: "users" },
       { href: "/admin/sugestoes-produtos", label: "Sugestões de produtos", icon: "plus" },
+      { href: "/admin/trending", label: "Trending", icon: "chart" },
     ],
   },
   {
