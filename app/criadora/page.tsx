@@ -9,11 +9,13 @@ import ReferralBanner from "@/components/ReferralBanner";
 import PerformanceChart from "@/components/PerformanceChart";
 import GoalCard from "@/components/GoalCard";
 import PeriodSelector from "@/components/PeriodSelector";
-import { normalizeDashboardPeriod } from "@/lib/dashboard-data";
+import { normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
 
-export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
-  const periodDays = normalizeDashboardPeriod((await searchParams).period);
-  const { products, videos, sales } = await getCreatorDashboard(periodDays);
+export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
+  const query = await searchParams;
+  const customRange = normalizeDashboardRange(query.from, query.to);
+  const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
+  const { products, videos, sales } = await getCreatorDashboard(customRange ?? periodDays);
   const nextProduct =
     products.find((product) => product.videoCount === 0) ?? products[0];
   return (
@@ -48,7 +50,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <ReferralBanner />
         </div>
       </div>
-      <div className="dashboard-tools"><PeriodSelector periodDays={periodDays} /></div>
+      <div className="dashboard-tools"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
         <div className="withdraw-copy">

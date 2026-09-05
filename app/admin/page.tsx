@@ -8,11 +8,13 @@ import GuideCard from "@/components/GuideCard";
 import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
-import { getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod } from "@/lib/dashboard-data";
-export default async function Admin({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
-  const periodDays = normalizeDashboardPeriod((await searchParams).period);
+import { getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
+export default async function Admin({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
+  const query = await searchParams;
+  const customRange = normalizeDashboardRange(query.from, query.to);
+  const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
   const [{ sales, videos, creators }, pendingVideosCount] = await Promise.all([
-    getAdminDashboard(periodDays),
+    getAdminDashboard(customRange ?? periodDays),
     getPendingVideosCount(),
   ]);
   const closedRevenue = sales
@@ -59,7 +61,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
         />
-        <PeriodSelector periodDays={periodDays} />
+        <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
       </div>
       <div className="overview-top">
         <div className="overview-left">

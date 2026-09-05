@@ -3736,3 +3736,26 @@ footer code {
 .stat-value {
   font-weight: 800;
 }
+
+/* Custom dashboard period picker */
+.period-selector { align-items: center; background: var(--surface); border: 1px solid var(--border-card); border-radius: var(--radius-card); color: var(--text-muted); cursor: pointer; display: flex; gap: 10px; padding: 9px 13px; text-align: left; }
+.period-selector > span { display: grid; gap: 2px; min-width: 116px; }
+.period-selector small, .period-suggested > small, .period-inputs label { color: var(--text-subtle); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.period-selector strong { color: var(--text-main); font-size: 12px; }
+.period-selector > svg:first-child { color: var(--brand); }
+.period-modal-overlay { align-items: center; background: rgba(25, 20, 18, .62); display: flex; inset: 0; justify-content: center; padding: 20px; position: fixed; z-index: 100; }
+.period-modal { background: var(--surface); border-radius: var(--radius-card-large); box-shadow: 0 24px 80px rgba(0,0,0,.24); max-height: calc(100svh - 40px); max-width: 760px; overflow: auto; width: 100%; }
+.period-modal-header, .period-modal-footer { align-items: center; display: flex; justify-content: space-between; padding: 22px 26px; }
+.period-modal-header { border-bottom: 1px solid var(--divider); }
+.period-modal-title { align-items: center; display: flex; gap: 12px; }
+.period-modal-title > span { align-items: center; background: var(--brand-light); border-radius: 12px; color: var(--brand); display: grid; height: 44px; justify-content: center; width: 44px; }
+.period-modal-title h2 { font-size: 18px; margin: 0; }
+.period-modal-title p { color: var(--text-muted); font-size: 11px; margin: 3px 0 0; }
+.period-close, .period-nav { align-items: center; background: transparent; border: 0; color: var(--text-muted); cursor: pointer; display: flex; justify-content: center; }
+.period-close { border-radius: 8px; padding: 7px; }.period-close:hover { background: var(--surface-muted); }
+.period-modal-body { padding: 24px 26px 8px; }.period-calendars { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; }
+.period-calendar-head { align-items: center; display: flex; justify-content: space-between; margin-bottom: 18px; }.period-calendar-head strong { font-size: 13px; }.period-nav { border-radius: 50%; font-size: 27px; height: 30px; line-height: 1; width: 30px; }.period-nav:hover { background: var(--brand-light); color: var(--brand); }.period-nav-placeholder { height: 30px; width: 30px; }
+.period-weekdays, .period-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }.period-weekdays { color: var(--text-subtle); font-size: 10px; font-weight: 700; margin-bottom: 7px; }.period-days { gap: 3px; }.period-days button { background: transparent; border: 0; border-radius: 8px; color: var(--text-main); cursor: pointer; font-size: 12px; height: 32px; padding: 0; }.period-days button:disabled { color: var(--divider); cursor: default; }.period-days button.is-in-range { background: var(--brand-light); border-radius: 0; }.period-days button.is-range-edge { background: var(--brand); border-radius: 50%; color: #fff; font-weight: 800; position: relative; z-index: 1; }
+.period-suggested { border-top: 1px solid var(--divider); margin-top: 24px; padding-top: 18px; }.period-suggested > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }.period-suggested button { background: var(--brand-light); border: 0; border-radius: var(--radius-pill); color: var(--brand-deep); cursor: pointer; font-size: 11px; font-weight: 700; padding: 8px 12px; }.period-suggested button:hover { background: var(--brand); color: #fff; }
+.period-inputs { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; margin-top: 20px; }.period-inputs label { display: grid; gap: 7px; }.period-inputs input { background: var(--surface-muted); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; padding: 11px 12px; }.period-modal-footer { border-top: 1px solid var(--divider); margin-top: 20px; }.period-clear { background: transparent; border: 0; color: var(--text-muted); cursor: pointer; font-weight: 700; }.period-modal-footer .button:disabled { cursor: not-allowed; opacity: .45; }
+@media (max-width: 600px) { .period-modal-overlay { align-items: flex-end; padding: 0; }.period-modal { border-radius: var(--radius-card-large) var(--radius-card-large) 0 0; max-height: 94svh; }.period-modal-header, .period-modal-footer, .period-modal-body { padding-left: 18px; padding-right: 18px; }.period-calendars { grid-template-columns: 1fr; gap: 22px; }.period-calendar + .period-calendar { border-top: 1px solid var(--divider); padding-top: 20px; }.period-calendar:nth-child(2) .period-calendar-head .period-nav, .period-calendar:nth-child(2) .period-calendar-head .period-nav-placeholder { display: none; } }

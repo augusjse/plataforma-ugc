@@ -140,19 +140,28 @@ export async function getPendingVideosCount(): Promise<number> {
 
 export const DASHBOARD_PERIODS = [15, 30, 60, 90] as const;
 export type DashboardPeriod = (typeof DASHBOARD_PERIODS)[number];
+export type DashboardDateRange = { from: string; to: string; days: number };
 
 export function normalizeDashboardPeriod(value?: string | number): DashboardPeriod {
   const period = Number(value);
   return DASHBOARD_PERIODS.includes(period as DashboardPeriod) ? period as DashboardPeriod : 15;
 }
 
-export async function getSales(videoIds?: string[], periodDays: DashboardPeriod = 15): Promise<DashboardSale[]> {
+export function normalizeDashboardRange(from?: string, to?: string): DashboardDateRange | null {
+  if (!from || !to || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to) || from > to) return null;
+  const start = new Date(`${from}T00:00:00Z`);
+  const end = new Date(`${to}T00:00:00Z`);
+  const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+  return { from, to, days };
+}
+
+export async function getSales(videoIds?: string[], periodDays: number | DashboardDateRange = 15): Promise<DashboardSale[]> {
   try {
     const config = await getAdminConfig();
     let query = supabaseAdmin.from("sales_ugc").select("*").order("sale_date", { ascending: false });
     if (videoIds) query = videoIds.length ? query.in("video_id", videoIds) : query.eq("video_id", "00000000-0000-0000-0000-000000000000");
-    const cutoff = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
-    query = query.gte("sale_date", cutoff);
+    if (typeof periodDays === "number") query = query.gte("sale_date", new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString());
+    else { query = query.gte("sale_date", `${periodDays.from}T00:00:00.000Z`); query = query.lt("sale_date", `${periodDays.to}T23:59:59.999Z`); }
     const { data } = await query;
     return (data ?? []).map((row) => {
       const value = Number(row.sale_value ?? 0);
@@ -168,15 +177,15 @@ export async function getSales(videoIds?: string[], periodDays: DashboardPeriod 
   } catch { return []; }
 }
 
-export async function getCreatorDashboard(periodDays: DashboardPeriod = 15) {
+export async function getCreatorDashboard(periodDays: number | DashboardDateRange = 15) {
   const account = await currentAccount();
   const videos = await getVideos(account?.id);
   const sales = await getSales(videos.map((video) => video.id), periodDays);
-  return { account, videos, sales, products: await getProducts(), periodDays };
+  return { account, videos, sales, products: await getProducts(), periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
 }
 
-export async function getAdminDashboard(periodDays: DashboardPeriod = 15) {
+export async function getAdminDashboard(periodDays: number | DashboardDateRange = 15) {
   const [account, videos, sales, products] = await Promise.all([currentAccount(), getVideos(), getSales(undefined, periodDays), getProducts()]);
   const { data: creators } = await supabaseAdmin.from("users").select("*").eq("role", "criadora").order("created_at", { ascending: false });
-  return { account, videos, sales, products, creators: creators ?? [], periodDays };
+  return { account, videos, sales, products, creators: creators ?? [], periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
 }
