@@ -3594,7 +3594,19 @@ footer code {
   .suggestion-product > img { min-height: 190px; }
   .suggestion-product-copy, .suggestion-copy { padding: 18px; }
   .suggestion-copy { min-height: 190px; }
-  .creator-mini-stats { grid-template-columns: 1fr; }
+  .creator-dashboard .dashboard-tools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .creator-dashboard .dashboard-tools .guide-card {
+    flex: none;
+    width: auto;
+  }
+  .creator-dashboard .dashboard-tools .period-selector {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .creator-dashboard .creator-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .creator-mini-stats .stat-card { min-height: 112px; }
 }
 
