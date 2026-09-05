@@ -17,15 +17,15 @@ export default function TrendingPage() {
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [minCommission, setMinCommission] = useState(5);
-  const [affiliateCode, setAffiliateCode] = useState("seu-codigo");
+  const [subIds, setSubIds] = useState<string[]>(["", "", "", "", ""]);
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSettings = () => {
       const saved = localStorage.getItem("admin_min_commission");
       if (saved) setMinCommission(parseInt(saved));
-      const code = localStorage.getItem("admin_affiliate_code");
-      if (code) setAffiliateCode(code);
+      const savedSubIds = localStorage.getItem("admin_sub_ids");
+      if (savedSubIds) setSubIds(JSON.parse(savedSubIds));
     };
     loadSettings();
     fetchTrendingProducts();
@@ -79,8 +79,17 @@ export default function TrendingPage() {
   }
 
   function generateAffiliateLink(baseLink: string): string {
+    let link = baseLink;
     const separator = baseLink.includes("?") ? "&" : "?";
-    return `${baseLink}${separator}af=${affiliateCode}`;
+
+    const activeSubIds = subIds.filter(id => id.trim());
+    if (activeSubIds.length > 0) {
+      activeSubIds.forEach((id, index) => {
+        link += (link.includes("?") ? "&" : "?") + `sub_id${index + 1}=${encodeURIComponent(id)}`;
+      });
+    }
+
+    return link;
   }
 
   async function copyAffiliateLink(product: TrendingProduct) {
@@ -145,19 +154,30 @@ export default function TrendingPage() {
         </div>
 
         <div className="setting-row">
-          <label>
-            Código de Afiliado Shopee:
-            <input
-              type="text"
-              value={affiliateCode}
-              onChange={(e) => {
-                setAffiliateCode(e.target.value);
-                localStorage.setItem("admin_affiliate_code", e.target.value);
-              }}
-              placeholder="seu-codigo-afiliado"
-            />
+          <label style={{ marginBottom: "0.75rem" }}>
+            <strong>Sub_ids para Rastreamento (até 5):</strong>
           </label>
-          <small>O link copiado será: shopee.com.br/...?af={affiliateCode}</small>
+          <div className="sub-ids-grid">
+            {subIds.map((id, index) => (
+              <div key={index} className="sub-id-input">
+                <label>Sub_id {index + 1}</label>
+                <input
+                  type="text"
+                  value={id}
+                  onChange={(e) => {
+                    const newSubIds = [...subIds];
+                    newSubIds[index] = e.target.value;
+                    setSubIds(newSubIds);
+                    localStorage.setItem("admin_sub_ids", JSON.stringify(newSubIds));
+                  }}
+                  placeholder={`Ex: ${["Trending", "Produtos-em-Alta", "InstagramFeed", "TikTok", "YouTube"][index]}`}
+                />
+              </div>
+            ))}
+          </div>
+          <small>
+            Preencha os Sub_ids que você usa no painel de afiliado da Shopee. O link será gerado automaticamente com esses parâmetros!
+          </small>
         </div>
       </div>
 
@@ -284,7 +304,36 @@ export default function TrendingPage() {
         .setting-row small {
           font-size: 0.8rem;
           color: var(--text-secondary);
-          margin-left: 0.5rem;
+          margin: 0.5rem 0 0 0;
+          display: block;
+        }
+
+        .sub-ids-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .sub-id-input {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .sub-id-input label {
+          font-size: 0.85rem;
+          font-weight: 500;
+          color: var(--text-secondary);
+        }
+
+        .sub-id-input input {
+          padding: 0.6rem;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          background: var(--app-bg);
+          color: var(--text-main);
+          font-size: 0.9rem;
         }
 
         .product-table-wrap {
