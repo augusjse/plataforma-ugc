@@ -155,7 +155,7 @@ export default function PerformanceChart({
                     <g className={`chart-point-group ${hover === index ? "is-hovered" : ""}`} key={`${item.key}-${index}`}>
                       <circle className={`chart-point-halo ${item.className}`} cx={point.x} cy={point.y} r="7" />
                       <circle className={`chart-point ${item.className}`} cx={point.x} cy={point.y} r="3.5" />
-                      {(index % 5 === 0 || index === points(item.key).length - 1 || hover === index) && (
+                      {(index % 7 === 0 || index === points(item.key).length - 1 || hover === index) && (
                         <text className={`chart-point-value ${item.className}`} x={point.x} y={point.y + item.labelOffset} textAnchor="middle">
                           {compactValue(point.value)}
                         </text>
