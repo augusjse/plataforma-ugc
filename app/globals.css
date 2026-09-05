@@ -60,6 +60,8 @@
 .suggestion-copy p:not(.eyebrow) { margin: 0 0 4px; }
 .creator-mini-stats { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 20px 0 0; }
 .creator-mini-stats .stat-card { min-height: 140px; }
+.suggestion-layout-empty .suggestion-copy { grid-column: 1 / -1; }
+.creator-mini-stats.creator-mini-stats-empty { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 767px) {
   .suggestion-layout { grid-template-columns: 1fr; }
   .suggestion-product, .suggestion-copy { min-height: 0; }
@@ -68,6 +70,7 @@
   .suggestion-product-copy, .suggestion-copy { padding: 18px; }
   .suggestion-copy { min-height: 190px; }
   .creator-mini-stats { grid-template-columns: 1fr; }
+  .creator-mini-stats.creator-mini-stats-empty { grid-template-columns: 1fr; }
   .creator-mini-stats .stat-card { min-height: 112px; }
 }
 

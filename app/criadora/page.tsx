@@ -105,7 +105,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         ))}
       </div>
       <SectionTitle icon="cart">Próximo passo sugerido</SectionTitle>
-      <div className="suggestion-layout">
+      <div className={`suggestion-layout${nextProduct ? "" : " suggestion-layout-empty"}`}>
         {nextProduct ? (
           <>
             <article className="suggestion-product card">
@@ -139,7 +139,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           </div>
         )}
       </div>
-      <div className="stats-grid creator-mini-stats">
+      <div className={`stats-grid creator-mini-stats${nextProduct ? "" : " creator-mini-stats-empty"}`}>
         <StatCard label="Publicados" value={String(videos.length)} icon="play" />
         <StatCard label="Vendas" value={String(sales.length)} icon="cart" tone="green" />
       </div>
