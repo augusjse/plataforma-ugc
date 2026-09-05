@@ -1,19 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Icon from "./Icon";
 
 type Props = { admin: boolean; menu: string | null; setMenu: (menu: string | null) => void };
 
-export default function ProfileMenu({ admin, menu, setMenu }: Props) {
+export default function ProfileMenu({ menu, setMenu }: Props) {
   const profileRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const user = admin
-    ? { name: "João Pereira", email: "joao@studiougc.com" }
-    : { name: "Maria Souza", email: "maria@email.com" };
+  const [profile, setProfile] = useState({ name: "", email: "" });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProfile() {
+      const supabase = createSupabaseBrowserClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+
+      if (!authUser?.email) return;
+
+      const authName = authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? "";
+      const { data: account } = await supabase
+        .from("users")
+        .select("name, email")
+        .eq("email", authUser.email)
+        .maybeSingle();
+
+      if (active) {
+        setProfile({
+          name: account?.name || authName,
+          email: account?.email || authUser.email,
+        });
+      }
+    }
+
+    void loadProfile();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (menu !== "profile") return;
@@ -31,6 +60,16 @@ export default function ProfileMenu({ admin, menu, setMenu }: Props) {
     };
   }, [menu, setMenu]);
 
+  const initials = profile.name
+    ? profile.name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("")
+        .toUpperCase()
+    : profile.email.slice(0, 2).toUpperCase();
+
   return (
     <div
       className="profile-menu"
@@ -45,7 +84,7 @@ export default function ProfileMenu({ admin, menu, setMenu }: Props) {
         onClick={() => setMenu(menu === "profile" ? null : "profile")}
         onMouseEnter={() => setMenu("profile")}
       >
-        {admin ? "JP" : "MS"}
+        {initials || "?"}
       </button>
       {menu === "profile" && (
       <div
@@ -55,8 +94,8 @@ export default function ProfileMenu({ admin, menu, setMenu }: Props) {
         onClick={() => setMenu(null)}
       >
         <div className="profile-user">
-          <strong>{user.name}</strong>
-          <span>{user.email}</span>
+          <strong>{profile.name || "Carregando..."}</strong>
+          <span>{profile.email}</span>
         </div>
         <Link href="/">
           <Icon name="settings" size={16} />

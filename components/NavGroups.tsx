@@ -2,20 +2,22 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Icon from "./Icon";
 
 type Item = { href: string; label: string; icon: string };
-type Group = { label: string; icon: string; items: Item[] };
+type Group = { href: string; label: string; icon: string; items: Item[] };
 type Props = { admin: boolean; menu: string | null; setMenu: (menu: string | null) => void };
 
 const adminGroups: Group[] = [
   {
+    href: "/admin",
     label: "Painel",
     icon: "home",
     items: [{ href: "/admin", label: "Visão geral", icon: "home" }],
   },
   {
+    href: "/admin/aprovacoes",
     label: "Conteúdo",
     icon: "play",
     items: [
@@ -26,6 +28,7 @@ const adminGroups: Group[] = [
     ],
   },
   {
+    href: "/admin/vendas",
     label: "Resultados",
     icon: "chart",
     items: [
@@ -34,6 +37,7 @@ const adminGroups: Group[] = [
     ],
   },
   {
+    href: "/admin/config",
     label: "Operação",
     icon: "settings",
     items: [
@@ -48,11 +52,13 @@ const adminGroups: Group[] = [
 
 const creatorGroups: Group[] = [
   {
+    href: "/criadora",
     label: "Painel",
     icon: "home",
     items: [{ href: "/criadora", label: "Visão geral", icon: "home" }],
   },
   {
+    href: "/criadora/catalogo",
     label: "Conteúdo",
     icon: "play",
     items: [
@@ -62,11 +68,13 @@ const creatorGroups: Group[] = [
     ],
   },
   {
+    href: "/criadora/ganhos",
     label: "Resultados",
     icon: "wallet",
     items: [{ href: "/criadora/ganhos", label: "Meus ganhos", icon: "wallet" }],
   },
   {
+    href: "/criadora/academy",
     label: "Aprender",
     icon: "play",
     items: [
@@ -80,10 +88,9 @@ export default function NavGroups({ admin, menu, setMenu }: Props) {
   const groups = admin ? adminGroups : creatorGroups;
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const navRef = useRef<HTMLElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const buttonRefs = useRef<HTMLButtonElement[]>([]);
+  const buttonRefs = useRef<HTMLAnchorElement[]>([]);
   const itemRefs = useRef<HTMLAnchorElement[]>([]);
 
   function openGroup(index: number) {
@@ -119,7 +126,7 @@ export default function NavGroups({ admin, menu, setMenu }: Props) {
     };
   }, [menu, setMenu]);
 
-  function handleButtonKey(event: React.KeyboardEvent, index: number) {
+  function handleButtonKey(event: React.KeyboardEvent<HTMLAnchorElement>, index: number) {
     if (event.key === "ArrowDown" && groups[index].items.length > 1) {
       event.preventDefault();
       setMenu(`nav-${index}`);
@@ -158,25 +165,22 @@ export default function NavGroups({ admin, menu, setMenu }: Props) {
             onMouseEnter={() => openGroup(index)}
             onMouseLeave={closeGroupLater}
           >
-            <button
+            <Link
               ref={(element) => {
                 if (element) buttonRefs.current[index] = element;
               }}
               className={`icon-button ${active ? "nav-active" : ""}`}
               title={group.items.length === 1 ? group.label : undefined}
+              href={group.href}
               aria-label={group.label}
+              aria-haspopup={group.items.length > 1 ? "menu" : undefined}
               aria-expanded={menu === `nav-${index}`}
-              onClick={() =>
-                group.items.length === 1
-                  ? router.push(group.items[0].href)
-                  : setMenu(menu === `nav-${index}` ? null : `nav-${index}`)
-              }
               onKeyDown={(event) => handleButtonKey(event, index)}
               >
               <Icon name={group.icon} size={17} />
               <span className="nav-group-label">{group.label}</span>
               {active && <span className="nav-active-dot" />}
-            </button>
+            </Link>
             {menu === `nav-${index}` && group.items.length > 1 && (
               <div className="nav-dropdown" role="menu">
                 {group.items.map((item, itemIndex) => (

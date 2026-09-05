@@ -68,17 +68,18 @@
 }
 
 /* Studio UGC authentication */
-.login-page { background: #f5f5f5; display: grid; grid-template-columns: 60% 40%; min-height: 100svh; }
+.login-page { background: #ffffff; display: grid; grid-template-columns: 60% 40%; min-height: 100svh; }
 .login-hero { background: url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=85") center/cover; color: #fff; min-height: 100svh; position: relative; overflow: hidden; }
 .login-hero::after { background: radial-gradient(circle, rgba(255,107,38,.75) 0 2px, transparent 3px) 0 0/28px 28px; content: ""; inset: 0; opacity: .18; pointer-events: none; position: absolute; }
 .login-hero-content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; padding: clamp(28px, 5vw, 72px); position: relative; z-index: 1; }
 .brand { align-items: center; display: flex; font-size: 18px; gap: 10px; letter-spacing: -.03em; }
 .brand b { font-weight: 800; }
 .brand-on-dark { color: #fff; }
-.brand-on-light { color: #fff; }
+.brand-on-light { color: #1a1a1a; }
 .brand-mark { align-items: center; background: var(--brand); border-radius: 11px; color: #fff; display: inline-flex; font-size: 20px; font-weight: 900; height: 38px; justify-content: center; width: 38px; }
 .login-hero-copy { max-width: 530px; padding-bottom: 5vh; }
 .login-kicker { color: var(--brand); font-size: 10px; font-weight: 800; letter-spacing: .16em; margin: 0 0 18px; }
+.login-intro .login-kicker { color: #ff6b26; }
 .login-hero .login-kicker { color: #ffb08a; }
 .login-hero h2 { font-size: clamp(42px, 5vw, 76px); letter-spacing: -.065em; line-height: .98; margin: 0 0 24px; }
 .login-hero h2 em, .login-card h1 em { color: var(--brand); font-style: normal; }
@@ -86,17 +87,17 @@
 .login-card h1 em { color: #ff6b26; }
 .login-hero-copy > p:last-child { color: rgba(255,255,255,.72); font-size: 16px; line-height: 1.6; max-width: 360px; }
 .login-hero-dot { background: var(--brand); border-radius: 50%; box-shadow: 0 0 0 16px rgba(255,107,38,.12), 0 0 0 32px rgba(255,107,38,.07); height: 12px; position: absolute; right: 13%; top: 30%; width: 12px; }
-.login-side { align-items: center; background: #f5f5f5; color: #fff; display: grid; padding: clamp(24px, 5vw, 72px); }
-.login-card { background: #1a1a1a; border: 1px solid #333; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.18); color: #fff; max-width: 460px; padding: clamp(28px, 4vw, 48px); width: 100%; }
+.login-side { align-items: center; background: #ffffff; color: #1a1a1a; display: grid; padding: clamp(24px, 5vw, 72px); }
+.login-card { background: #ffffff; border: 1px solid #e8e8e8; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.08); color: #1a1a1a; max-width: 460px; padding: clamp(28px, 4vw, 48px); width: 100%; }
 .login-card .brand { margin-bottom: clamp(48px, 8vh, 84px); }
-.login-intro h1 { color: #fff; font-size: clamp(32px, 3.2vw, 45px); letter-spacing: -.06em; line-height: 1.02; margin: 0 0 16px; }
-.login-intro > p:last-child { color: rgba(255,255,255,.8); font-size: 14px; line-height: 1.65; margin: 0 0 30px; }
-.login-google-button { align-items: center; background: #fff; border: 0; color: #000; display: flex; font-weight: 750; gap: 12px; justify-content: center; min-height: 52px; width: 100%; }
-.login-google-button:hover { background: #e8e8e8; }
+.login-intro h1 { color: #1a1a1a; font-size: clamp(32px, 3.2vw, 45px); letter-spacing: -.06em; line-height: 1.02; margin: 0 0 16px; }
+.login-intro > p:last-child { background: #ff6b26; border-radius: 12px; color: #ffffff; font-size: 14px; line-height: 1.65; margin: 0 0 30px; padding: 16px 18px; }
+.login-google-button { align-items: center; background: #ffffff; border: 1px solid #e8e8e8; color: #1a1a1a; display: flex; font-weight: 750; gap: 12px; justify-content: center; min-height: 52px; width: 100%; }
+.login-google-button:hover { background: #f7f7f7; }
 .login-google-button:disabled { cursor: wait; opacity: .7; }
 .google-g { background: #fff; border-radius: 50%; color: #4285f4; display: grid; font-size: 16px; font-weight: 800; height: 23px; place-items: center; width: 23px; }
-.login-terms { color: rgba(255,255,255,.7); font-size: 10px; line-height: 1.5; margin: 26px 0 0; text-align: center; }
-.login-terms a { color: #fff; text-decoration: underline; }
+.login-terms { color: #666666; font-size: 10px; line-height: 1.5; margin: 26px 0 0; text-align: center; }
+.login-terms a { color: #1a1a1a; text-decoration: underline; }
 .auth-page { align-items: center; background: #fffaf7; display: grid; min-height: 100svh; justify-items: center; padding: 24px; }
 .auth-card { background: #fff; border: 1px solid #f0e7e1; border-radius: 24px; box-shadow: 0 20px 60px rgba(91,45,25,.11); max-width: 480px; padding: 44px; width: 100%; }
 .auth-card .brand { margin-bottom: 52px; }
@@ -433,6 +434,7 @@
   line-height: 1;
   white-space: nowrap;
 }
+
 .hero::before {
   color: var(--overlay-soft);
   content: "R$   R$   R$   R$   R$";
@@ -2164,22 +2166,22 @@ footer code {
 }
 .login-side {
   align-items: center;
-  background: #f5f5f5;
-  color: #fff;
+  background: #ffffff;
+  color: #1a1a1a;
   display: grid;
   justify-items: center;
   padding: 30px;
 }
 .login-card {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
   border-radius: 24px;
-  color: #fff;
+  color: #1a1a1a;
   max-width: 410px;
   padding: 42px;
 }
 .login-card h1 {
-  color: #fff;
+  color: #1a1a1a;
   font: 600 35px/1.05 var(--font-sans);
   letter-spacing: -0.05em;
   margin: 30px 0 15px;
@@ -3387,13 +3389,97 @@ footer code {
 [data-theme="dark"] .login-page,
 [data-theme="dark"] .auth-page,
 [data-theme="dark"] .oauth-login { background: var(--app-bg); }
-[data-theme="dark"] .login-side { background: #211c1b; }
-[data-theme="dark"] .login-card,
+[data-theme="dark"] .login-page { background: #ffffff; }
+[data-theme="dark"] .login-side { background: #ffffff; }
+[data-theme="dark"] .login-card { background: #ffffff; border-color: #e8e8e8; color: #1a1a1a; }
 [data-theme="dark"] .auth-card { background: var(--surface); border-color: var(--border-card); }
 [data-theme="dark"] .login-intro h1,
 [data-theme="dark"] .auth-card h1 { color: var(--text-main); }
-[data-theme="dark"] .login-intro > p:last-child,
+[data-theme="dark"] .login-intro h1 { color: #1a1a1a; }
+[data-theme="dark"] .login-intro > p:last-child { background: #ff6b26; color: #ffffff; }
+[data-theme="dark"] .login-terms { color: #666666; }
+[data-theme="dark"] .login-terms a { color: #1a1a1a; }
 [data-theme="dark"] .auth-description { color: var(--text-muted); }
 [data-theme="dark"] .auth-form label { color: var(--text-muted); }
 [data-theme="dark"] .auth-form input { background: var(--surface-muted); border-color: var(--divider); color: var(--text-main); }
 [data-theme="dark"] .oauth-login-card { box-shadow: 0 18px 50px rgba(0, 0, 0, .35); }
+
+/* Keep the two login sections visible together on short mobile viewports. */
+@media (max-width: 800px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: clamp(160px, 29svh, 200px) minmax(0, 1fr);
+    min-height: 100svh;
+  }
+  .login-hero {
+    min-height: 0;
+  }
+  .login-hero-content {
+    padding: 16px 12px;
+  }
+  .login-hero h2 {
+    font-size: clamp(30px, 8vw, 38px);
+    margin-bottom: 8px;
+  }
+  .login-hero-copy > p:last-child {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .login-side {
+    min-height: 0;
+    padding: 12px 16px;
+  }
+  .login-card {
+    padding: 20px 16px;
+  }
+  .login-card .brand {
+    margin-bottom: 24px;
+  }
+  .login-intro h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .login-intro > p:last-child {
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 18px;
+    padding: 10px 12px;
+  }
+  .login-terms {
+    margin-top: 16px;
+  }
+}
+
+/* Keep the daily billing chart compact within its card. */
+.chart-card {
+  box-sizing: border-box;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 20px;
+  width: 100%;
+}
+
+.chart-area-large {
+  box-sizing: border-box;
+  height: clamp(200px, 32vw, 280px);
+  margin: 16px 0 0;
+  min-height: 200px;
+  width: 100%;
+}
+
+.chart-area-large svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .chart-card {
+    padding: 16px;
+  }
+
+  .chart-area-large {
+    height: 200px;
+    min-height: 200px;
+  }
+}

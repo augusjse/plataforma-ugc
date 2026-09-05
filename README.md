@@ -38,9 +38,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Login com Google e usuários
 
 1. Execute `supabase/migrations/20260904_users.sql` no SQL Editor do projeto Supabase.
-2. No Google Cloud Console, configure a tela de consentimento OAuth e crie uma credencial OAuth Client ID do tipo Web application. Em **Authorized redirect URIs**, adicione `https://plataforma-ugc.vercel.app/auth/callback` (e a URL local, se necessário).
+2. No Google Cloud Console, configure a tela de consentimento OAuth e crie uma credencial OAuth Client ID do tipo Web application. Em **Authorized redirect URIs**, adicione o callback do Supabase: `https://xzlzifoeprjwvinsiznd.supabase.co/auth/v1/callback` (não `/auth/callback` da aplicação).
 3. No Supabase, abra **Authentication → Providers → Google**, habilite o provedor e cole o Client ID e Client Secret do Google.
-4. Em **Authentication → URL Configuration**, adicione `https://plataforma-ugc.vercel.app/auth/callback` às Redirect URLs.
+4. Em **Authentication → URL Configuration**, defina **Site URL** como `https://plataforma-ugc.vercel.app` e, em **Redirect URLs**, use `https://plataforma-ugc.vercel.app/**`. Remova entradas `localhost` do ambiente de produção.
 5. Configure na Vercel: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` e, opcionalmente, `NEXT_PUBLIC_APP_URL`.
 
 O primeiro login cria o usuário com papel `criadora`. Para promover a primeira pessoa administradora, execute `update public.users set role = 'admin' where email = 'seu@email.com';` no SQL Editor. Depois disso, administradores podem gerenciar usuários em `/admin/usuarios`. Client Secret e service role key devem permanecer apenas no servidor.
