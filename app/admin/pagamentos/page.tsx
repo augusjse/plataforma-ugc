@@ -1,8 +1,8 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
-import { creators } from "@/lib/mock/admin";
-import { videos } from "@/lib/mock/creator";
-export default function Pagamentos() {
+import { getAdminDashboard } from "@/lib/dashboard-data";
+export default async function Pagamentos() {
+  const { creators, videos } = await getAdminDashboard();
   const expiringSoon = videos.filter(
     (video) =>
       video.janela_status === "ativa" && (video.diasRestantes ?? 99) <= 7,
@@ -44,16 +44,16 @@ export default function Pagamentos() {
           </thead>
           <tbody>
             {creators.map((c) => (
-              <tr key={c.name}>
+              <tr key={c.id}>
                 <td>
                   <div className="person">
-                    <div className="person-avatar">{c.initials}</div>
-                    <b>{c.name}</b>
+                    <div className="person-avatar">{String(c.name ?? c.email).slice(0, 2).toUpperCase()}</div>
+                    <b>{c.name ?? c.email}</b>
                   </div>
                 </td>
-                <td>{c.sales}</td>
+                <td>—</td>
                 <td className="money">
-                  R$ {c.commission.toFixed(2).replace(".", ",")}
+                  R$ 0,00
                 </td>
                 <td>
                   <button className="button button-light">

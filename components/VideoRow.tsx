@@ -1,5 +1,5 @@
 import Badge from "./Badge";
-import { Video } from "@/lib/mock/creator";
+import { DashboardVideo as Video } from "@/lib/dashboard-data";
 import Icon from "./Icon";
 export default function VideoRow({ video }: { video: Video }) {
   const tone =

@@ -1,8 +1,10 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
-import { creatorLinks } from "@/lib/mock/links";
+import { getAdminDashboard } from "@/lib/dashboard-data";
 
-export default function Links() {
+export default async function Links() {
+  const { videos } = await getAdminDashboard();
+  const creatorLinks = videos.map((video) => ({ creator: video.productId, product: video.product, video: video.title, subId: video.id, url: video.myLink, date: video.janela_inicio ?? "—", clicks: video.clicks, sales: video.sales, commission: video.commission }));
   return (
     <Shell admin>
       <div className="page-head">

@@ -2,8 +2,10 @@ import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import StatCard from "@/components/StatCard";
 import VideoRow from "@/components/VideoRow";
-import { sales, videos, links } from "@/lib/mock/creator";
-export default function Ganhos() {
+import { getCreatorDashboard } from "@/lib/dashboard-data";
+export default async function Ganhos() {
+  const { sales, videos } = await getCreatorDashboard();
+  const links = videos.map((video) => ({ code: video.id, video: video.title, url: video.myLink }));
   const received = videos
     .filter((v) => v.janela_status === "encerrada")
     .reduce((sum, video) => sum + video.commission, 0);
@@ -26,16 +28,16 @@ export default function Ganhos() {
         </div>
       </div>
       <div className="stats-grid">
-        <StatCard label="Total acumulado" value="R$ 600,20" icon="wallet" />
+        <StatCard label="Total acumulado" value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}`} icon="wallet" />
         <StatCard
           label="A receber"
-          value="R$ 144,00"
+          value={`R$ ${payable.toFixed(2).replace(".", ",")}`}
           icon="card"
           tone="purple"
         />
         <StatCard
           label="Já recebido"
-          value="R$ 456,20"
+          value={`R$ ${received.toFixed(2).replace(".", ",")}`}
           icon="check"
           tone="green"
         />

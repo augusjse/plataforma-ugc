@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Badge from "./Badge";
-import { Product } from "@/lib/mock/products";
+import { DashboardProduct as Product } from "@/lib/dashboard-data";
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">

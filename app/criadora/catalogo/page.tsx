@@ -1,8 +1,9 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/mock/products";
-export default function Catalogo() {
+import { getProducts } from "@/lib/dashboard-data";
+export default async function Catalogo() {
+  const products = await getProducts();
   return (
     <Shell>
       <div className="page-head">

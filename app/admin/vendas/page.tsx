@@ -1,8 +1,7 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import StatCard from "@/components/StatCard";
-import { products } from "@/lib/mock/products";
-import { sales, videos } from "@/lib/mock/creator";
+import { getAdminDashboard } from "@/lib/dashboard-data";
 
 function formatMoney(value: number): string {
   return value.toLocaleString("pt-BR", {
@@ -11,7 +10,8 @@ function formatMoney(value: number): string {
   });
 }
 
-export default function Vendas() {
+export default async function Vendas() {
+  const { sales, videos, products } = await getAdminDashboard();
   const revenue = sales.reduce((sum, sale) => sum + sale.revenue, 0);
   const grossCommission = sales.reduce(
     (sum, sale) => sum + sale.platformCommission,

@@ -6,12 +6,12 @@ import { dailyBilling } from "@/lib/mock/chart";
 
 type Props = { subtitle?: string };
 type Key = "sales" | "commission" | "payable";
-type Series = { key: Key; label: string; className: string };
+type Series = { key: Key; label: string; className: string; labelOffset: number };
 
 const series: Series[] = [
-  { key: "sales", label: "Vendas", className: "series-one" },
-  { key: "commission", label: "Comissões", className: "series-two" },
-  { key: "payable", label: "A pagar", className: "series-three" },
+  { key: "sales", label: "Vendas", className: "series-one", labelOffset: -12 },
+  { key: "commission", label: "Comissões", className: "series-two", labelOffset: -10 },
+  { key: "payable", label: "A pagar", className: "series-three", labelOffset: 18 },
 ];
 
 export default function PerformanceChart({
@@ -30,12 +30,31 @@ export default function PerformanceChart({
     pad.left + (index / 29) * (width - pad.left - pad.right);
   const y = (value: number) =>
     pad.top + (1 - value / 80000) * (height - pad.top - pad.bottom);
+  const points = (key: Key) =>
+    dailyBilling.map((point, index) => ({ x: x(index), y: y(point[key]), value: point[key] }));
+  // Convert the data points into a smooth Catmull-Rom spline without adding a dependency.
+  const smoothPath = (key: Key) => {
+    const data = points(key);
+    if (data.length < 2) return "";
+    return data.reduce((result, point, index, list) => {
+      if (index === 0) return `M ${point.x},${point.y}`;
+      const previous = list[index - 1];
+      const before = list[index - 2] ?? previous;
+      const after = list[index + 1] ?? point;
+      const controlOneX = previous.x + (point.x - before.x) / 6;
+      const controlOneY = previous.y + (point.y - before.y) / 6;
+      const controlTwoX = point.x - (after.x - previous.x) / 6;
+      const controlTwoY = point.y - (after.y - previous.y) / 6;
+      return `${result} C ${controlOneX},${controlOneY} ${controlTwoX},${controlTwoY} ${point.x},${point.y}`;
+    }, "");
+  };
   const path = (key: Key) =>
-    dailyBilling
-      .map((point, index) => `${index ? "L" : "M"}${x(index)},${y(point[key])}`)
-      .join(" ");
+    smoothPath(key);
   const area = (key: Key) =>
     `${path(key)} L${x(29)},${height - pad.bottom} L${x(0)},${height - pad.bottom} Z`;
+
+  const compactValue = (value: number) =>
+    `${(value / 1000).toFixed(1).replace(".", ",")}k`;
 
   function move(event: React.MouseEvent<SVGSVGElement>) {
     const box = event.currentTarget.getBoundingClientRect();
@@ -77,6 +96,14 @@ export default function PerformanceChart({
           aria-label="Faturamento diário"
           onMouseMove={move}
         >
+          <defs>
+            {series.map((item) => (
+              <linearGradient key={item.key} id={`chart-fill-${item.key}`} x1="0" y1="0" x2="0" y2="1">
+                <stop className={`chart-gradient-start ${item.className}`} offset="0%" />
+                <stop className={`chart-gradient-end ${item.className}`} offset="100%" />
+              </linearGradient>
+            ))}
+          </defs>
           {[0, 20000, 40000, 60000, 80000].map((value) => (
             <g key={value}>
               <line
@@ -98,11 +125,21 @@ export default function PerformanceChart({
                   <path
                     className={`chart-series-fill ${item.className}`}
                     d={area(item.key)}
+                    fill={`url(#chart-fill-${item.key})`}
                   />
                   <path
                     className={`chart-series-line ${item.className}`}
                     d={path(item.key)}
                   />
+                  {points(item.key).map((point, index) => (
+                    <g className={`chart-point-group ${hover === index ? "is-hovered" : ""}`} key={`${item.key}-${index}`}>
+                      <circle className={`chart-point-halo ${item.className}`} cx={point.x} cy={point.y} r="7" />
+                      <circle className={`chart-point ${item.className}`} cx={point.x} cy={point.y} r="3.5" />
+                      <text className={`chart-point-value ${item.className}`} x={point.x} y={point.y + item.labelOffset} textAnchor="middle">
+                        {compactValue(point.value)}
+                      </text>
+                    </g>
+                  ))}
                 </g>
               ),
           )}

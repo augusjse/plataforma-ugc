@@ -1,9 +1,9 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import Badge from "@/components/Badge";
-import { pending } from "@/lib/mock/admin";
-import { products } from "@/lib/mock/products";
-export default function Aprovacoes() {
+import { getVideos } from "@/lib/dashboard-data";
+export default async function Aprovacoes() {
+  const pending = (await getVideos()).filter((video) => video.status === "aguardando_primeira_venda");
   return (
     <Shell admin>
       <div className="page-head">
@@ -20,12 +20,11 @@ export default function Aprovacoes() {
         <table className="approval-table">
           <thead><tr><th>Vídeo</th><th>Criadora</th><th>Produto</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead>
           <tbody>{pending.map((v) => {
-            const product = products.find((item) => item.name === v.product);
             return <tr key={v.id}>
-              <td><div className="approval-video"><img src={v.image} alt="" /><strong>{v.title}</strong></div></td>
-              <td>{v.creator}</td>
+              <td><div className="approval-video"><strong>{v.title}</strong></div></td>
+              <td>{v.productId}</td>
               <td>{v.product}</td>
-              <td>{product?.commissionPercent ?? 0}%</td>
+              <td>—</td>
               <td><Badge tone="warning">Em análise</Badge></td>
               <td><div className="approval-actions"><button className="button button-primary">Aprovar</button><button className="button button-ghost">Reprovar</button></div></td>
             </tr>;

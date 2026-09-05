@@ -1,7 +1,8 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
-import { creators } from "@/lib/mock/admin";
-export default function Criadoras() {
+import { getAdminDashboard } from "@/lib/dashboard-data";
+export default async function Criadoras() {
+  const { creators, videos, sales } = await getAdminDashboard();
   return (
     <Shell admin>
       <div className="page-head">
@@ -12,7 +13,7 @@ export default function Criadoras() {
         </div>
       </div>
       <SectionTitle icon="users">
-        Todas as criadoras <span className="muted">(128)</span>
+        Todas as criadoras <span className="muted">({creators.length})</span>
       </SectionTitle>
       <div className="card table-wrap">
         <table className="data-table">
@@ -26,25 +27,27 @@ export default function Criadoras() {
             </tr>
           </thead>
           <tbody>
-            {creators.map((c) => (
-              <tr key={c.name}>
+            {creators.map((c) => {
+              const mine = videos.filter((video) => video.creatorId === c.id);
+              const mySales = sales.filter((sale) => mine.some((video) => video.id === sale.videoId));
+              return <tr key={c.id}>
                 <td>
                   <div className="person">
-                    <div className="person-avatar">{c.initials}</div>
+                    <div className="person-avatar">{String(c.name ?? c.email).slice(0, 2).toUpperCase()}</div>
                     <div>
-                      <b>{c.name}</b>
-                      <small className="muted">{c.handle}</small>
+                      <b>{c.name ?? c.email}</b>
+                      <small className="muted">{c.email}</small>
                     </div>
                   </div>
                 </td>
-                <td>{c.videos}</td>
-                <td>{c.sales}</td>
-                <td>{c.activeWindows}</td>
+                <td>{mine.length}</td>
+                <td>{mySales.length}</td>
+                <td>{mine.filter((video) => video.janela_status === "ativa").length}</td>
                 <td className="money">
-                  R$ {c.commission.toFixed(2).replace(".", ",")}
+                  R$ {mySales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}
                 </td>
-              </tr>
-            ))}
+              </tr>;
+            })}
           </tbody>
         </table>
       </div>

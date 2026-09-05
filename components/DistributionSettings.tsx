@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  calculateSaleFinancials,
-  ORGANIC_SHARE,
-  PAID_AD_COST_PER_SALE,
-  PAID_SHARE,
-  type SaleOrigin,
-} from "@/lib/mock/finance";
-import { products } from "@/lib/mock/products";
-import { sales } from "@/lib/mock/creator";
-import { videos } from "@/lib/mock/creator";
+type SaleOrigin = "organico" | "pago";
+const ORGANIC_SHARE = 50;
+const PAID_SHARE = 18;
+const PAID_AD_COST_PER_SALE = 9;
+const sales: { origem: SaleOrigin; revenue: number; videoId: string; creatorCommission: number; insideWindow: boolean }[] = [];
+const videos: { id: string; productId: string }[] = [];
+const products: { id: string; commissionPercent: number }[] = [];
+function calculateSaleFinancials(revenue: number, percent: number, origin: SaleOrigin, inside: boolean, config: Config) {
+  const platformCommission = revenue * percent / 100;
+  const creatorCommission = inside ? platformCommission * (origin === "organico" ? config.organicShare : config.paidShare) / 100 : 0;
+  return { platformCommission, creatorCommission, netMargin: platformCommission - creatorCommission - (origin === "pago" ? config.paidAdCost : 0) };
+}
 
 type Config = {
   organicShare: number;

@@ -8,8 +8,9 @@ import GuideCard from "@/components/GuideCard";
 import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
-import { sales, videos } from "@/lib/mock/creator";
-export default function Admin() {
+import { getAdminDashboard } from "@/lib/dashboard-data";
+export default async function Admin() {
+  const { sales, videos, creators } = await getAdminDashboard();
   const closedRevenue = sales
     .filter((sale) => {
       const video = videos.find((item) => item.id === sale.videoId);
@@ -46,26 +47,25 @@ export default function Admin() {
         <div className="overview-left">
           <div className="hero">
             <p className="eyebrow">Receita gerada este mês</p>
-            <h2>R$ 148.290,00</h2>
-            <p>+ 18,4% em relação ao mês passado</p>
-            <span className="hero-tag">Meta: R$ 180 mil</span>
+            <h2>R$ {sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</h2>
+            <p>Dados reais das vendas registradas</p>
+            <span className="hero-tag">Sem dados mockados</span>
           </div>
           <div className="stats-grid">
-            <StatCard label="Criadoras" value="428" change="+36" icon="users" />
+            <StatCard label="Criadoras" value={String(creators.length)} icon="users" />
             <StatCard
               label="Vendas"
-              value="8.942"
-              change="+24,8%"
+              value={sales.length.toLocaleString("pt-BR")}
               icon="cart"
               tone="green"
             />
             <StatCard
               label="A pagar"
-              value="R$ 28.420"
+              value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
               icon="wallet"
               tone="purple"
             />
-            <StatCard label="Na fila" value="14" icon="play" />
+            <StatCard label="Na fila" value={String(videos.filter((video) => video.status === "aguardando_primeira_venda").length)} icon="play" />
           </div>
         </div>
         <PromoCard
@@ -77,7 +77,7 @@ export default function Admin() {
       </div>
       <div className="compact-queue">
         <span className="section-icon">◈</span>
-        <strong>14 vídeos aguardando aprovação</strong>
+        <strong>{videos.filter((video) => video.status === "aguardando_primeira_venda").length} vídeos aguardando aprovação</strong>
         <Link href="/admin/aprovacoes">Abrir fila →</Link>
       </div>
       <PerformanceChart subtitle="Vendas e comissões nos últimos 15 dias" />

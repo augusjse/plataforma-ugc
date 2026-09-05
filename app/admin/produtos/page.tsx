@@ -1,9 +1,10 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import StatCard from "@/components/StatCard";
-import { products } from "@/lib/mock/products";
+import { getProducts } from "@/lib/dashboard-data";
 
-export default function Produtos() {
+export default async function Produtos() {
+  const products = await getProducts();
   return (
     <Shell admin>
       <div className="page-head">
@@ -66,23 +67,23 @@ export default function Produtos() {
       <div className="stats-grid catalog-health">
         <StatCard
           label="Produtos ativos"
-          value="186"
+          value={String(products.filter((product) => product.status === "Ativo").length)}
           icon="check"
           tone="green"
         />
         <StatCard
           label="Sem nenhum vídeo"
-          value="42"
+          value={String(products.filter((product) => product.videoCount === 0).length)}
           change="Oportunidade"
           icon="play"
         />
         <StatCard
           label="Comissão abaixo de 10%"
-          value="18"
+          value={String(products.filter((product) => product.commissionPercent < 10).length)}
           icon="warning"
           tone="purple"
         />
-        <StatCard label="Produtos minerados" value="264" icon="cart" />
+        <StatCard label="Produtos minerados" value={String(products.length)} icon="cart" />
       </div>
       <SectionTitle
         icon="cart"

@@ -1,8 +1,9 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import VideoRow from "@/components/VideoRow";
-import { videos } from "@/lib/mock/creator";
-export default function Videos() {
+import { getCreatorDashboard } from "@/lib/dashboard-data";
+export default async function Videos() {
+  const { videos } = await getCreatorDashboard();
   return (
     <Shell>
       <div className="page-head">

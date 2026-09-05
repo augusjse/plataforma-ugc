@@ -2,9 +2,9 @@ import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import Icon from "@/components/Icon";
 import LinkRow from "@/components/LinkRow";
-import { products } from "@/lib/mock/products";
-export default function Enviar() {
-  const product = products[0];
+import { getProducts } from "@/lib/dashboard-data";
+export default async function Enviar() {
+  const product = (await getProducts())[0];
   return (
     <Shell>
       <div className="page-head">
@@ -23,12 +23,12 @@ export default function Enviar() {
         </div>
         <SectionTitle icon="cart">Produto escolhido</SectionTitle>
         <div className="selected-product">
-          <img src={product.image} alt="" />
+          {product ? <img src={product.image} alt="" /> : <div />}
           <div>
-            <strong>{product.name}</strong>
+            <strong>{product?.name ?? "Nenhum produto disponível"}</strong>
             <span>
               Você ganha R${" "}
-              {product.creatorCommissionValue.toFixed(2).replace(".", ",")} por
+              {(product?.creatorCommissionValue ?? 0).toFixed(2).replace(".", ",")} por
               venda
             </span>
           </div>

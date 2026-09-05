@@ -8,10 +8,9 @@ export function validatePhone(countryCode: string, phone: string) {
   const country = PHONE_COUNTRIES.find(({ code }) => code === countryCode);
   if (!country) return "País obrigatório";
   const digits = phone.replace(/\D/g, "");
-  if (digits.length < 2) return "Faltam dígitos";
+  if (digits.length < country.expectedDigits) return "Número incompleto";
   if (country.code === "BR" && Number(digits.slice(0, 2)) < 11) return "DDD inválido para o país";
-  if (digits.length < country.expectedDigits) return `Número incompleto (esperado ${country.expectedDigits} dígitos)`;
-  if (digits.length > country.expectedDigits) return `Número inválido (esperado ${country.expectedDigits} dígitos)`;
+  if (digits.length > country.expectedDigits) return "Número inválido";
   return null;
 }
 export function normalizePhone(countryCode: string, phone: string) {
