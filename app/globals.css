@@ -4053,8 +4053,16 @@ footer code {
 .mobile-drawer a:hover, .mobile-drawer-logout:hover { background: var(--brand-light); color: var(--brand-deep); }
 .mobile-drawer-logout { border: 0; color: var(--danger-text); cursor: pointer; font: inherit; }
 @media (max-width: 767px) {
-  .topbar-container { margin: 10px 0 0; max-width: none; padding: 0 32px; }
-  .topbar { padding: 0 12px; width: 100%; }
+  .topbar-container { margin: 0; max-width: none; padding: 0; width: 100%; }
+  .topbar {
+    border-radius: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 40;
+  }
   .topbar .group-nav, .top-actions, .mobile-nav-toggle { display: none; }
   .mobile-actions { align-items: center; display: flex; gap: 8px; margin-left: auto; }
   .mobile-actions .icon-button { flex: 0 0 36px; }
