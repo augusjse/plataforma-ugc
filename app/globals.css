@@ -2295,6 +2295,10 @@ button {
 .video-submit-form { display: grid; gap: 12px; }
 .file-input { height: auto; padding: 12px 13px; }
 .file-selected, .form-hint { color: var(--text-muted); font-size: 12px; margin: 0; }
+.upload-progress { align-items: center; color: var(--text-muted); display: grid; font-size: 12px; gap: 7px; }
+.upload-progress-bar { background: var(--brand-light); border-radius: 999px; height: 7px; overflow: hidden; position: relative; }
+.upload-progress-bar::after { animation: upload-progress 1.5s ease-in-out infinite; background: var(--brand); border-radius: inherit; content: ""; height: 100%; left: 0; position: absolute; width: 35%; }
+@keyframes upload-progress { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
 .approval-video { border-radius: 8px; display: block; max-width: 320px; width: 100%; }
 .form-label { color: var(--text-muted); font-size: 12px; font-weight: 700; }
 .text-input { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; min-height: 48px; padding: 0 13px; width: 100%; }
