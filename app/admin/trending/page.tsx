@@ -37,17 +37,25 @@ export default function TrendingPage() {
       setProducts([
         {
           id: "1",
-          name: "Fone Bluetooth Premium",
+          name: "Fone Bluetooth Premium com Cancelamento de Ruído",
           price: 89.99,
-          image: "https://via.placeholder.com/48",
+          image: "https://via.placeholder.com/48?text=Fone",
           shopLink: "https://shopee.com.br",
           status: "pending",
         },
         {
           id: "2",
-          name: "Carregador Rápido USB-C",
+          name: "Carregador Rápido USB-C 65W",
           price: 45.50,
-          image: "https://via.placeholder.com/48",
+          image: "https://via.placeholder.com/48?text=Carregador",
+          shopLink: "https://shopee.com.br",
+          status: "pending",
+        },
+        {
+          id: "3",
+          name: "Smartwatch Fitness com Monitor Cardíaco",
+          price: 129.99,
+          image: "https://via.placeholder.com/48?text=Watch",
           shopLink: "https://shopee.com.br",
           status: "pending",
         },
@@ -63,6 +71,7 @@ export default function TrendingPage() {
       setProducts(products.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
     } catch (error) {
       console.error("Erro ao aprovar:", error);
+      setProducts(products.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
     }
   }
 
@@ -72,10 +81,9 @@ export default function TrendingPage() {
       setProducts(products.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
     } catch (error) {
       console.error("Erro ao rejeitar:", error);
+      setProducts(products.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
     }
   }
-
-  const pendingProducts = products.filter((p) => p.status === "pending");
 
   return (
     <Shell admin>
@@ -83,13 +91,13 @@ export default function TrendingPage() {
         <div>
           <p className="eyebrow">Administração</p>
           <h1>Produtos em Alta</h1>
-          <p>Aprove ou rejeite produtos trending da Shopee.</p>
+          <p>Aprove ou rejeite produtos trending da Shopee para suas criadoras.</p>
         </div>
       </div>
 
       <div className="trending-settings">
         <label className="commission-label">
-          Comissão: {commissionPercent}%
+          Comissão sugerida: <strong>{commissionPercent}%</strong>
           <input
             type="range"
             min="10"
@@ -105,10 +113,10 @@ export default function TrendingPage() {
       </div>
 
       {loading ? (
-        <p>Carregando...</p>
-      ) : pendingProducts.length === 0 ? (
+        <p>Carregando produtos...</p>
+      ) : products.length === 0 ? (
         <div className="card">
-          <p>Nenhum produto pendente de aprovação.</p>
+          <p>Nenhum produto no momento.</p>
         </div>
       ) : (
         <div className="product-table-wrap">
@@ -118,12 +126,12 @@ export default function TrendingPage() {
                 <th>PRODUTO</th>
                 <th>PREÇO</th>
                 <th>COMISSÃO ({commissionPercent}%)</th>
-                <th style={{ textAlign: "right" }}>AÇÕES</th>
+                <th style={{ textAlign: "center" }}>AÇÕES</th>
               </tr>
             </thead>
             <tbody>
-              {pendingProducts.map((product) => (
-                <tr key={product.id}>
+              {products.map((product) => (
+                <tr key={product.id} className={`row-${product.status}`}>
                   <td>
                     <div className="product-cell">
                       <img src={product.image} alt={product.name} className="product-thumb" />
@@ -136,22 +144,30 @@ export default function TrendingPage() {
                   <td>
                     R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
-                  <td style={{ textAlign: "right" }}>
+                  <td style={{ textAlign: "center" }}>
                     <div className="action-buttons">
-                      <button
-                        className="button button-primary"
-                        onClick={() => approveProduct(product.id)}
-                        title="Aprovar"
-                      >
-                        ✓
-                      </button>
-                      <button
-                        className="button button-light"
-                        onClick={() => rejectProduct(product.id)}
-                        title="Rejeitar"
-                      >
-                        ✕
-                      </button>
+                      {product.status === "pending" ? (
+                        <>
+                          <button
+                            className="button button-primary"
+                            onClick={() => approveProduct(product.id)}
+                            title="Aprovar este produto"
+                          >
+                            Aprovar
+                          </button>
+                          <button
+                            className="button button-light"
+                            onClick={() => rejectProduct(product.id)}
+                            title="Rejeitar este produto"
+                          >
+                            Rejeitar
+                          </button>
+                        </>
+                      ) : (
+                        <span className={`status status-${product.status}`}>
+                          {product.status === "approved" ? "✓ Aprovado" : "✕ Rejeitado"}
+                        </span>
+                      )}
                       <a
                         href={product.shopLink}
                         target="_blank"
@@ -159,7 +175,7 @@ export default function TrendingPage() {
                         className="button button-ghost"
                         title="Ver no Shopee"
                       >
-                        →
+                        Shopee →
                       </a>
                     </div>
                   </td>
@@ -170,55 +186,13 @@ export default function TrendingPage() {
         </div>
       )}
 
-      {products.filter((p) => p.status !== "pending").length > 0 && (
-        <>
-          <h3 style={{ marginTop: "3rem", marginBottom: "1rem" }}>Histórico</h3>
-          <div className="product-table-wrap">
-            <table className="product-table">
-              <thead>
-                <tr>
-                  <th>PRODUTO</th>
-                  <th>PREÇO</th>
-                  <th>COMISSÃO ({commissionPercent}%)</th>
-                  <th>STATUS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products
-                  .filter((p) => p.status !== "pending")
-                  .map((product) => (
-                    <tr key={product.id}>
-                      <td>
-                        <div className="product-cell">
-                          <img src={product.image} alt={product.name} className="product-thumb" />
-                          <span>{product.name}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <strong>R$ {product.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>
-                      </td>
-                      <td>
-                        R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                      </td>
-                      <td>
-                        <span className={`status status-${product.status}`}>
-                          {product.status === "approved" ? "✓ Aprovado" : "✕ Rejeitado"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
       <style jsx>{`
         .trending-settings {
           background: var(--surface);
           padding: 1.5rem;
           border-radius: 12px;
           margin-bottom: 2rem;
+          border: 1px solid var(--border-color);
         }
 
         .commission-label {
@@ -270,6 +244,10 @@ export default function TrendingPage() {
           border-bottom: none;
         }
 
+        .row-rejected {
+          opacity: 0.6;
+        }
+
         .product-cell {
           display: flex;
           align-items: center;
@@ -282,23 +260,25 @@ export default function TrendingPage() {
           object-fit: cover;
           border-radius: 8px;
           background: var(--app-bg);
+          flex-shrink: 0;
         }
 
         .action-buttons {
           display: flex;
           gap: 8px;
-          justify-content: flex-end;
+          justify-content: center;
+          flex-wrap: wrap;
         }
 
         .action-buttons .button {
-          min-width: 40px;
-          padding: 8px 12px;
-          font-size: 0.9rem;
+          padding: 8px 14px;
+          font-size: 0.85rem;
           border-radius: 8px;
           text-decoration: none;
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          white-space: nowrap;
         }
 
         .button-ghost {
@@ -314,7 +294,7 @@ export default function TrendingPage() {
         .status {
           font-size: 0.85rem;
           font-weight: 500;
-          padding: 4px 8px;
+          padding: 6px 10px;
           border-radius: 6px;
           display: inline-block;
         }
@@ -327,11 +307,6 @@ export default function TrendingPage() {
         .status-rejected {
           background: rgba(239, 68, 68, 0.1);
           color: #ef4444;
-        }
-
-        h3 {
-          font-size: 1.1rem;
-          margin: 0;
         }
       `}</style>
     </Shell>
