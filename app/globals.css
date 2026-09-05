@@ -2929,9 +2929,9 @@ footer code {
   text-shadow: 0 2px 8px var(--surface-inverse);
 }
 .promo-subtitle {
-  color: var(--login-copy);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 12px;
-  text-shadow: 0 1px 5px var(--surface-inverse);
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 .promo-button {
   align-items: center;
