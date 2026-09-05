@@ -9,18 +9,19 @@ type TrendingProduct = {
   price: number;
   image: string;
   shopLink: string;
+  vendorCommission: number;
   status: "pending" | "approved" | "rejected";
 };
 
 export default function TrendingPage() {
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [commissionPercent, setCommissionPercent] = useState(30);
+  const [minCommission, setMinCommission] = useState(5);
 
   useEffect(() => {
     const loadSettings = () => {
-      const saved = localStorage.getItem("admin_commission_percent");
-      if (saved) setCommissionPercent(parseInt(saved));
+      const saved = localStorage.getItem("admin_min_commission");
+      if (saved) setMinCommission(parseInt(saved));
     };
     loadSettings();
     fetchTrendingProducts();
@@ -41,6 +42,7 @@ export default function TrendingPage() {
           price: 89.99,
           image: "https://via.placeholder.com/48?text=Fone",
           shopLink: "https://shopee.com.br",
+          vendorCommission: 12,
           status: "pending",
         },
         {
@@ -49,6 +51,7 @@ export default function TrendingPage() {
           price: 45.50,
           image: "https://via.placeholder.com/48?text=Carregador",
           shopLink: "https://shopee.com.br",
+          vendorCommission: 8,
           status: "pending",
         },
         {
@@ -57,6 +60,16 @@ export default function TrendingPage() {
           price: 129.99,
           image: "https://via.placeholder.com/48?text=Watch",
           shopLink: "https://shopee.com.br",
+          vendorCommission: 15,
+          status: "pending",
+        },
+        {
+          id: "4",
+          name: "Capa de Silicone para iPhone 15",
+          price: 25.00,
+          image: "https://via.placeholder.com/48?text=Capa",
+          shopLink: "https://shopee.com.br",
+          vendorCommission: 6,
           status: "pending",
         },
       ]);
@@ -85,38 +98,43 @@ export default function TrendingPage() {
     }
   }
 
+  const filteredProducts = products.filter((p) => p.vendorCommission >= minCommission);
+
   return (
     <Shell admin>
       <div className="page-head">
         <div>
           <p className="eyebrow">Administração</p>
           <h1>Produtos em Alta</h1>
-          <p>Aprove ou rejeite produtos trending da Shopee para suas criadoras.</p>
+          <p>Filtre por comissão de afiliado e aprove produtos trending da Shopee.</p>
         </div>
       </div>
 
       <div className="trending-settings">
         <label className="commission-label">
-          Comissão sugerida: <strong>{commissionPercent}%</strong>
+          Comissão mínima dos vendedores: <strong>{minCommission}%</strong>
           <input
             type="range"
-            min="10"
+            min="1"
             max="50"
-            value={commissionPercent}
+            value={minCommission}
             onChange={(e) => {
               const val = parseInt(e.target.value);
-              setCommissionPercent(val);
-              localStorage.setItem("admin_commission_percent", String(val));
+              setMinCommission(val);
+              localStorage.setItem("admin_min_commission", String(val));
             }}
           />
         </label>
+        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.5rem 0 0 0" }}>
+          Mostrando apenas produtos com comissão de afiliado ≥ {minCommission}%
+        </p>
       </div>
 
       {loading ? (
         <p>Carregando produtos...</p>
-      ) : products.length === 0 ? (
+      ) : filteredProducts.length === 0 ? (
         <div className="card">
-          <p>Nenhum produto no momento.</p>
+          <p>Nenhum produto com comissão ≥ {minCommission}%. Tente reduzir o filtro.</p>
         </div>
       ) : (
         <div className="product-table-wrap">
@@ -125,12 +143,12 @@ export default function TrendingPage() {
               <tr>
                 <th>PRODUTO</th>
                 <th>PREÇO</th>
-                <th>COMISSÃO ({commissionPercent}%)</th>
+                <th>COMISSÃO DO VENDEDOR</th>
                 <th style={{ textAlign: "center" }}>AÇÕES</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} className={`row-${product.status}`}>
                   <td>
                     <div className="product-cell">
@@ -142,7 +160,7 @@ export default function TrendingPage() {
                     <strong>R$ {product.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>
                   </td>
                   <td>
-                    R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    <span className="commission-badge">{product.vendorCommission}%</span>
                   </td>
                   <td style={{ textAlign: "center" }}>
                     <div className="action-buttons">
@@ -261,6 +279,16 @@ export default function TrendingPage() {
           border-radius: 8px;
           background: var(--app-bg);
           flex-shrink: 0;
+        }
+
+        .commission-badge {
+          background: rgba(255, 107, 38, 0.1);
+          color: var(--brand);
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-weight: 600;
+          display: inline-block;
+          font-size: 0.9rem;
         }
 
         .action-buttons {
