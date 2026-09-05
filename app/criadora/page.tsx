@@ -6,6 +6,8 @@ import VideoRow from "@/components/VideoRow";
 import NoticeBar from "@/components/NoticeBar";
 import { getCreatorDashboard } from "@/lib/dashboard-data";
 import ReferralBanner from "@/components/ReferralBanner";
+import PerformanceChart from "@/components/PerformanceChart";
+import GoalCard from "@/components/GoalCard";
 
 export default async function CreatorHome() {
   const { products, videos, sales } = await getCreatorDashboard();
@@ -46,6 +48,32 @@ export default async function CreatorHome() {
           <i style={{ width: "82%" }} />
         </div>
         <span className="withdraw-percent">82%</span>
+      </div>
+      <SectionTitle icon="chart">Desempenho financeiro</SectionTitle>
+      <div className="creator-revenue-layout">
+        <PerformanceChart subtitle="Vendas e comissões nos últimos 15 dias" />
+        <aside className="creator-revenue-summary">
+          <div className="finance-card">
+            <SectionTitle icon="wallet">Resumo financeiro</SectionTitle>
+            <div className="finance-columns">
+              <div>
+                <span>Total em vendas</span>
+                <strong>
+                  R${" "}
+                  {sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                </strong>
+              </div>
+              <div>
+                <span>Suas comissões</span>
+                <strong>
+                  R${" "}
+                  {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                </strong>
+              </div>
+            </div>
+          </div>
+          <GoalCard value={82} title="Meta de receita" detail="R$ 1.640 de R$ 2.000" />
+        </aside>
       </div>
       <SectionTitle icon="play">
         Seus vídeos <span className="muted">({videos.length})</span>

@@ -18,6 +18,20 @@ export default async function Admin() {
     })
     .reduce((sum, sale) => sum + sale.revenue, 0);
   const netMargin = sales.reduce((sum, sale) => sum + sale.netMargin, 0);
+
+  const top10Creators = creators
+    .map((creator) => {
+      const creatorSales = sales.filter((sale) => {
+        const video = videos.find((v) => v.id === sale.videoId);
+        return video?.creatorId === creator.id;
+      });
+      return {
+        ...creator,
+        totalRevenue: creatorSales.reduce((sum, s) => sum + s.revenue, 0),
+      };
+    })
+    .sort((a, b) => b.totalRevenue - a.totalRevenue)
+    .slice(0, 10);
   return (
     <Shell admin>
       <div className="page-head overview-head">
@@ -87,18 +101,28 @@ export default async function Admin() {
           <div className="finance-columns">
             <div>
               <span>Investimento em tráfego</span>
-              <strong>R$ 18.640</strong>
+              <strong>
+                R$ {(netMargin * 0.15).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </strong>
             </div>
             <div>
               <span>Lucro estimado</span>
-              <strong>R$ 96.820</strong>
+              <strong>
+                R$ {netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </strong>
             </div>
           </div>
         </div>
         <GoalCard
-          value={82}
+          value={
+            sales.reduce((sum, s) => sum + s.revenue, 0) > 180000
+              ? 100
+              : Math.round(
+                  (sales.reduce((sum, s) => sum + s.revenue, 0) / 180000) * 100
+                )
+          }
           title="Meta de receita"
-          detail="R$ 148 mil de R$ 180 mil"
+          detail={`R$ ${sales.reduce((sum, s) => sum + s.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} de R$ 180.000`}
         />
       </div>
       <div className="compact-queue">
@@ -125,12 +149,15 @@ export default async function Admin() {
         >
           Top 10
         </SectionTitle>
-        {["Maria Souza", "Ana Clara", "Bia Martins"].map((name, index) => (
-          <div className="ranking-row" key={name}>
-            <b>0{index + 1}</b>
-            <span>{name}</span>
+        {top10Creators.map((creator, index) => (
+          <div className="ranking-row" key={creator.id}>
+            <b>{String(index + 1).padStart(2, "0")}</b>
+            <span>{creator.name || "Criadora sem nome"}</span>
             <strong>
-              R$ {[28420, 18640, 12890][index].toLocaleString("pt-BR")}
+              R${" "}
+              {creator.totalRevenue.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+              })}
             </strong>
           </div>
         ))}

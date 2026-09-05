@@ -3513,6 +3513,45 @@ footer code {
   width: 100%;
 }
 
+/* Creator revenue overview: keep the chart dominant without letting it span the full page. */
+.creator-revenue-layout {
+  align-items: stretch;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 13fr) minmax(280px, 7fr);
+}
+
+.creator-revenue-layout .chart-card {
+  margin-top: 0;
+  min-width: 0;
+}
+
+.creator-revenue-summary {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.creator-revenue-summary .finance-card,
+.creator-revenue-summary .goal-card {
+  min-width: 0;
+}
+
+.creator-revenue-summary .section-title {
+  margin-top: 0 !important;
+  padding-top: 0;
+}
+
+@media (max-width: 767px) {
+  .creator-revenue-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-revenue-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 767px) {
   .chart-card {
     padding: 16px;
