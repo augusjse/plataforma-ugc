@@ -9,6 +9,7 @@ import ReferralBanner from "@/components/ReferralBanner";
 import PerformanceChart from "@/components/PerformanceChart";
 import GoalCard from "@/components/GoalCard";
 import PeriodSelector from "@/components/PeriodSelector";
+import GuideCard from "@/components/GuideCard";
 import { normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
 
 export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
@@ -50,7 +51,14 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <ReferralBanner />
         </div>
       </div>
-      <div className="dashboard-tools"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
+      <div className="dashboard-tools">
+        <GuideCard
+          title="Aprenda como usar"
+          description="Veja em 2 minutos como acompanhar seus resultados."
+          action="Ver guia"
+        />
+        <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
+      </div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
         <div className="withdraw-copy">
