@@ -51,18 +51,21 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           Ver aprovações
         </Link>
       </div>
-      <NoticeBar
-        title={`${pendingVideosCount.toLocaleString("pt-BR")} vídeos esperam sua aprovação`}
-        description="Uma fila organizada ajuda as melhores criadoras a começarem mais rápido."
-        action="Revisar agora"
-      />
+      <div className="notice-period-row admin-notice-period-row">
+        <NoticeBar
+          title={`${pendingVideosCount.toLocaleString("pt-BR")} vídeos esperam sua aprovação`}
+          description="Uma fila organizada ajuda as melhores criadoras a começarem mais rápido."
+          action="Revisar agora"
+        />
+        <div className="mobile-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} compact /></div>
+      </div>
       <div className="dashboard-tools">
         <GuideCard
           title="Aprenda como usar"
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
         />
-        <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
+        <div className="desktop-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
       </div>
       <div className="overview-top">
         <div className="overview-left">

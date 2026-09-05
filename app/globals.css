@@ -4079,6 +4079,22 @@ footer code {
 .period-inputs { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; margin-top: 20px; }.period-inputs label { display: grid; gap: 7px; }.period-inputs input { background: var(--surface-muted); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; padding: 11px 12px; }.period-modal-footer { border-top: 1px solid var(--divider); margin-top: 20px; }.period-clear { background: transparent; border: 0; color: var(--text-muted); cursor: pointer; font-weight: 700; }.period-modal-footer .button:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 600px) { .period-modal-overlay { align-items: flex-end; padding: 0; }.period-modal { border-radius: var(--radius-card-large) var(--radius-card-large) 0 0; max-height: 94svh; }.period-modal-header, .period-modal-footer, .period-modal-body { padding-left: 18px; padding-right: 18px; }.period-calendars { grid-template-columns: 1fr; gap: 22px; }.period-calendar + .period-calendar { border-top: 1px solid var(--divider); padding-top: 20px; }.period-calendar:nth-child(2) .period-calendar-head .period-nav, .period-calendar:nth-child(2) .period-calendar-head .period-nav-placeholder { display: none; } }
 
+.mobile-period-selector { display: none; }
+.desktop-period-selector { margin-left: auto; }
+
+@media (max-width: 767px) {
+  .desktop-period-selector { display: none; }
+  .notice-period-row { align-items: stretch; display: flex; gap: 8px; }
+  .notice-period-row > .notice-bar { flex: 1 1 auto; min-width: 0; }
+  .mobile-period-selector { align-items: center; display: flex; flex: 0 0 auto; }
+  .period-selector-compact { align-items: center; border-radius: 10px; height: 40px; justify-content: center; padding: 0; width: 40px; }
+  .period-selector-compact > span,
+  .period-selector-compact > svg:last-child { display: none; }
+  .period-selector-compact > svg:first-child { color: var(--brand); height: 18px; width: 18px; }
+  .creator-dashboard .dashboard-tools .desktop-period-selector { display: none; }
+  .creator-dashboard .dashboard-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .mobile-actions { display: none; }
 .mobile-drawer-backdrop { background: rgba(0, 0, 0, .42); inset: 0; opacity: 0; pointer-events: none; position: fixed; transition: opacity .2s ease; z-index: 80; }
 .mobile-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }

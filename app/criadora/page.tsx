@@ -26,11 +26,14 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
       <div className="creator-dashboard">
       <div className="creator-top-layout">
         <div className="creator-top-left">
-          <NoticeBar
-            title="Seu próximo pagamento está quase lá"
-            description="Continue criando: faltam R$ 18 para completar o próximo ciclo."
-            action="Ver ganhos"
-          />
+          <div className="notice-period-row">
+            <NoticeBar
+              title="Seu próximo pagamento está quase lá"
+              description="Continue criando: faltam R$ 18 para completar o próximo ciclo."
+              action="Ver ganhos"
+            />
+            <div className="mobile-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} compact /></div>
+          </div>
           <div className="creator-hero">
             <div>
               <p className="eyebrow">Quanto você já ganhou</p>
@@ -74,7 +77,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           href="/criadora/catalogo"
           icon="cart"
         />
-        <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
+        <div className="desktop-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
       </div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
