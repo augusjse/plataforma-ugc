@@ -18,29 +18,35 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
     products.find((product) => product.videoCount === 0) ?? products[0];
   return (
     <Shell>
-      <NoticeBar
-        title="Seu próximo pagamento está quase lá"
-        description="Continue criando: faltam R$ 18 para completar o próximo ciclo."
-        action="Ver ganhos"
-      />
-      <div className="creator-hero">
-        <div>
-          <p className="eyebrow">Quanto você já ganhou</p>
-            <h1>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</h1>
-          <div className="creator-pills">
-            <span>
-                Disponível para saque <b>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</b>
-            </span>
-            <span>
-                Já recebido <b>R$ 0,00</b>
-            </span>
+      <div className="creator-top-layout">
+        <div className="creator-top-left">
+          <NoticeBar
+            title="Seu próximo pagamento está quase lá"
+            description="Continue criando: faltam R$ 18 para completar o próximo ciclo."
+            action="Ver ganhos"
+          />
+          <div className="creator-hero">
+            <div>
+              <p className="eyebrow">Quanto você já ganhou</p>
+              <h1>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</h1>
+              <div className="creator-pills">
+                <span>
+                  Disponível para saque <b>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</b>
+                </span>
+                <span>
+                  Já recebido <b>R$ 0,00</b>
+                </span>
+              </div>
+            </div>
+            <Link href="/criadora/ganhos" className="button button-primary">
+              Sacar agora →
+            </Link>
           </div>
         </div>
-        <Link href="/criadora/ganhos" className="button button-primary">
-          Sacar agora →
-        </Link>
+        <div className="creator-top-right">
+          <ReferralBanner />
+        </div>
       </div>
-      <ReferralBanner />
       <div className="dashboard-tools"><PeriodSelector periodDays={periodDays} /></div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
