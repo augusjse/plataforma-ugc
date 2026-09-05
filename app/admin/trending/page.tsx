@@ -19,6 +19,7 @@ export default function TrendingPage() {
   const [minCommission, setMinCommission] = useState(5);
   const [subIds, setSubIds] = useState<string[]>(["", "", "", "", ""]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [usingMock, setUsingMock] = useState(false);
 
   useEffect(() => {
     const loadSettings = () => {
@@ -36,14 +37,23 @@ export default function TrendingPage() {
       setLoading(true);
       const res = await fetch("/api/shopee/trending");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Shopee API não configurada");
+      setUsingMock(false);
       setProducts(
         (data.products || []).map((p: any) => ({
-          ...p,
-          status: p.status || "pending",
+          id: p.id,
+          name: p.name,
+          price: p.price ?? 0,
+          image: p.image || "https://via.placeholder.com/48",
+          shopLink: p.url,
+          // commissionRate vem como fração (0.12 = 12%) da API da Shopee
+          vendorCommission: p.commissionRate ? Math.round(p.commissionRate * 100) : 0,
+          status: "pending" as const,
         }))
       );
     } catch (error) {
       console.error("Erro ao buscar trending:", error);
+      setUsingMock(true);
       setProducts([
         {
           id: "1",
@@ -134,6 +144,13 @@ export default function TrendingPage() {
           <p>Filtre por comissão de afiliado e aprove produtos trending da Shopee.</p>
         </div>
       </div>
+
+      {usingMock && (
+        <div className="warning-banner">
+          ⚠️ A API da Shopee ainda não está configurada (faltam <code>SHOPEE_APP_ID</code> e{" "}
+          <code>SHOPEE_APP_SECRET</code> no Vercel). Mostrando produtos de exemplo por enquanto.
+        </div>
+      )}
 
       <div className="trending-settings">
         <div className="setting-row">
@@ -261,6 +278,23 @@ export default function TrendingPage() {
       )}
 
       <style jsx>{`
+        .warning-banner {
+          background: rgba(245, 158, 11, 0.1);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          color: #b45309;
+          padding: 1rem 1.25rem;
+          border-radius: 10px;
+          margin-bottom: 1.5rem;
+          font-size: 0.9rem;
+        }
+
+        .warning-banner code {
+          background: rgba(0, 0, 0, 0.08);
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 0.85em;
+        }
+
         .trending-settings {
           background: var(--surface);
           padding: 1.5rem;
