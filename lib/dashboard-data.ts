@@ -49,6 +49,18 @@ export type DashboardVideo = {
   diasRestantes: number | null;
 };
 
+export type ModerationVideo = {
+  id: string;
+  creatorId: string;
+  creatorName: string;
+  productId: string;
+  productName: string;
+  productImage: string;
+  videoUrl: string;
+  affiliateLink: string;
+  moderationStatus: "pendente" | "aprovado" | "reprovado";
+};
+
 export type DashboardSale = {
   id: string;
   videoId: string;
@@ -130,12 +142,37 @@ export async function getPendingVideosCount(): Promise<number> {
     const { count, error } = await supabaseAdmin
       .from("videos_ugc")
       .select("id", { count: "exact", head: true })
-      .eq("status", "aguardando_primeira_venda");
+      .eq("moderation_status", "pendente");
     if (error) return 0;
     return count ?? 0;
   } catch {
     return 0;
   }
+}
+
+export async function getPendingModerationVideos(): Promise<ModerationVideo[]> {
+  try {
+    const { data: rows, error } = await supabaseAdmin.from("videos_ugc")
+      .select("id,creator_id,product_id,video_url_sua_plataforma,affiliate_link_bruto,moderation_status")
+      .eq("moderation_status", "pendente").order("created_at", { ascending: false });
+    if (error) return [];
+    const videos = rows ?? [];
+    const creatorIds = [...new Set(videos.map((row) => String(row.creator_id)))];
+    const productIds = [...new Set(videos.map((row) => String(row.product_id)))];
+    const [{ data: creators }, { data: products }, { data: trending }] = await Promise.all([
+      supabaseAdmin.from("users").select("id,name,email").in("id", creatorIds),
+      supabaseAdmin.from("catalog_products").select("*").in("id", productIds),
+      supabaseAdmin.from("trending_products_ugc").select("id,name,image").in("id", productIds),
+    ]);
+    const creatorMap = new Map((creators ?? []).map((row) => [String(row.id), String(row.name ?? row.email ?? "Criadora")]));
+    const productMap = new Map<string, { name: string; image: string }>();
+    for (const row of products ?? []) productMap.set(String(row.id), { name: String(row.name ?? "Produto"), image: String(row.image_url ?? row.image ?? "") });
+    for (const row of trending ?? []) productMap.set(String(row.id), { name: String(row.name ?? "Produto"), image: String(row.image ?? "") });
+    return videos.map((row) => {
+      const product = productMap.get(String(row.product_id)) ?? { name: "Produto", image: "" };
+      return { id: String(row.id), creatorId: String(row.creator_id), creatorName: creatorMap.get(String(row.creator_id)) ?? `Criadora ${String(row.creator_id).slice(0, 8)}`, productId: String(row.product_id), productName: product.name, productImage: product.image, videoUrl: String(row.video_url_sua_plataforma), affiliateLink: String(row.affiliate_link_bruto), moderationStatus: String(row.moderation_status) as ModerationVideo["moderationStatus"] };
+    });
+  } catch { return []; }
 }
 
 export const DASHBOARD_PERIODS = [15, 30, 60, 90] as const;

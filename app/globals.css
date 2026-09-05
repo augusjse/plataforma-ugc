@@ -2292,6 +2292,25 @@ button {
   font-size: 12px;
   padding: 14px;
 }
+.video-submit-form { display: grid; gap: 12px; }
+.form-label { color: var(--text-muted); font-size: 12px; font-weight: 700; }
+.text-input { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; min-height: 48px; padding: 0 13px; width: 100%; }
+.text-input:focus { border-color: var(--brand); outline: 2px solid rgba(255,107,38,.15); }
+.copy-suggestion { background: var(--surface-muted); border-left: 3px solid var(--brand); border-radius: 8px; color: var(--text-muted); font-size: 13px; line-height: 1.6; padding: 14px 16px; }
+.form-error { color: var(--danger-text); font-size: 13px; margin: 0; }
+.form-success { color: var(--success-text); font-size: 13px; margin: 0; }
+.affiliate-result { background: var(--success-bg); border-radius: 10px; display: grid; gap: 5px; padding: 12px 14px; }
+.affiliate-result a, .affiliate-small { color: var(--brand-deep); font-size: 12px; overflow-wrap: anywhere; }
+.approval-list { background: var(--surface); border: 1px solid var(--border-card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; }
+.approval-list-item { align-items: center; border-bottom: 1px solid var(--divider); display: flex; gap: 20px; padding: 14px 18px; }
+.approval-list-item:last-child { border-bottom: 0; }
+.approval-list-item > img { border-radius: 8px; object-fit: cover; }
+.approval-list-main { display: grid; flex: 1; gap: 3px; min-width: 0; }
+.approval-list-main strong { color: var(--text-main); font-size: 13px; }
+.approval-list-main span { color: var(--text-muted); font-size: 12px; }
+.play-link { color: var(--brand-deep); font-size: 12px; font-weight: 750; }
+.affiliate-small { font-size: 11px; }
+@media (max-width: 640px) { .approval-list-item { align-items: flex-start; flex-wrap: wrap; gap: 12px; } .approval-list-main { min-width: calc(100% - 68px); } .approval-actions { margin-left: 68px; } }
 footer {
   border-top: 1px solid var(--divider);
   color: var(--text-subtle);

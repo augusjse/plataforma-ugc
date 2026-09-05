@@ -1,36 +1,10 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import Badge from "@/components/Badge";
-import { getVideos } from "@/lib/dashboard-data";
+import { getPendingModerationVideos } from "@/lib/dashboard-data";
+import ApprovalQueue from "./ApprovalQueue";
+
 export default async function Aprovacoes() {
-  const pending = (await getVideos()).filter((video) => video.status === "aguardando_primeira_venda");
-  return (
-    <Shell admin>
-      <div className="page-head">
-        <div>
-          <p className="eyebrow">Moderação</p>
-          <h1>
-            Fila de aprovação <Badge tone="warning">14 pendentes</Badge>
-          </h1>
-          <p>Assista aos vídeos e decida quais entram no catálogo.</p>
-        </div>
-      </div>
-      <SectionTitle icon="play">Vídeos para analisar</SectionTitle>
-      <div className="approval-table-wrap">
-        <table className="approval-table">
-          <thead><tr><th>Vídeo</th><th>Criadora</th><th>Produto</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>{pending.map((v) => {
-            return <tr key={v.id}>
-              <td><div className="approval-video"><strong>{v.title}</strong></div></td>
-              <td>{v.productId}</td>
-              <td>{v.product}</td>
-              <td>—</td>
-              <td><Badge tone="warning">Em análise</Badge></td>
-              <td><div className="approval-actions"><button className="button button-primary">Aprovar</button><button className="button button-ghost">Reprovar</button></div></td>
-            </tr>;
-          })}</tbody>
-        </table>
-      </div>
-    </Shell>
-  );
+  const pending = await getPendingModerationVideos();
+  return <Shell admin><div className="page-head"><div><p className="eyebrow">Moderação</p><h1>Fila de aprovação <Badge tone="warning">{pending.length} pendente{pending.length === 1 ? "" : "s"}</Badge></h1><p>Assista aos vídeos e decida quais entram no catálogo.</p></div></div><SectionTitle icon="play">Vídeos para analisar</SectionTitle><ApprovalQueue initialVideos={pending} /></Shell>;
 }

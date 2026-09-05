@@ -145,3 +145,19 @@ create table if not exists public.trending_products_ugc (
 );
 alter table public.trending_products_ugc enable row level security;
 alter table public.trending_products_ugc add column if not exists shop_name text;
+
+alter table public.videos_ugc
+  add column if not exists moderation_status text not null default 'pendente';
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'videos_ugc_moderation_status_check'
+      and conrelid = 'public.videos_ugc'::regclass
+  ) then
+    alter table public.videos_ugc
+      add constraint videos_ugc_moderation_status_check
+      check (moderation_status in ('pendente', 'aprovado', 'reprovado'));
+  end if;
+end $$;
