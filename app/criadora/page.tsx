@@ -66,6 +66,13 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
         />
+        <GuideCard
+          title="Produtos novos"
+          description="Veja os produtos recém aprovados para gravar."
+          action="Ver produtos novos"
+          href="/criadora/catalogo"
+          icon="cart"
+        />
         <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
       </div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
