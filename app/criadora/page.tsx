@@ -12,6 +12,7 @@ import PeriodSelector from "@/components/PeriodSelector";
 import GuideCard from "@/components/GuideCard";
 import Icon from "@/components/Icon";
 import { normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
+import { MoneyValue } from "@/components/ValuesVisibilityContext";
 
 export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
   const query = await searchParams;
@@ -33,13 +34,13 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <div className="creator-hero">
             <div>
               <p className="eyebrow">Quanto você já ganhou</p>
-              <h1>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</h1>
+              <h1><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}`} /></h1>
               <div className="creator-pills">
                 <span>
-                  Disponível para saque <b>R$ {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}</b>
+                  Disponível para saque <b><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}`} /></b>
                 </span>
                 <span>
-                  Já recebido <b>R$ 0,00</b>
+                  Já recebido <b><MoneyValue value="R$ 0,00" /></b>
                 </span>
               </div>
             </div>
@@ -96,15 +97,13 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
               <div>
                 <span>Total em vendas</span>
                 <strong>
-                  R${" "}
-                  {sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  <MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
                 </strong>
               </div>
               <div>
                 <span>Suas comissões</span>
                 <strong>
-                  R${" "}
-                  {sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  <MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
                 </strong>
               </div>
             </div>

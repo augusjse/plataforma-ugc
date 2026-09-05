@@ -4037,3 +4037,25 @@ footer code {
 .period-suggested { border-top: 1px solid var(--divider); margin-top: 24px; padding-top: 18px; }.period-suggested > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }.period-suggested button { background: var(--brand-light); border: 0; border-radius: var(--radius-pill); color: var(--brand-deep); cursor: pointer; font-size: 11px; font-weight: 700; padding: 8px 12px; }.period-suggested button:hover { background: var(--brand); color: #fff; }
 .period-inputs { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; margin-top: 20px; }.period-inputs label { display: grid; gap: 7px; }.period-inputs input { background: var(--surface-muted); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; padding: 11px 12px; }.period-modal-footer { border-top: 1px solid var(--divider); margin-top: 20px; }.period-clear { background: transparent; border: 0; color: var(--text-muted); cursor: pointer; font-weight: 700; }.period-modal-footer .button:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 600px) { .period-modal-overlay { align-items: flex-end; padding: 0; }.period-modal { border-radius: var(--radius-card-large) var(--radius-card-large) 0 0; max-height: 94svh; }.period-modal-header, .period-modal-footer, .period-modal-body { padding-left: 18px; padding-right: 18px; }.period-calendars { grid-template-columns: 1fr; gap: 22px; }.period-calendar + .period-calendar { border-top: 1px solid var(--divider); padding-top: 20px; }.period-calendar:nth-child(2) .period-calendar-head .period-nav, .period-calendar:nth-child(2) .period-calendar-head .period-nav-placeholder { display: none; } }
+
+.mobile-actions { display: none; }
+.mobile-drawer-backdrop { background: rgba(0, 0, 0, .42); inset: 0; opacity: 0; pointer-events: none; position: fixed; transition: opacity .2s ease; z-index: 80; }
+.mobile-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.mobile-drawer { background: var(--surface); box-shadow: -14px 0 40px rgba(0,0,0,.2); display: flex; flex-direction: column; height: 100%; max-width: 360px; overflow-y: auto; padding: 20px; position: absolute; right: 0; top: 0; transform: translateX(100%); transition: transform .24s ease; width: min(88vw, 360px); }
+.mobile-drawer-backdrop.is-open .mobile-drawer { transform: translateX(0); }
+.mobile-drawer-header { align-items: center; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; padding-bottom: 16px; }
+.mobile-drawer-header strong { font-size: 18px; }
+.mobile-drawer-nav, .mobile-drawer-group, .mobile-drawer-account { display: grid; gap: 4px; }
+.mobile-drawer-nav { gap: 16px; padding: 20px 0; }
+.mobile-drawer-group + .mobile-drawer-group, .mobile-drawer-account { border-top: 1px solid var(--divider); padding-top: 16px; }
+.mobile-drawer-label { align-items: center; color: var(--text-subtle); display: flex; font-size: 11px; font-weight: 800; gap: 8px; letter-spacing: .08em; padding: 3px 8px 6px; text-transform: uppercase; }
+.mobile-drawer a, .mobile-drawer-logout { align-items: center; background: transparent; border-radius: 10px; color: var(--text-main); display: flex; font-size: 14px; gap: 10px; padding: 11px 8px; text-align: left; width: 100%; }
+.mobile-drawer a:hover, .mobile-drawer-logout:hover { background: var(--brand-light); color: var(--brand-deep); }
+.mobile-drawer-logout { border: 0; color: var(--danger-text); cursor: pointer; font: inherit; }
+@media (max-width: 767px) {
+  .topbar-container { margin: 10px 32px 0; max-width: none; padding: 0; }
+  .topbar { padding: 0 12px; width: 100%; }
+  .topbar .group-nav, .top-actions, .mobile-nav-toggle { display: none; }
+  .mobile-actions { align-items: center; display: flex; gap: 8px; margin-left: auto; }
+  .mobile-actions .icon-button { flex: 0 0 36px; }
+}

@@ -9,6 +9,7 @@ import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
 import { getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
+import { MoneyValue } from "@/components/ValuesVisibilityContext";
 export default async function Admin({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
@@ -67,7 +68,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="overview-left">
           <div className="hero">
             <p className="eyebrow">Receita gerada este mês</p>
-            <h2>R$ {sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</h2>
+            <h2><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} /></h2>
             <p>Dados reais das vendas registradas</p>
             <span className="hero-tag">Sem dados mockados</span>
           </div>
@@ -108,13 +109,13 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div>
               <span>Investimento em tráfego</span>
               <strong>
-                R$ {(netMargin * 0.15).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                <MoneyValue value={`R$ ${(netMargin * 0.15).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
               </strong>
             </div>
             <div>
               <span>Lucro estimado</span>
               <strong>
-                R$ {netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                <MoneyValue value={`R$ ${netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
               </strong>
             </div>
           </div>
@@ -135,14 +136,13 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <span className="section-icon">◈</span>
         <strong>Receita de janelas encerradas</strong>
         <span>
-          R${" "}
-          {closedRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+          <MoneyValue value={`R$ ${closedRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
         </span>
       </div>
       <div className="net-margin-callout">
         <span className="eyebrow">Margem líquida da operação</span>
         <strong>
-          R$ {netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+          <MoneyValue value={`R$ ${netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
         </strong>
         <span>Comissão Shopee menos repasses e anúncios.</span>
       </div>
@@ -160,10 +160,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <b>{String(index + 1).padStart(2, "0")}</b>
             <span>{creator.name || "Criadora sem nome"}</span>
             <strong>
-              R${" "}
-              {creator.totalRevenue.toLocaleString("pt-BR", {
+              <MoneyValue value={`R$ ${creator.totalRevenue.toLocaleString("pt-BR", {
                 minimumFractionDigits: 2,
-              })}
+              })}`} />
             </strong>
           </div>
         ))}

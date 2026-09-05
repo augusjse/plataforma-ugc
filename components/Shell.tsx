@@ -5,10 +5,13 @@ import Icon from "./Icon";
 import NavGroups from "./NavGroups";
 import ProfileMenu from "./ProfileMenu";
 import ThemeToggle from "./ThemeToggle";
+import MobileDrawer from "./MobileDrawer";
+import { useValuesVisibility, ValuesVisibilityProvider } from "./ValuesVisibilityContext";
 type Props = { children: React.ReactNode; admin?: boolean };
 export default function Shell({ children, admin = false }: Props) {
   const [menu, setMenu] = useState<string | null>(null);
   const shellRef = useRef<HTMLDivElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   useEffect(() => {
     const close = (event: MouseEvent) => {
       if (!shellRef.current?.querySelector(".topbar")?.contains(event.target as Node)) setMenu(null);
@@ -17,6 +20,7 @@ export default function Shell({ children, admin = false }: Props) {
     return () => document.removeEventListener("mousedown", close);
   }, []);
   return (
+    <ValuesVisibilityProvider>
     <div className="app-shell" ref={shellRef}>
       <div className="topbar-container">
         <header className="topbar">
@@ -40,8 +44,10 @@ export default function Shell({ children, admin = false }: Props) {
             <ThemeToggle />
             <ProfileMenu admin={admin} menu={menu} setMenu={setMenu} />
           </div>
+          <MobileActions drawerOpen={drawerOpen} onDrawer={() => setDrawerOpen((open) => !open)} />
         </header>
       </div>
+      <MobileDrawer admin={admin} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       <main className="container">{children}</main>
       <footer>
         <span>Studio UGC</span>
@@ -49,7 +55,16 @@ export default function Shell({ children, admin = false }: Props) {
         <code>v0.1.0 mock</code>
       </footer>
     </div>
+    </ValuesVisibilityProvider>
   );
+}
+function MobileActions({ drawerOpen, onDrawer }: { drawerOpen: boolean; onDrawer: () => void }) {
+  const { hidden, toggle } = useValuesVisibility();
+  return <div className="mobile-actions">
+    <button className="icon-button" type="button" onClick={toggle} aria-label={hidden ? "Mostrar valores" : "Ocultar valores"}><Icon name={hidden ? "eye-off" : "eye"} size={18} /></button>
+    <ThemeToggle />
+    <button className="icon-button" type="button" onClick={onDrawer} aria-label={drawerOpen ? "Fechar menu" : "Abrir menu"} aria-expanded={drawerOpen}><Icon name={drawerOpen ? "close" : "menu"} size={19} /></button>
+  </div>;
 }
 function BadgeMini({ text }: { text: string }) {
   return <span className="plan-pill">{text}</span>;

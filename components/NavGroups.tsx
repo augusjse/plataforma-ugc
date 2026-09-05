@@ -9,7 +9,7 @@ type Item = { href: string; label: string; icon: string };
 type Group = { href: string; label: string; icon: string; items: Item[] };
 type Props = { admin: boolean; menu: string | null; setMenu: (menu: string | null) => void };
 
-const adminGroups: Group[] = [
+export const adminGroups: Group[] = [
   {
     href: "/admin",
     label: "Painel",
@@ -51,7 +51,7 @@ const adminGroups: Group[] = [
   },
 ];
 
-const creatorGroups: Group[] = [
+export const creatorGroups: Group[] = [
   {
     href: "/criadora",
     label: "Painel",
