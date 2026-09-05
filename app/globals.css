@@ -319,7 +319,7 @@
   white-space: nowrap;
 }
 .guide-copy strong {
-  color: var(--text-on-inverse);
+  color: var(--text-main);
   font: 600 16px var(--font-sans);
   white-space: nowrap;
 }
@@ -1609,7 +1609,7 @@
   white-space: nowrap;
 }
 .guide-copy strong {
-  color: var(--text-on-inverse);
+  color: var(--text-main);
   font: 600 16px var(--font-sans);
   white-space: nowrap;
 }
