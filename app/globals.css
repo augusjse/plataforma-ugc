@@ -2829,10 +2829,11 @@ footer code {
   text-align: left;
 }
 .promo-card {
+  background-color: var(--surface);
   background-position: center;
   background-size: cover;
   border-radius: var(--radius-card);
-  color: var(--text-on-inverse);
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2843,10 +2844,10 @@ footer code {
   position: relative;
 }
 .promo-card::before {
-  background: linear-gradient(transparent, var(--surface-inverse));
+  background: transparent;
   content: "";
   inset: 0;
-  opacity: 0.84;
+  opacity: 0;
   position: absolute;
 }
 .promo-card > * {
