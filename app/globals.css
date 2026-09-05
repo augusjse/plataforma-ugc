@@ -2824,14 +2824,48 @@ footer code {
     grid-column: span 2;
   }
 }
-.selected-product strong,
-.selected-product span {
+.selected-product > div > strong,
+.selected-product > div > span {
   display: block;
 }
-.selected-product span {
+.selected-product > div > span {
   color: var(--success-text);
   font-size: 12px;
   margin-top: 5px;
+}
+.sales-projection {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sales-projection > small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.sales-projection-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sales-projection-chip {
+  align-items: flex-start;
+  background: var(--brand-light);
+  border: 1px solid var(--overlay-border);
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px;
+}
+.sales-projection-chip small {
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.1;
+}
+.sales-projection-chip strong {
+  color: var(--brand-deep);
+  font-size: 13px;
+  line-height: 1.1;
 }
 .link-callout {
   background: var(--brand-light);
