@@ -14,9 +14,9 @@
   --brand-deep: #c93813;
   --brand: #ff6b26;
   --brand-light: #fff0e8;
-  --brand-grad-start: #ff7a2f;
-  --brand-grad-end: #ee3d20;
-  --brand-glow: rgba(239, 83, 31, 0.18);
+  --brand-grad-start: #ffb648;
+  --brand-grad-end: #f97316;
+  --brand-glow: rgba(249, 115, 22, 0.32);
   --success-bg: #e8f7ef;
   --success-text: #1b9d70;
   --danger-bg: #fff0f0;
@@ -37,9 +37,10 @@
   --chart-orange: #f28a45;
   --chart-grid: #e7e2dc;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-hero: 0 14px 28px var(--brand-glow);
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --radius-card: 18px;
+  --shadow-hero: 0 8px 32px rgba(255, 107, 38, 0.35), 0 3px 12px rgba(245, 158, 11, 0.2);
+  --font-sans: var(--font-inter), system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --radius-card: 20px;
+  --radius-card-large: 24px;
   --radius-pill: 999px;
   --content-max: 1120px;
 }
@@ -1676,9 +1677,7 @@ body {
   margin: 0;
   background: var(--app-bg);
   color: var(--text-main);
-  font-family:
-    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-sans);
 }
 a {
   color: inherit;
@@ -1848,7 +1847,7 @@ button {
     var(--brand-grad-start),
     var(--brand-grad-end)
   );
-  border-radius: 22px;
+  border-radius: var(--radius-card-large);
   box-shadow: var(--shadow-hero);
   color: var(--text-on-inverse);
   min-height: 190px;
@@ -1873,7 +1872,7 @@ button {
   z-index: 1;
 }
 .hero h2 {
-  font: 600 44px/1 var(--font-sans);
+  font: 800 44px/1 var(--font-sans);
   letter-spacing: -0.05em;
   margin: 11px 0 15px;
   position: relative;
@@ -1941,7 +1940,7 @@ button {
   font-weight: 700;
 }
 .stat-value {
-  font: 600 22px var(--font-sans);
+  font: 800 22px var(--font-sans);
   letter-spacing: -0.04em;
 }
 .stat-change {
@@ -3723,4 +3722,17 @@ footer code {
     min-height: 34px;
     padding: 8px 10px;
   }
+}
+
+/* Final token overrides keep the visual language consistent on desktop and mobile. */
+.hero,
+.creator-hero,
+.promo-card {
+  border-radius: var(--radius-card-large);
+  box-shadow: var(--shadow-hero);
+}
+
+.stat-card .stat-value,
+.stat-value {
+  font-weight: 800;
 }

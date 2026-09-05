@@ -1,4 +1,13 @@
 import "./globals.css";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
 export const metadata = {
   title: "Studio UGC",
   description: "Plataforma de criadoras de conteúdo",
@@ -7,7 +16,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" className={inter.variable} suppressHydrationWarning>
       <body>
         <script
           dangerouslySetInnerHTML={{
