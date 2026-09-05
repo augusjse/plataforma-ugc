@@ -26,7 +26,8 @@ export default function PerformanceChart({
   const [hover, setHover] = useState<number | null>(null);
   const width = 760;
   const height = 280;
-  const pad = { left: 58, right: 18, top: 18, bottom: 34 };
+  // Keep only the space needed for axis labels so the plotted area uses the card.
+  const pad = { left: 52, right: 12, top: 12, bottom: 24 };
   const leftAxisMax = 80000;
   const rightAxisMax = 4000;
   const x = (index: number) =>
@@ -102,6 +103,7 @@ export default function PerformanceChart({
       >
         <svg
           viewBox={`0 0 ${width} ${height}`}
+          preserveAspectRatio="none"
           role="img"
           aria-label="Faturamento diário"
           onMouseMove={move}
