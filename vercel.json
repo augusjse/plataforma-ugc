@@ -1,5 +1,0 @@
-{
-  "crons": [
-    { "path": "/api/cron/sync-trending", "schedule": "0 * * * *" }
-  ]
-}

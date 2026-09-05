@@ -1,0 +1,19 @@
+# Configure CRON_SECRET in GitHub Settings > Secrets and variables > Actions
+# with the same value as the CRON_SECRET environment variable configured in Vercel.
+name: Sync trending products
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-trending:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync trending products
+        run: >-
+          curl --fail --show-error --silent --retry 2
+          --request GET
+          --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          https://plataforma-ugc.vercel.app/api/cron/sync-trending
