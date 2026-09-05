@@ -42,7 +42,14 @@ export async function syncTrendingProducts(): Promise<TrendingProduct[]> {
     if (!result?.pageInfo?.hasNextPage) break;
   }
   const fetchedAt = new Date().toISOString();
-  const products = nodes.slice(0, MAX_PRODUCTS).map((product) => ({ id: String(product.itemId ?? ""), name: product.productName ?? "Produto Shopee", price: numberOrNull(product.priceMin), image: product.imageUrl ?? "", store: product.shopName ?? "Shopee", url: product.offerLink ?? product.productLink ?? "https://shopee.com.br", growth: null, commissionRate: numberOrNull(product.commissionRate), fetchedAt })).filter((product) => product.id);
+  // The API can return the same item on more than one page. PostgreSQL rejects
+  // an upsert batch when two rows target the same conflict key, so keep the
+  // first occurrence of each item before persisting.
+  const entries = nodes.map((product) => {
+    const normalized = { id: String(product.itemId ?? ""), name: product.productName ?? "Produto Shopee", price: numberOrNull(product.priceMin), image: product.imageUrl ?? "", store: product.shopName ?? "Shopee", url: product.offerLink ?? product.productLink ?? "https://shopee.com.br", growth: null, commissionRate: numberOrNull(product.commissionRate), fetchedAt };
+    return [normalized.id, normalized] as const;
+  }).filter(([id]) => id);
+  const products = Array.from(new Map(entries).values()).slice(0, MAX_PRODUCTS);
   if (isSupabaseConfigured && products.length) {
     const rows = products.map((product) => ({ id: product.id, name: product.name, price: product.price, image: product.image, shop_link: product.url, vendor_commission: (product.commissionRate ?? 0) * 100, fetched_at: product.fetchedAt }));
     const { error } = await supabaseAdmin.from("trending_products_ugc").upsert(rows, { onConflict: "id" });
