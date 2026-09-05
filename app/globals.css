@@ -45,7 +45,7 @@
   --text-h3: 700 17px/1.25 var(--font-sans);
   --text-body: 400 14px/1.5 var(--font-sans);
   --text-small: 500 12px/1.4 var(--font-sans);
-  --text-value: 800 40px/1.1 var(--font-sans);
+  --text-value: 900 48px/1.05 var(--font-sans);
   --radius-card: 20px;
   --radius-card-large: 24px;
   --radius-pill: 999px;
@@ -752,6 +752,11 @@
   padding: 30px 34px;
   position: relative;
 }
+.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
+.referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
+.referral-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
+@keyframes referral-ken-burns { from { transform: scale(1); } to { transform: scale(1.1); } }
 .referral-copy { max-width: 600px; position: relative; z-index: 2; }
 .referral-badge {
   background: var(--brand);
@@ -772,12 +777,22 @@
 .referral-orbit::before, .referral-orbit::after { border: 1px solid rgba(255,255,255,.13); border-radius: 50%; content: ""; inset: 22px; position: absolute; }
 .referral-orbit::after { border-color: rgba(255,107,38,.22); inset: 48px; }
 .referral-orbit span { align-items: center; background: var(--brand); border-radius: 50%; box-shadow: 0 10px 32px rgba(255,107,38,.34); display: grid; font-size: 24px; font-weight: 900; height: 86px; letter-spacing: -.08em; place-items: center; transform: rotate(18deg); width: 86px; }
+.referral-indicators { bottom: 13px; display: flex; gap: 6px; left: 34px; position: absolute; z-index: 3; }
+.referral-indicators button { background: rgba(255,255,255,.42); border: 0; border-radius: 50%; cursor: pointer; height: 6px; padding: 0; transition: background .2s ease, transform .2s ease; width: 6px; }
+.referral-indicators button.is-active { background: var(--brand); transform: scale(1.35); }
+.creator-hero > .button, .referral-button { font-size: 13px; font-weight: 700; }
 @media (max-width: 767px) {
-  .referral-banner { min-height: 0; padding: 25px 22px; }
+  .referral-banner { min-height: 270px; padding: 25px 22px; }
+  .referral-slide { padding: 25px 22px; }
   .referral-banner h2 { font-size: 26px; max-width: 300px; }
   .referral-banner p { line-height: 1.45; max-width: 290px; }
   .referral-button { width: 100%; }
+  .referral-indicators { bottom: 10px; left: 22px; }
   .referral-orbit { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .referral-slide { transition: opacity .2s ease; }
+  .referral-slide.is-active::before { animation: none; }
 }
 
 /* Keep the final admin treatment after the legacy responsive rules above. */
@@ -4117,7 +4132,7 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
 .page-head p, .suggestion-copy p:not(.eyebrow), .academy-card > p,
 .referral-banner p, .oauth-description { font: var(--text-body); }
 .hero h2 { font: var(--text-value); }
-.creator-hero h1 { font: var(--text-h1); }
+.creator-hero h1 { font: var(--text-value); }
 .stat-value, .stat-card .stat-value, .radial b, .suggestion-earning b { font: var(--text-value); }
 
 @media (max-width: 767px) {
@@ -4127,6 +4142,13 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
     --text-h3: 700 16px/1.25 var(--font-sans);
     --text-body: 400 14px/1.5 var(--font-sans);
     --text-small: 500 11px/1.4 var(--font-sans);
-    --text-value: 800 34px/1.1 var(--font-sans);
+    --text-value: 900 40px/1.05 var(--font-sans);
   }
+}
+
+/* Keep the two primary CTAs identical after all responsive overrides. */
+.creator-hero > .button,
+.referral-button {
+  font-size: 13px;
+  font-weight: 700;
 }
