@@ -2293,6 +2293,9 @@ button {
   padding: 14px;
 }
 .video-submit-form { display: grid; gap: 12px; }
+.file-input { height: auto; padding: 12px 13px; }
+.file-selected, .form-hint { color: var(--text-muted); font-size: 12px; margin: 0; }
+.approval-video { border-radius: 8px; display: block; max-width: 320px; width: 100%; }
 .form-label { color: var(--text-muted); font-size: 12px; font-weight: 700; }
 .text-input { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; min-height: 48px; padding: 0 13px; width: 100%; }
 .text-input:focus { border-color: var(--brand); outline: 2px solid rgba(255,107,38,.15); }
