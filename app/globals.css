@@ -3631,6 +3631,98 @@ footer code {
   padding: 0;
 }
 
+/* Creator dashboard: compact mobile density without changing desktop sizing. */
+@media (max-width: 767px) {
+  .creator-dashboard .section-title {
+    margin-top: 24px !important;
+    padding-top: 14px;
+  }
+
+  .creator-dashboard .dashboard-tools {
+    gap: 10px;
+    margin-top: 16px !important;
+  }
+
+  .creator-dashboard .withdraw-card {
+    padding: 14px 16px;
+  }
+
+  .creator-dashboard .withdraw-copy {
+    margin-bottom: 10px;
+  }
+
+  .creator-dashboard .creator-revenue-layout {
+    gap: 14px;
+  }
+
+  .creator-dashboard .chart-card {
+    padding: 14px;
+  }
+
+  .creator-dashboard .chart-area-large {
+    height: 170px;
+    min-height: 170px;
+    margin-top: 12px;
+  }
+
+  .creator-dashboard .chart-legend {
+    gap: 6px;
+  }
+
+  .creator-dashboard .chart-legend .legend-chip {
+    padding: 6px 8px;
+  }
+
+  .creator-dashboard .creator-revenue-summary {
+    gap: 14px;
+  }
+
+  .creator-dashboard .finance-card,
+  .creator-dashboard .goal-card {
+    padding: 14px;
+  }
+
+  .creator-dashboard .finance-columns {
+    gap: 12px;
+  }
+
+  .creator-dashboard .finance-columns strong {
+    font-size: 21px;
+  }
+
+  .creator-dashboard .radial {
+    height: 112px;
+    width: 112px;
+  }
+
+  .creator-dashboard .video-list {
+    gap: 8px;
+  }
+
+  .creator-dashboard .video-row {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .creator-dashboard .suggestion-layout {
+    gap: 12px;
+  }
+
+  .creator-dashboard .suggestion-product > img {
+    min-height: 150px;
+  }
+
+  .creator-dashboard .suggestion-product-copy,
+  .creator-dashboard .suggestion-copy {
+    padding: 14px;
+  }
+
+  .creator-dashboard .suggestion-copy {
+    gap: 8px;
+    min-height: 150px;
+  }
+}
+
 /* Dark theme must win over the legacy light-mode finishing rules above. */
 [data-theme="dark"] .section-title { border-top-color: var(--divider); }
 [data-theme="dark"] .section-title h2 { color: var(--text-main); }
