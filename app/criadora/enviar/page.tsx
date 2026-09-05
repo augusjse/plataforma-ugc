@@ -1,6 +1,6 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
-import { currentAccount, getProducts, type DashboardProduct } from "@/lib/dashboard-data";
+import { currentAccount, getAdminConfig, getProducts, type DashboardProduct } from "@/lib/dashboard-data";
 import { supabaseAdmin } from "@/lib/supabase";
 import EnviarForm from "./EnviarForm";
 
@@ -11,10 +11,10 @@ export default async function Enviar({ searchParams }: EnviarProps) {
   const products = await getProducts();
   let product: DashboardProduct | undefined = productId ? products.find((item) => item.id === productId) : products[0];
   if (!product && productId) {
-    const { data } = await supabaseAdmin.from("trending_products_ugc").select("id,name,price,image,shop_link,vendor_commission").eq("id", productId).eq("status", "approved").maybeSingle();
+    const [{ data }, config] = await Promise.all([supabaseAdmin.from("trending_products_ugc").select("id,name,price,image,shop_link,vendor_commission").eq("id", productId).eq("status", "approved").maybeSingle(), getAdminConfig()]);
     if (data) {
       const price = Number(data.price ?? 0); const commission = Number(data.vendor_commission ?? 0);
-      product = { id: String(data.id), name: String(data.name), category: "Em alta", price, commissionPercent: commission, commissionValue: price * commission / 100, creatorCommissionValue: price * commission / 100, difficulty: "Médio", image: String(data.image ?? ""), shopeeLink: String(data.shop_link ?? ""), affiliateLink: "", status: "Ativo", videoCount: 0, sales: 0 };
+      product = { id: String(data.id), name: String(data.name), category: "Em alta", price, commissionPercent: commission, commissionValue: price * commission / 100, creatorCommissionValue: price * commission * config.repasse_organico_percent / 10000, difficulty: "Médio", image: String(data.image ?? ""), shopeeLink: String(data.shop_link ?? ""), affiliateLink: "", status: "Ativo", videoCount: 0, sales: 0 };
     }
   }
   const account = await currentAccount();

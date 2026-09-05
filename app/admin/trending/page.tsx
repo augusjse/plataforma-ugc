@@ -136,6 +136,17 @@ export default function TrendingPage() {
     }
   }
 
+  async function resetToPending(id: string) {
+    try {
+      const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/reset`, { method: "POST" });
+      if (!response.ok) throw new Error("Não foi possível desfazer a decisão do produto.");
+      setProducts(products.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+    } catch (error) {
+      console.error("Erro ao desfazer decisão:", error);
+      setProducts(products.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+    }
+  }
+
   const filteredProducts = products.filter((p) => p.vendorCommission >= minCommission);
 
   return (
@@ -238,6 +249,7 @@ export default function TrendingPage() {
                     <span className="commission-badge">
                       R$ {(product.price * (product.vendorCommission / 100)).toLocaleString("pt-BR", {
                         minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
                     </span>
                   </td>
@@ -259,8 +271,19 @@ export default function TrendingPage() {
                           </button>
                         </>
                       ) : (
-                        <span className={`status status-${product.status}`}>
-                          {product.status === "approved" ? "✓ Aprovado" : "✕ Rejeitado"}
+                        <span className="status-with-action">
+                          <span className={`status status-${product.status}`}>
+                            {product.status === "approved" ? "✓ Aprovado" : "✕ Rejeitado"}
+                          </span>
+                          <button
+                            type="button"
+                            className="button button-ghost undo-button"
+                            onClick={() => resetToPending(product.id)}
+                            title="Voltar o produto para pendente"
+                            aria-label="Desfazer decisão e voltar para pendente"
+                          >
+                            ↶ Desfazer
+                          </button>
                         </span>
                       )}
                       <button
@@ -486,6 +509,23 @@ export default function TrendingPage() {
           padding: 6px 10px;
           border-radius: 6px;
           display: inline-block;
+        }
+
+        .status-with-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .undo-button {
+          padding: 4px 7px !important;
+          border: none;
+          color: var(--text-secondary);
+          font-size: 0.75rem !important;
+        }
+
+        .undo-button:hover {
+          color: var(--text-main);
         }
 
         .status-approved {

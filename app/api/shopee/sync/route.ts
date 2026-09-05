@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { syncShopeeConversions } from "@/lib/shopee-api";
 import { supabaseAdmin } from "@/lib/supabase";
+import { getAdminConfig } from "@/lib/dashboard-data";
 
 export async function POST(request: Request) {
   try {
     const conversions = await syncShopeeConversions();
+    const config = await getAdminConfig();
 
     let synced = 0;
     let errors = 0;
@@ -36,9 +38,9 @@ export async function POST(request: Request) {
             commission_creator:
               conversion.sale_value *
               conversion.commission_percent *
-              0.5,
+              config.repasse_organico_percent / 100,
             commission_platform:
-              conversion.sale_value * conversion.commission_percent * 0.5,
+              conversion.sale_value * conversion.commission_percent * (1 - config.repasse_organico_percent / 100),
             sale_date: new Date(conversion.timestamp * 1000).toISOString(),
             external_sale_id: conversion.order_id,
           })

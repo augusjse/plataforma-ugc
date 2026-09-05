@@ -3,7 +3,7 @@ export type SaleOrigin = "organico" | "pago";
 // Percentuais padrão da comissão da plataforma repassados à criadora, nunca do valor da venda.
 // O orgânico paga mais porque a criadora trouxe o público; o pago considera a verba de anúncio.
 export const ORGANIC_SHARE = 50;
-export const PAID_SHARE = 18;
+export const PAID_SHARE = 10;
 
 // Custo médio mock de anúncio atribuído a cada venda originada por tráfego pago.
 export const PAID_AD_COST_PER_SALE = 9;

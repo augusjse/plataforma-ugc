@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase";
+import { getAdminConfig } from "@/lib/dashboard-data";
 
 export async function POST(request: NextRequest) {
   const secret = process.env.VIDEO_SALES_WEBHOOK_SECRET;
@@ -19,7 +20,8 @@ export async function POST(request: NextRequest) {
   const start = firstSale ? saleDate : video.data.janela_inicio;
   const end = firstSale ? new Date(new Date(saleDate).getTime() + 30 * 86400000).toISOString() : video.data.janela_fim;
   const inWindow = !end || new Date(saleDate) <= new Date(end);
-  const creatorCommission = inWindow ? Number((saleValue * commissionRate * 0.5).toFixed(2)) : 0;
+  const config = await getAdminConfig();
+  const creatorCommission = inWindow ? Number((saleValue * commissionRate * config.repasse_organico_percent / 100).toFixed(2)) : 0;
   const platformCommission = Number((saleValue * commissionRate - creatorCommission).toFixed(2));
   const updated = await supabaseAdmin.from("videos_ugc").update({ janela_inicio: start, janela_fim: end, status: inWindow ? "ativo" : "encerrado" }).eq("id", videoId).select("*").single();
   if (updated.error) return NextResponse.json({ success: false, error: updated.error.message }, { status: 500 });

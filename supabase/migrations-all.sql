@@ -85,14 +85,26 @@ select v.id as video_id, v.creator_id, v.product_id, v.janela_inicio, v.janela_f
 from public.videos_ugc v left join public.sales_ugc s on s.video_id = v.id
 group by v.id;
 
+create table if not exists public.admin_config (
+  id boolean primary key default true check (id),
+  repasse_organico_percent numeric(5,2) not null default 50,
+  repasse_impulsionado_percent numeric(5,2) not null default 10,
+  custo_anuncio_por_venda numeric(10,2) not null default 9,
+  updated_at timestamptz not null default now()
+);
+insert into public.admin_config (id) values (true) on conflict (id) do nothing;
+alter table public.admin_config enable row level security;
+
 create or replace function public.registrar_venda_ugc(
   p_video_id uuid, p_sale_value numeric, p_commission_percent numeric,
   p_sale_date timestamptz default now(), p_external_sale_id text default null
 ) returns table(video_id uuid, sale_id uuid, status text, janela_inicio timestamptz,
   janela_fim timestamptz, commission_creator numeric, commission_platform numeric)
 language plpgsql security definer set search_path = public as $$
-declare v videos_ugc%rowtype; creator numeric; platform numeric; inserted_id uuid;
+declare v videos_ugc%rowtype; creator numeric; platform numeric; inserted_id uuid; organic_share numeric;
 begin
+  select coalesce(repasse_organico_percent, 50) into organic_share from public.admin_config where id = true;
+  organic_share := coalesce(organic_share, 50);
   select * into v from videos_ugc where id = p_video_id for update;
   if not found then raise exception 'video_id não encontrado'; end if;
   if p_external_sale_id is not null and exists(select 1 from sales_ugc where external_sale_id = p_external_sale_id) then
@@ -107,7 +119,7 @@ begin
     update videos_ugc set status = 'encerrado' where id = p_video_id returning * into v;
   end if;
   if v.status = 'ativo' and p_sale_date between v.janela_inicio and v.janela_fim then
-    creator := round((p_sale_value * p_commission_percent * 0.5)::numeric, 2);
+    creator := round((p_sale_value * p_commission_percent * organic_share / 100)::numeric, 2);
   else creator := 0; end if;
   platform := round((p_sale_value * p_commission_percent - creator)::numeric, 2);
   insert into sales_ugc(video_id, sale_value, commission_percent, commission_creator, commission_platform, sale_date, external_sale_id)

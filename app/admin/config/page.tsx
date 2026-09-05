@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 
-type Config = { repasse_organico_percent: number; repasse_impulsionado_percent: number; custo_anuncio_venda: number };
-const defaults: Config = { repasse_organico_percent: 50, repasse_impulsionado_percent: 18, custo_anuncio_venda: 9 };
+type Config = { repasse_organico_percent: number; repasse_impulsionado_percent: number; custo_anuncio_por_venda: number };
+const defaults: Config = { repasse_organico_percent: 50, repasse_impulsionado_percent: 10, custo_anuncio_por_venda: 9 };
 
 export default function Config() {
   const [config, setConfig] = useState<Config>(defaults);
@@ -25,13 +25,13 @@ export default function Config() {
   function update(key: keyof Config, value: string) {
     const numeric = Number(value.replace(",", "."));
     if (!Number.isFinite(numeric)) return;
-    const next = { ...config, [key]: Math.max(0, key === "custo_anuncio_venda" ? numeric : Math.min(100, numeric)) };
+    const next = { ...config, [key]: Math.max(0, key === "custo_anuncio_por_venda" ? numeric : Math.min(100, numeric)) };
     setConfig(next);
     setStatus("Salvando...");
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       try {
-        const response = await fetch("/api/admin/config", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
+        const response = await fetch("/api/admin/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
         if (!response.ok) throw new Error((await response.json()).error);
         setStatus("Salvo");
       } catch (error) { setStatus(error instanceof Error ? error.message : "Erro ao salvar"); }
@@ -44,7 +44,7 @@ export default function Config() {
     <div className="card settings-card">
       <ConfigSlider label="Repasse orgânico" value={config.repasse_organico_percent} suffix="%" min={0} max={100} step={1} onChange={(value) => update("repasse_organico_percent", value)} />
       <ConfigSlider label="Repasse impulsionado" value={config.repasse_impulsionado_percent} suffix="%" min={0} max={100} step={1} onChange={(value) => update("repasse_impulsionado_percent", value)} />
-      <ConfigSlider label="Custo de anúncio por venda" value={config.custo_anuncio_venda} suffix="R$" min={0} max={1000} step={0.5} onChange={(value) => update("custo_anuncio_venda", value)} />
+      <ConfigSlider label="Custo de anúncio por venda" value={config.custo_anuncio_por_venda} suffix="R$" min={0} max={1000} step={0.5} onChange={(value) => update("custo_anuncio_por_venda", value)} />
       <small className="muted" aria-live="polite">{status}</small>
     </div>
   </Shell>;
