@@ -156,8 +156,8 @@ export async function getPendingVideosCount(): Promise<number> {
 
 export async function getPendingModerationVideos(): Promise<ModerationVideo[]> {
   try {
-    const { data: rows, error } = await supabaseAdmin.from("videos_ugc")
-      .select("id,creator_id,product_id,video_url_sua_plataforma,affiliate_link_bruto,moderation_status")
+  const { data: rows, error } = await supabaseAdmin.from("videos_ugc")
+      .select("id,creator_id,product_id,video_url_sua_plataforma,affiliate_link_bruto,moderation_status,motivo_reprovacao")
       .eq("moderation_status", "pendente").order("created_at", { ascending: false });
     if (error) return [];
     const videos = rows ?? [];

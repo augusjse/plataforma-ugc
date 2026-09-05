@@ -2293,7 +2293,15 @@ button {
   padding: 14px;
 }
 .video-submit-form { display: grid; gap: 12px; }
-.file-input { height: auto; padding: 12px 13px; }
+.video-dropzone { align-items: center; background: var(--brand-light); border: 1.5px dashed var(--brand); border-radius: 16px; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; gap: 6px; justify-content: center; min-height: 220px; padding: 28px 22px; position: relative; text-align: center; transition: background .2s, border-color .2s, transform .2s; }
+.video-dropzone:hover, .video-dropzone:focus-within { background: var(--surface-muted); border-color: var(--brand-deep); }
+.video-dropzone:active { transform: scale(.99); }
+.video-dropzone.has-file { background: var(--surface-muted); }
+.video-dropzone-icon { align-items: center; background: var(--brand); border-radius: 50%; color: #fff; display: inline-flex; font-size: 34px; font-weight: 300; height: 62px; justify-content: center; line-height: 1; margin-bottom: 8px; width: 62px; }
+.video-dropzone strong { color: var(--text-main); font-size: 14px; }
+.video-dropzone span:not(.video-dropzone-icon) { font-size: 12px; }
+.video-dropzone small { color: var(--text-subtle); font-size: 11px; }
+.file-input-hidden { height: 1px; opacity: 0; overflow: hidden; position: absolute; width: 1px; }
 .file-selected, .form-hint { color: var(--text-muted); font-size: 12px; margin: 0; }
 .upload-progress { align-items: center; color: var(--text-muted); display: grid; font-size: 12px; gap: 7px; }
 .upload-progress-bar { background: var(--brand-light); border-radius: 999px; height: 7px; overflow: hidden; position: relative; }
@@ -2317,6 +2325,14 @@ button {
 .approval-list-main span { color: var(--text-muted); font-size: 12px; }
 .play-link { color: var(--brand-deep); font-size: 12px; font-weight: 750; }
 .affiliate-small { font-size: 11px; }
+.reject-reason-panel { background: var(--danger-bg); border: 1px solid color-mix(in srgb, var(--danger-text) 30%, transparent); border-radius: 12px; display: grid; gap: 8px; padding: 12px; width: 100%; }
+.reject-reason-panel label { color: var(--text-main); font-size: 12px; font-weight: 750; }
+.reject-reason-panel textarea { background: var(--surface); border: 1px solid var(--border-card); border-radius: 8px; color: var(--text-main); font: inherit; font-size: 13px; padding: 9px 10px; resize: vertical; width: 100%; }
+.reject-reason-panel > div { display: flex; gap: 8px; justify-content: flex-end; }
+.rejected-video-notice { background: var(--danger-bg); border-radius: 9px; color: var(--danger-text); display: grid; gap: 4px; min-width: 180px; padding: 9px 10px; }
+.rejected-video-notice strong { font-size: 12px; }
+.rejected-video-notice span { font-size: 12px; line-height: 1.4; }
+.rejected-video-notice a { color: var(--danger-text); font-size: 11px; font-weight: 750; text-decoration: underline; }
 @media (max-width: 640px) { .approval-list-item { align-items: flex-start; flex-wrap: wrap; gap: 12px; } .approval-list-main { min-width: calc(100% - 68px); } .approval-actions { margin-left: 68px; } }
 footer {
   border-top: 1px solid var(--divider);
