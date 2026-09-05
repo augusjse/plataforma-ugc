@@ -212,6 +212,7 @@ export default function TrendingPage() {
                 <th>PRODUTO</th>
                 <th>PREÇO</th>
                 <th>COMISSÃO</th>
+                <th>VOCÊ FATURARIA</th>
                 <th style={{ textAlign: "center" }}>AÇÕES</th>
               </tr>
             </thead>
@@ -229,6 +230,13 @@ export default function TrendingPage() {
                   </td>
                   <td>
                     <span className="commission-badge">{product.vendorCommission}%</span>
+                  </td>
+                  <td>
+                    <span className="commission-badge">
+                      R$ {(product.price * (product.vendorCommission / 100)).toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
                   </td>
                   <td style={{ textAlign: "center" }}>
                     <div className="action-buttons">
