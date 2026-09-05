@@ -1,5 +1,18 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { calculateSaleFinancials, ORGANIC_SHARE, PAID_AD_COST_PER_SALE, PAID_SHARE, type SaleOrigin } from "@/lib/mock/finance";
+
+export type AdminConfig = {
+  repasse_organico_percent: number;
+  repasse_impulsionado_percent: number;
+  custo_anuncio_venda: number;
+};
+
+const defaultAdminConfig: AdminConfig = {
+  repasse_organico_percent: ORGANIC_SHARE,
+  repasse_impulsionado_percent: PAID_SHARE,
+  custo_anuncio_venda: PAID_AD_COST_PER_SALE,
+};
 
 export type DashboardProduct = {
   id: string;
@@ -58,13 +71,20 @@ export async function currentAccount() {
   } catch { return null; }
 }
 
-function product(row: Record<string, unknown>): DashboardProduct {
+export async function getAdminConfig(): Promise<AdminConfig> {
+  try {
+    const { data } = await supabaseAdmin.from("admin_config").select("repasse_organico_percent,repasse_impulsionado_percent,custo_anuncio_venda").eq("id", true).maybeSingle();
+    return { ...defaultAdminConfig, ...(data ?? {}) };
+  } catch { return defaultAdminConfig; }
+}
+
+function product(row: Record<string, unknown>, config: AdminConfig): DashboardProduct {
   const commission = Number(row.commission_percent ?? row.commissionPercent ?? 0);
   const price = Number(row.price ?? 0);
   return {
     id: String(row.id), name: String(row.name ?? "Produto"), category: String(row.category ?? ""),
     price, commissionPercent: commission, commissionValue: price * commission / 100,
-    creatorCommissionValue: price * commission / 200, difficulty: "Médio",
+    creatorCommissionValue: price * commission * config.repasse_organico_percent / 10000, difficulty: "Médio",
     image: String(row.image_url ?? row.image ?? ""), shopeeLink: String(row.shopee_url ?? ""),
     affiliateLink: String(row.affiliate_link ?? ""), status: row.status === "paused" ? "Pausado" : "Ativo",
     videoCount: 0, sales: 0,
@@ -73,8 +93,11 @@ function product(row: Record<string, unknown>): DashboardProduct {
 
 export async function getProducts(): Promise<DashboardProduct[]> {
   try {
-    const { data } = await supabaseAdmin.from("catalog_products").select("*").order("created_at", { ascending: false });
-    return (data ?? []).map((row) => product(row as Record<string, unknown>));
+    const [{ data }, config] = await Promise.all([
+      supabaseAdmin.from("catalog_products").select("*").order("created_at", { ascending: false }),
+      getAdminConfig(),
+    ]);
+    return (data ?? []).map((row) => product(row as Record<string, unknown>, config));
   } catch { return []; }
 }
 
@@ -117,12 +140,20 @@ export async function getPendingVideosCount(): Promise<number> {
 
 export async function getSales(videoIds?: string[]): Promise<DashboardSale[]> {
   try {
+    const config = await getAdminConfig();
     let query = supabaseAdmin.from("sales_ugc").select("*").order("sale_date", { ascending: false });
     if (videoIds) query = videoIds.length ? query.in("video_id", videoIds) : query.eq("video_id", "00000000-0000-0000-0000-000000000000");
     const { data } = await query;
     return (data ?? []).map((row) => {
-      const value = Number(row.sale_value ?? 0), creator = Number(row.commission_creator ?? 0), platform = Number(row.commission_platform ?? 0);
-      return { id: String(row.id), videoId: String(row.video_id), date: String(row.sale_date), quantity: 1, revenue: value, platformCommission: platform, creatorCommission: creator, netMargin: platform - creator, origem: "organico" };
+      const value = Number(row.sale_value ?? 0);
+      const commissionPercent = Number(row.commission_percent ?? 0) * (Number(row.commission_percent ?? 0) <= 1 ? 100 : 1);
+      const origem: SaleOrigin = row.origem === "pago" || row.origin === "paid" ? "pago" : "organico";
+      const financials = calculateSaleFinancials(value, commissionPercent, origem, true, {
+        organicShare: config.repasse_organico_percent,
+        paidShare: config.repasse_impulsionado_percent,
+        paidAdCost: config.custo_anuncio_venda,
+      });
+      return { id: String(row.id), videoId: String(row.video_id), date: String(row.sale_date), quantity: 1, revenue: value, platformCommission: financials.platformCommission, creatorCommission: financials.creatorCommission, netMargin: financials.netMargin, origem };
     });
   } catch { return []; }
 }
