@@ -39,6 +39,13 @@
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-hero: 0 8px 32px rgba(232, 89, 12, 0.35), 0 3px 12px rgba(217, 79, 10, 0.2);
   --font-sans: var(--font-inter), system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Shared typography scale: weight + size + line-height + family stay in sync. */
+  --text-h1: 800 34px/1.1 var(--font-sans);
+  --text-h2: 800 24px/1.2 var(--font-sans);
+  --text-h3: 700 17px/1.25 var(--font-sans);
+  --text-body: 400 14px/1.5 var(--font-sans);
+  --text-small: 500 12px/1.4 var(--font-sans);
+  --text-value: 800 36px/1.1 var(--font-sans);
   --radius-card: 20px;
   --radius-card-large: 24px;
   --radius-pill: 999px;
@@ -1411,7 +1418,7 @@
 .new-video-copy strong { font-size: 14px; }
 .new-video-copy small { color: var(--text-muted); font-size: 11px; }
 .creator-hero h1 {
-  font-size: clamp(38px, 5vw, 64px);
+  font-size: clamp(45px, 6vw, 76px);
   font-weight: 800;
   letter-spacing: -0.03em;
   margin: 8px 0 18px;
@@ -1967,7 +1974,7 @@ button {
   z-index: 1;
 }
 .hero h2 {
-  font: 800 44px/1 var(--font-sans);
+  font: 800 52px/1 var(--font-sans);
   letter-spacing: -0.05em;
   margin: 11px 0 15px;
   position: relative;
@@ -2474,7 +2481,7 @@ footer code {
     padding: 24px 22px;
   }
   .hero h2 {
-    font-size: 36px;
+    font-size: 43px;
   }
   .hero-tag {
     bottom: 20px;
@@ -2555,7 +2562,7 @@ footer code {
   padding: 40px 42px;
 }
 .hero h2 {
-  font-size: clamp(48px, 6vw, 80px);
+  font-size: clamp(56px, 7vw, 94px);
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -3471,7 +3478,7 @@ footer code {
   padding: 40px;
 }
 .hero h2 {
-  font-size: clamp(48px, 6vw, 80px);
+  font-size: clamp(56px, 7vw, 94px);
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -3984,7 +3991,7 @@ footer code {
   }
 
   .creator-hero h1 {
-    font-size: 32px;
+    font-size: 38px;
     margin: 4px 0 10px;
   }
 
@@ -4100,4 +4107,27 @@ footer code {
   .topbar .group-nav, .top-actions, .mobile-nav-toggle { display: none; }
   .mobile-actions { align-items: center; display: flex; gap: 8px; margin-left: auto; }
   .mobile-actions .icon-button { flex: 0 0 36px; }
+}
+
+/* Typography scale: one hierarchy shared by admin and creator surfaces. */
+h1, .page-head h1, .oauth-login-card h1 { font: var(--text-h1); }
+h2, .section-title h2, .suggestion-copy h2, .academy-card h2, .academy-faq h2,
+.referral-banner h2, .notification-group h2 { font: var(--text-h2); }
+h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
+.eyebrow, .academy-eyebrow, .login-kicker, .suggestion-category,
+.stat-label, .form-label { font: var(--text-small); }
+.page-head p, .suggestion-copy p:not(.eyebrow), .academy-card > p,
+.referral-banner p, .oauth-description { font: var(--text-body); }
+.hero h2, .creator-hero h1 { font: var(--text-h1); }
+.stat-value, .stat-card .stat-value, .radial b, .suggestion-earning b { font: var(--text-value); }
+
+@media (max-width: 767px) {
+  :root {
+    --text-h1: 800 28px/1.12 var(--font-sans);
+    --text-h2: 800 20px/1.2 var(--font-sans);
+    --text-h3: 700 16px/1.25 var(--font-sans);
+    --text-body: 400 14px/1.5 var(--font-sans);
+    --text-small: 500 11px/1.4 var(--font-sans);
+    --text-value: 800 26px/1.1 var(--font-sans);
+  }
 }
