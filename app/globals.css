@@ -3643,6 +3643,40 @@ footer code {
     margin-top: 16px !important;
   }
 
+  .creator-dashboard .dashboard-tools .guide-card {
+    min-width: 0;
+    overflow: hidden;
+    padding: 10px;
+  }
+
+  .creator-dashboard .dashboard-tools .guide-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .creator-dashboard .dashboard-tools .guide-copy small {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .creator-dashboard .dashboard-tools .guide-copy strong {
+    font-size: 14px;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .creator-dashboard .dashboard-tools .guide-icon {
+    border-radius: 9px;
+    flex: 0 0 32px;
+    height: 32px;
+    width: 32px;
+  }
+
   .creator-dashboard .withdraw-card {
     padding: 14px 16px;
   }
