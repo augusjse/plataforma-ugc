@@ -4118,8 +4118,7 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
 .stat-label, .form-label { font: var(--text-small); }
 .page-head p, .suggestion-copy p:not(.eyebrow), .academy-card > p,
 .referral-banner p, .oauth-description { font: var(--text-body); }
-.hero h2 { font: var(--text-value); }
-.creator-hero h1 { font: var(--text-h1); }
+.hero h2, .creator-hero h1 { font: var(--text-value); }
 .stat-value, .stat-card .stat-value, .radial b, .suggestion-earning b { font: var(--text-value); }
 
 @media (max-width: 767px) {
