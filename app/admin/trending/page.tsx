@@ -223,11 +223,11 @@ export default function TrendingPage() {
                         {copied === product.id ? "✓ Copiado!" : "Copiar"}
                       </button>
                       <a
-                        href={product.shopLink}
+                        href={generateAffiliateLink(product.shopLink)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="button button-ghost"
-                        title="Ver no Shopee"
+                        title="Ver no Shopee (com seu código de afiliado)"
                       >
                         Shopee →
                       </a>
