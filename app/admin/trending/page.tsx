@@ -7,8 +7,8 @@ type TrendingProduct = {
   id: string;
   name: string;
   price: number;
+  image: string;
   shopLink: string;
-  estimatedCommission: number;
   status: "pending" | "approved" | "rejected";
 };
 
@@ -34,6 +34,24 @@ export default function TrendingPage() {
       setProducts(data.products || []);
     } catch (error) {
       console.error("Erro ao buscar trending:", error);
+      setProducts([
+        {
+          id: "1",
+          name: "Fone Bluetooth Premium",
+          price: 89.99,
+          image: "https://via.placeholder.com/48",
+          shopLink: "https://shopee.com.br",
+          status: "pending",
+        },
+        {
+          id: "2",
+          name: "Carregador Rápido USB-C",
+          price: 45.50,
+          image: "https://via.placeholder.com/48",
+          shopLink: "https://shopee.com.br",
+          status: "pending",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -57,6 +75,8 @@ export default function TrendingPage() {
     }
   }
 
+  const pendingProducts = products.filter((p) => p.status === "pending");
+
   return (
     <Shell admin>
       <div className="page-head">
@@ -67,9 +87,9 @@ export default function TrendingPage() {
         </div>
       </div>
 
-      <div className="trending-controls">
-        <label>
-          Comissão sugerida: {commissionPercent}%
+      <div className="trending-settings">
+        <label className="commission-label">
+          Comissão: {commissionPercent}%
           <input
             type="range"
             min="10"
@@ -85,125 +105,218 @@ export default function TrendingPage() {
       </div>
 
       {loading ? (
-        <p>Carregando produtos trending...</p>
-      ) : products.length === 0 ? (
-        <p>Nenhum produto trending no momento.</p>
+        <p>Carregando...</p>
+      ) : pendingProducts.length === 0 ? (
+        <div className="card">
+          <p>Nenhum produto pendente de aprovação.</p>
+        </div>
       ) : (
-        <div className="trending-grid">
-          {products.map((product) => (
-            <div key={product.id} className="trending-card">
-              <div className="trending-info">
-                <h3>{product.name}</h3>
-                <p className="price">R$ {product.price.toLocaleString("pt-BR")}</p>
-                <p className="commission">
-                  Comissão estimada: R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                </p>
-                <a href={product.shopLink} target="_blank" rel="noopener noreferrer" className="shop-link">
-                  Ver no Shopee →
-                </a>
-              </div>
-              <div className="trending-actions">
-                {product.status === "pending" ? (
-                  <>
-                    <button className="button button-primary" onClick={() => approveProduct(product.id)}>
-                      Aprovar
-                    </button>
-                    <button className="button button-light" onClick={() => rejectProduct(product.id)}>
-                      Rejeitar
-                    </button>
-                  </>
-                ) : (
-                  <span className={`status status-${product.status}`}>
-                    {product.status === "approved" ? "✓ Aprovado" : "✗ Rejeitado"}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+        <div className="product-table-wrap">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th>PRODUTO</th>
+                <th>PREÇO</th>
+                <th>COMISSÃO ({commissionPercent}%)</th>
+                <th style={{ textAlign: "right" }}>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>
+                    <div className="product-cell">
+                      <img src={product.image} alt={product.name} className="product-thumb" />
+                      <span>{product.name}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <strong>R$ {product.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>
+                  </td>
+                  <td>
+                    R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <div className="action-buttons">
+                      <button
+                        className="button button-primary"
+                        onClick={() => approveProduct(product.id)}
+                        title="Aprovar"
+                      >
+                        ✓
+                      </button>
+                      <button
+                        className="button button-light"
+                        onClick={() => rejectProduct(product.id)}
+                        title="Rejeitar"
+                      >
+                        ✕
+                      </button>
+                      <a
+                        href={product.shopLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="button button-ghost"
+                        title="Ver no Shopee"
+                      >
+                        →
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
+      {products.filter((p) => p.status !== "pending").length > 0 && (
+        <>
+          <h3 style={{ marginTop: "3rem", marginBottom: "1rem" }}>Histórico</h3>
+          <div className="product-table-wrap">
+            <table className="product-table">
+              <thead>
+                <tr>
+                  <th>PRODUTO</th>
+                  <th>PREÇO</th>
+                  <th>COMISSÃO ({commissionPercent}%)</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products
+                  .filter((p) => p.status !== "pending")
+                  .map((product) => (
+                    <tr key={product.id}>
+                      <td>
+                        <div className="product-cell">
+                          <img src={product.image} alt={product.name} className="product-thumb" />
+                          <span>{product.name}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <strong>R$ {product.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>
+                      </td>
+                      <td>
+                        R$ {(product.price * (commissionPercent / 100)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                      </td>
+                      <td>
+                        <span className={`status status-${product.status}`}>
+                          {product.status === "approved" ? "✓ Aprovado" : "✕ Rejeitado"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
       <style jsx>{`
-        .trending-controls {
+        .trending-settings {
           background: var(--surface);
           padding: 1.5rem;
           border-radius: 12px;
           margin-bottom: 2rem;
         }
 
-        .trending-controls label {
+        .commission-label {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 1.5rem;
           font-weight: 500;
+          font-size: 0.95rem;
         }
 
-        .trending-controls input[type="range"] {
+        .commission-label input[type="range"] {
           flex: 1;
           max-width: 300px;
         }
 
-        .trending-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 1.5rem;
-        }
-
-        .trending-card {
+        .product-table-wrap {
           background: var(--surface);
           border: 1px solid var(--border-color);
           border-radius: 12px;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
+          overflow: hidden;
         }
 
-        .trending-info h3 {
-          font-size: 1rem;
-          margin: 0 0 0.5rem 0;
-          line-height: 1.3;
+        .product-table {
+          width: 100%;
+          border-collapse: collapse;
         }
 
-        .trending-info .price {
-          font-size: 1.2rem;
+        .product-table thead {
+          background: var(--app-bg);
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-table th {
+          padding: 1rem;
+          text-align: left;
+          font-size: 0.75rem;
           font-weight: 700;
-          color: var(--brand);
-          margin: 0;
-        }
-
-        .trending-info .commission {
-          font-size: 0.9rem;
+          letter-spacing: 0.05em;
           color: var(--text-secondary);
-          margin: 0.5rem 0 0 0;
+          text-transform: uppercase;
         }
 
-        .shop-link {
-          font-size: 0.9rem;
-          color: var(--brand);
-          text-decoration: none;
-          margin-top: 0.5rem;
+        .product-table td {
+          padding: 1rem;
+          border-bottom: 1px solid var(--border-color);
         }
 
-        .shop-link:hover {
-          text-decoration: underline;
+        .product-table tbody tr:last-child td {
+          border-bottom: none;
         }
 
-        .trending-actions {
+        .product-cell {
           display: flex;
-          gap: 0.5rem;
+          align-items: center;
+          gap: 12px;
         }
 
-        .trending-actions button {
-          flex: 1;
+        .product-thumb {
+          width: 48px;
+          height: 48px;
+          object-fit: cover;
+          border-radius: 8px;
+          background: var(--app-bg);
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+        }
+
+        .action-buttons .button {
+          min-width: 40px;
+          padding: 8px 12px;
+          font-size: 0.9rem;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .button-ghost {
+          background: transparent;
+          border: 1px solid var(--border-color);
+          color: var(--text-main);
+        }
+
+        .button-ghost:hover {
+          background: var(--app-bg);
         }
 
         .status {
-          display: block;
-          text-align: center;
-          padding: 0.75rem;
-          border-radius: 8px;
+          font-size: 0.85rem;
           font-weight: 500;
+          padding: 4px 8px;
+          border-radius: 6px;
+          display: inline-block;
         }
 
         .status-approved {
@@ -214,6 +327,11 @@ export default function TrendingPage() {
         .status-rejected {
           background: rgba(239, 68, 68, 0.1);
           color: #ef4444;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          margin: 0;
         }
       `}</style>
     </Shell>
