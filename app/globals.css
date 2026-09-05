@@ -1768,6 +1768,7 @@ button {
   margin: 0 auto;
   padding: 34px 28px 60px;
 }
+/* Single desktop source of truth; the only mobile overrides are grouped below. */
 .topbar-container {
   margin: 16px auto 0;
   max-width: var(--content-max);
