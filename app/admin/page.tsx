@@ -8,9 +8,12 @@ import GuideCard from "@/components/GuideCard";
 import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
-import { getAdminDashboard } from "@/lib/dashboard-data";
+import { getAdminDashboard, getPendingVideosCount } from "@/lib/dashboard-data";
 export default async function Admin() {
-  const { sales, videos, creators } = await getAdminDashboard();
+  const [{ sales, videos, creators }, pendingVideosCount] = await Promise.all([
+    getAdminDashboard(),
+    getPendingVideosCount(),
+  ]);
   const closedRevenue = sales
     .filter((sale) => {
       const video = videos.find((item) => item.id === sale.videoId);
@@ -45,7 +48,7 @@ export default async function Admin() {
         </Link>
       </div>
       <NoticeBar
-        title="14 vídeos esperam sua aprovação"
+        title={`${pendingVideosCount.toLocaleString("pt-BR")} vídeos esperam sua aprovação`}
         description="Uma fila organizada ajuda as melhores criadoras a começarem mais rápido."
         action="Revisar agora"
       />
@@ -79,7 +82,7 @@ export default async function Admin() {
               icon="wallet"
               tone="purple"
             />
-            <StatCard label="Na fila" value={String(videos.filter((video) => video.status === "aguardando_primeira_venda").length)} icon="play" />
+            <StatCard label="Na fila" value={pendingVideosCount.toLocaleString("pt-BR")} icon="play" />
           </div>
         </div>
         <PromoCard
@@ -91,7 +94,7 @@ export default async function Admin() {
       </div>
       <div className="compact-queue">
         <span className="section-icon">◈</span>
-        <strong>{videos.filter((video) => video.status === "aguardando_primeira_venda").length} vídeos aguardando aprovação</strong>
+        <strong>{pendingVideosCount.toLocaleString("pt-BR")} vídeos aguardando aprovação</strong>
         <Link href="/admin/aprovacoes">Abrir fila →</Link>
       </div>
       <PerformanceChart subtitle="Vendas e comissões nos últimos 15 dias" />

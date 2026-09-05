@@ -102,6 +102,19 @@ export async function getVideos(creatorId?: string): Promise<DashboardVideo[]> {
   } catch { return []; }
 }
 
+export async function getPendingVideosCount(): Promise<number> {
+  try {
+    const { count, error } = await supabaseAdmin
+      .from("videos_ugc")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "aguardando_primeira_venda");
+    if (error) return 0;
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function getSales(videoIds?: string[]): Promise<DashboardSale[]> {
   try {
     let query = supabaseAdmin.from("sales_ugc").select("*").order("sale_date", { ascending: false });

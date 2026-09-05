@@ -6,6 +6,7 @@ import { dailyBilling } from "@/lib/mock/chart";
 
 type Props = { subtitle?: string };
 type Key = "sales" | "commission" | "payable";
+type Axis = "left" | "right";
 type Series = { key: Key; label: string; className: string; labelOffset: number };
 
 const series: Series[] = [
@@ -26,12 +27,21 @@ export default function PerformanceChart({
   const width = 760;
   const height = 280;
   const pad = { left: 58, right: 18, top: 18, bottom: 34 };
+  const leftAxisMax = 80000;
+  const rightAxisMax = 4000;
   const x = (index: number) =>
     pad.left + (index / 29) * (width - pad.left - pad.right);
-  const y = (value: number) =>
-    pad.top + (1 - value / 80000) * (height - pad.top - pad.bottom);
+  const y = (value: number, axis: Axis = "left") => {
+    const max = axis === "right" ? rightAxisMax : leftAxisMax;
+    return pad.top + (1 - value / max) * (height - pad.top - pad.bottom);
+  };
+  const axisFor = (key: Key): Axis => (key === "payable" ? "right" : "left");
   const points = (key: Key) =>
-    dailyBilling.map((point, index) => ({ x: x(index), y: y(point[key]), value: point[key] }));
+    dailyBilling.map((point, index) => ({
+      x: x(index),
+      y: y(point[key], axisFor(key)),
+      value: point[key],
+    }));
   // Convert the data points into a smooth Catmull-Rom spline without adding a dependency.
   const smoothPath = (key: Key) => {
     const data = points(key);
@@ -115,6 +125,14 @@ export default function PerformanceChart({
               />
               <text className="chart-axis-label" x="0" y={y(value) + 4}>
                 R$ {value / 1000} mil
+              </text>
+              <text
+                className="chart-axis-label"
+                x={width - 2}
+                y={y((value / leftAxisMax) * rightAxisMax, "right") + 4}
+                textAnchor="end"
+              >
+                R$ {(value / leftAxisMax) * rightAxisMax / 1000} mil
               </text>
             </g>
           ))}
