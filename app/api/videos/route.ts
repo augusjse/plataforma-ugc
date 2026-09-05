@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     ? buildShopeeAffiliateLink(productLinkBase, videoId, extraSubIds)
     : affiliateOverride;
 
-  const { data, error } = await supabaseAdmin.from("videos_ugc").insert({ id: videoId, creator_id: creatorId, product_id: productId, affiliate_link_bruto: affiliate, video_url_sua_plataforma: videoUrl }).select("id,status,moderation_status,created_at").single();
+  const { data, error } = await supabaseAdmin.from("videos_ugc").insert({ id: videoId, creator_id: creatorId, product_id: productId, affiliate_link_bruto: affiliate, video_url: videoUrl }).select("id,status,moderation_status,created_at").single();
   if (error) return fail(error.message, 500);
   const base = (process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin).replace(/\/$/, "");
   return NextResponse.json({ success: true, video_id: data.id, link_seu_dominio: `${base}/v/${data.id}`, affiliate_link_bruto: affiliate, status: data.status, moderation_status: data.moderation_status, created_at: data.created_at }, { status: 201 });

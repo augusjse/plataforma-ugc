@@ -157,7 +157,7 @@ export async function getPendingVideosCount(): Promise<number> {
 export async function getPendingModerationVideos(): Promise<ModerationVideo[]> {
   try {
   const { data: rows, error } = await supabaseAdmin.from("videos_ugc")
-      .select("id,creator_id,product_id,video_url_sua_plataforma,affiliate_link_bruto,moderation_status,motivo_reprovacao")
+      .select("id,creator_id,product_id,video_url,affiliate_link_bruto,moderation_status,motivo_reprovacao")
       .eq("moderation_status", "pendente").order("created_at", { ascending: false });
     if (error) return [];
     const videos = rows ?? [];
@@ -174,7 +174,7 @@ export async function getPendingModerationVideos(): Promise<ModerationVideo[]> {
     for (const row of trending ?? []) productMap.set(String(row.id), { name: String(row.name ?? "Produto"), image: String(row.image ?? "") });
     return videos.map((row) => {
       const product = productMap.get(String(row.product_id)) ?? { name: "Produto", image: "" };
-      return { id: String(row.id), creatorId: String(row.creator_id), creatorName: creatorMap.get(String(row.creator_id)) ?? `Criadora ${String(row.creator_id).slice(0, 8)}`, productId: String(row.product_id), productName: product.name, productImage: product.image, videoUrl: String(row.video_url_sua_plataforma), affiliateLink: String(row.affiliate_link_bruto), moderationStatus: String(row.moderation_status) as ModerationVideo["moderationStatus"] };
+      return { id: String(row.id), creatorId: String(row.creator_id), creatorName: creatorMap.get(String(row.creator_id)) ?? `Criadora ${String(row.creator_id).slice(0, 8)}`, productId: String(row.product_id), productName: product.name, productImage: product.image, videoUrl: String(row.video_url), affiliateLink: String(row.affiliate_link_bruto), moderationStatus: String(row.moderation_status) as ModerationVideo["moderationStatus"] };
     });
   } catch { return []; }
 }
