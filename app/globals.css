@@ -3743,7 +3743,7 @@ footer code {
 .period-selector small, .period-suggested > small, .period-inputs label { color: var(--text-subtle); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
 .period-selector strong { color: var(--text-main); font-size: 12px; }
 .period-selector > svg:first-child { color: var(--brand); }
-.period-modal-overlay { align-items: center; background: rgba(25, 20, 18, .62); display: flex; inset: 0; justify-content: center; padding: 20px; position: fixed; z-index: 100; }
+.period-modal-overlay { -webkit-backdrop-filter: blur(8px); align-items: center; backdrop-filter: blur(8px); background: rgba(25, 20, 18, .62); display: flex; inset: 0; justify-content: center; padding: 20px; position: fixed; z-index: 100; }
 .period-modal { background: var(--surface); border-radius: var(--radius-card-large); box-shadow: 0 24px 80px rgba(0,0,0,.24); max-height: calc(100svh - 40px); max-width: 760px; overflow: auto; width: 100%; }
 .period-modal-header, .period-modal-footer { align-items: center; display: flex; justify-content: space-between; padding: 22px 26px; }
 .period-modal-header { border-bottom: 1px solid var(--divider); }
