@@ -89,28 +89,38 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
       </div>
       <SectionTitle icon="cart">Próximo passo sugerido</SectionTitle>
       <div className="suggestion-layout">
-        <article className="suggestion-product card">
-          <img src={nextProduct.image} alt="" />
-          <div className="suggestion-product-copy">
-            <span className="suggestion-category">{nextProduct.category}</span>
-            <h3>{nextProduct.name}</h3>
-            <span className="badge badge-brand">Ninguém gravou ainda</span>
-            <div className="suggestion-earning">
-              Você ganha <b>R$ {nextProduct.creatorCommissionValue.toFixed(2).replace(".", ",")}</b> por venda
+        {nextProduct ? (
+          <>
+            <article className="suggestion-product card">
+              <img src={nextProduct.image} alt="" />
+              <div className="suggestion-product-copy">
+                <span className="suggestion-category">{nextProduct.category}</span>
+                <h3>{nextProduct.name}</h3>
+                <span className="badge badge-brand">Ninguém gravou ainda</span>
+                <div className="suggestion-earning">
+                  Você ganha <b>R$ {nextProduct.creatorCommissionValue.toFixed(2).replace(".", ",")}</b> por venda
+                </div>
+              </div>
+            </article>
+            <div className="suggestion-copy">
+              <p className="eyebrow">Oportunidade para você</p>
+              <h2>Grave este produto e seja a primeira</h2>
+              <p>Comece agora e coloque esse produto na frente de milhares de pessoas.</p>
+              <Link
+                href={`/criadora/enviar?produto=${nextProduct.id}`}
+                className="button button-primary"
+              >
+                Quero gravar este →
+              </Link>
             </div>
+          </>
+        ) : (
+          <div className="suggestion-copy card">
+            <p className="eyebrow">Oportunidade para você</p>
+            <h2>Nenhum produto disponível no momento</h2>
+            <p>Volte em breve para conferir novas oportunidades.</p>
           </div>
-        </article>
-        <div className="suggestion-copy">
-          <p className="eyebrow">Oportunidade para você</p>
-          <h2>Grave este produto e seja a primeira</h2>
-          <p>Comece agora e coloque esse produto na frente de milhares de pessoas.</p>
-          <Link
-            href={`/criadora/enviar?produto=${nextProduct.id}`}
-            className="button button-primary"
-          >
-            Quero gravar este →
-          </Link>
-        </div>
+        )}
       </div>
       <div className="stats-grid creator-mini-stats">
         <StatCard label="Publicados" value={String(videos.length)} icon="play" />
