@@ -1,6 +1,7 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import ProductCard from "@/components/ProductCard";
+import TrendingProducts from "@/components/TrendingProducts";
 import { getProducts } from "@/lib/dashboard-data";
 export default async function Catalogo() {
   const products = await getProducts();
@@ -23,6 +24,7 @@ export default async function Catalogo() {
           <ProductCard key={p.id} product={p} />
         ))}
       </div>
+      <TrendingProducts />
     </Shell>
   );
 }
