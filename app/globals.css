@@ -45,7 +45,7 @@
   --text-h3: 700 17px/1.25 var(--font-sans);
   --text-body: 400 14px/1.5 var(--font-sans);
   --text-small: 500 12px/1.4 var(--font-sans);
-  --text-value: 800 36px/1.1 var(--font-sans);
+  --text-value: 800 40px/1.1 var(--font-sans);
   --radius-card: 20px;
   --radius-card-large: 24px;
   --radius-pill: 999px;
@@ -4118,7 +4118,7 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
 .stat-label, .form-label { font: var(--text-small); }
 .page-head p, .suggestion-copy p:not(.eyebrow), .academy-card > p,
 .referral-banner p, .oauth-description { font: var(--text-body); }
-.hero h2, .creator-hero h1 { font: var(--text-h1); }
+.hero h2, .creator-hero h1 { font: var(--text-value); }
 .stat-value, .stat-card .stat-value, .radial b, .suggestion-earning b { font: var(--text-value); }
 
 @media (max-width: 767px) {
@@ -4128,6 +4128,6 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
     --text-h3: 700 16px/1.25 var(--font-sans);
     --text-body: 400 14px/1.5 var(--font-sans);
     --text-small: 500 11px/1.4 var(--font-sans);
-    --text-value: 800 26px/1.1 var(--font-sans);
+    --text-value: 800 34px/1.1 var(--font-sans);
   }
 }
