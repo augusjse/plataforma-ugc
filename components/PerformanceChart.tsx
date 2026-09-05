@@ -24,7 +24,6 @@ export default function PerformanceChart({
     commission: true,
     payable: true,
   });
-  const [hover, setHover] = useState<number | null>(null);
   const width = 760;
   const height = 280;
   const days = Math.max(1, periodDays);
@@ -43,7 +42,6 @@ export default function PerformanceChart({
     };
   });
   const chartSubtitle = subtitle ?? `Vendas e comissões nos últimos ${days} dias`;
-  const hoverIndex = hover ?? 0;
   // Keep only the space needed for axis labels so the plotted area uses the card.
   const pad = { left: 52, right: 12, top: 12, bottom: 24 };
   const leftAxisMax = 80000;
@@ -77,25 +75,6 @@ export default function PerformanceChart({
   };
   const path = (key: Key) =>
     smoothPath(key);
-  const area = (key: Key) =>
-    `${path(key)} L${x(days - 1)},${height - pad.bottom} L${x(0)},${height - pad.bottom} Z`;
-
-  function move(event: React.MouseEvent<SVGSVGElement>) {
-    const box = event.currentTarget.getBoundingClientRect();
-    const position = ((event.clientX - box.left) / box.width) * width;
-    setHover(
-      Math.max(
-        0,
-        Math.min(
-          days - 1,
-          Math.round(
-            (position - pad.left) / ((width - pad.left - pad.right) / Math.max(1, days - 1)),
-          ),
-        ),
-      ),
-    );
-  }
-
   return (
     <div className="chart-card">
       <div className="chart-head">
@@ -111,23 +90,13 @@ export default function PerformanceChart({
       </div>
       <div
         className="chart-area chart-area-large"
-        onMouseLeave={() => setHover(null)}
       >
         <svg
           viewBox={`0 0 ${width} ${height}`}
           preserveAspectRatio="none"
           role="img"
           aria-label="Faturamento diário"
-          onMouseMove={move}
         >
-          <defs>
-            {series.map((item) => (
-              <linearGradient key={item.key} id={`chart-fill-${item.key}`} x1="0" y1="0" x2="0" y2="1">
-                <stop className={`chart-gradient-start ${item.className}`} offset="0%" />
-                <stop className={`chart-gradient-end ${item.className}`} offset="100%" />
-              </linearGradient>
-            ))}
-          </defs>
           {[0, 20000, 40000, 60000, 80000].map((value) => (
             <g key={value}>
               <line
@@ -144,39 +113,19 @@ export default function PerformanceChart({
               visible[item.key] && (
                 <g key={item.key}>
                   <path
-                    className={`chart-series-fill ${item.className}`}
-                    d={area(item.key)}
-                    fill={`url(#chart-fill-${item.key})`}
-                  />
-                  <path
                     className={`chart-series-line ${item.className}`}
                     d={path(item.key)}
                   />
-                  {points(item.key).map((point, index) => (
-                    <g className={`chart-point-group ${hover === index ? "is-hovered" : ""}`} key={`${item.key}-${index}`}>
-                      <circle className={`chart-point-halo ${item.className}`} cx={point.x} cy={point.y} r="7" />
-                      <circle className={`chart-point ${item.className}`} cx={point.x} cy={point.y} r="3.5" />
-                    </g>
-                  ))}
                 </g>
               ),
           )}
-          {hover !== null && (
-            <line
-              className="chart-crosshair"
-              x1={x(hover)}
-              x2={x(hover)}
-              y1={pad.top}
-              y2={height - pad.bottom}
-            />
-          )}
         </svg>
-        {false && hover !== null && (
+        {false && (
           <div
             className="chart-tooltip"
-            style={{ left: `${(x(hoverIndex) / width) * 100}%` }}
+            style={{ left: "0%" }}
           >
-            <strong>{dailyBilling[hoverIndex].label}</strong>
+            <strong>{dailyBilling[0].label}</strong>
             {series
               .filter((item) => visible[item.key])
               .map((item) => (
@@ -185,7 +134,7 @@ export default function PerformanceChart({
                   {item.label}
                   <b>
                     R${" "}
-                    {(dailyBilling[hoverIndex][item.key] / 1000)
+                    {(dailyBilling[0][item.key] / 1000)
                       .toFixed(1)
                       .replace(".", ",")}{" "}
                     mil
