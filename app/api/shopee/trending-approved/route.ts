@@ -8,7 +8,7 @@ export async function GET() {
 
   const { data, error } = await supabaseAdmin
     .from("trending_products_ugc")
-    .select("id,name,image,shop_name")
+    .select("id,name,image,shop_link")
     .eq("status", "approved")
     .order("fetched_at", { ascending: false });
 
@@ -22,7 +22,8 @@ export async function GET() {
       id: String(product.id),
       name: product.name,
       image: product.image ?? "",
-      store: product.shop_name ?? "Shopee",
+      store: "Shopee",
+      url: product.shop_link,
     })),
   });
 }

@@ -8,6 +8,7 @@ type Product = {
   name: string;
   image: string;
   store: string;
+  url: string;
 };
 
 export default function TrendingProducts() {
