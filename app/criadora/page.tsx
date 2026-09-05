@@ -10,6 +10,7 @@ import PerformanceChart from "@/components/PerformanceChart";
 import GoalCard from "@/components/GoalCard";
 import PeriodSelector from "@/components/PeriodSelector";
 import GuideCard from "@/components/GuideCard";
+import Icon from "@/components/Icon";
 import { normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
 
 export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
@@ -49,6 +50,14 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         </div>
         <div className="creator-top-right">
           <ReferralBanner />
+          <Link href="/criadora/catalogo" className="new-video-card">
+            <span className="new-video-icon"><Icon name="plus" size={21} /></span>
+            <span className="new-video-copy">
+              <strong>Subir novo vídeo</strong>
+              <small>Escolha um produto para gravar</small>
+            </span>
+            <Icon name="arrow" size={18} />
+          </Link>
         </div>
       </div>
       <div className="dashboard-tools">
