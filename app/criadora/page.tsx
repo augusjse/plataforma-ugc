@@ -18,6 +18,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
     products.find((product) => product.videoCount === 0) ?? products[0];
   return (
     <Shell>
+      <div className="creator-dashboard">
       <div className="creator-top-layout">
         <div className="creator-top-left">
           <NoticeBar
@@ -131,6 +132,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
       <div className="stats-grid creator-mini-stats">
         <StatCard label="Publicados" value={String(videos.length)} icon="play" />
         <StatCard label="Vendas" value={String(sales.length)} icon="cart" tone="green" />
+      </div>
       </div>
     </Shell>
   );

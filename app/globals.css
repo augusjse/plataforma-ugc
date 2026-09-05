@@ -3425,6 +3425,27 @@ footer code {
   .creator-mini-stats .stat-card { min-height: 112px; }
 }
 
+/* Creator dashboard final alignment and native select reset. */
+.creator-dashboard > * {
+  max-width: none;
+  width: 100%;
+}
+.creator-dashboard .dashboard-tools {
+  margin-top: 28px !important;
+}
+.period-selector select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  outline: 0;
+  padding: 0;
+}
+
 /* Dark theme must win over the legacy light-mode finishing rules above. */
 [data-theme="dark"] .section-title { border-top-color: var(--divider); }
 [data-theme="dark"] .section-title h2 { color: var(--text-main); }
