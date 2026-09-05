@@ -51,7 +51,7 @@ export async function syncTrendingProducts(): Promise<TrendingProduct[]> {
   }).filter(([id]) => id);
   const products = Array.from(new Map(entries).values()).slice(0, MAX_PRODUCTS);
   if (isSupabaseConfigured && products.length) {
-    const rows = products.map((product) => ({ id: product.id, name: product.name, price: product.price, image: product.image, shop_link: product.url, vendor_commission: (product.commissionRate ?? 0) * 100, fetched_at: product.fetchedAt }));
+    const rows = products.map((product) => ({ id: product.id, name: product.name, price: product.price, image: product.image, shop_name: product.store, shop_link: product.url, vendor_commission: (product.commissionRate ?? 0) * 100, fetched_at: product.fetchedAt }));
     const { error } = await supabaseAdmin.from("trending_products_ugc").upsert(rows, { onConflict: "id" });
     if (error) throw new Error(`Erro ao persistir trending: ${error.message}`);
   }
