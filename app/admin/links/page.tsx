@@ -1,5 +1,6 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
+import GerarLinkForm from "@/components/GerarLinkForm";
 import { getAdminDashboard } from "@/lib/dashboard-data";
 
 export default async function Links() {
@@ -14,6 +15,7 @@ export default async function Links() {
           <p>Prove que cada venda está ligada à criadora e ao vídeo certo.</p>
         </div>
       </div>
+      <GerarLinkForm />
       <div className="filter-row">
         <input placeholder="Filtrar por criadora..." />
         <input placeholder="Filtrar por produto..." />
