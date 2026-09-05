@@ -4053,7 +4053,7 @@ footer code {
 .mobile-drawer a:hover, .mobile-drawer-logout:hover { background: var(--brand-light); color: var(--brand-deep); }
 .mobile-drawer-logout { border: 0; color: var(--danger-text); cursor: pointer; font: inherit; }
 @media (max-width: 767px) {
-  .topbar-container { margin: 10px 32px 0; max-width: none; padding: 0; }
+  .topbar-container { margin: 10px 0 0; max-width: none; padding: 0 32px; }
   .topbar { padding: 0 12px; width: 100%; }
   .topbar .group-nav, .top-actions, .mobile-nav-toggle { display: none; }
   .mobile-actions { align-items: center; display: flex; gap: 8px; margin-left: auto; }
