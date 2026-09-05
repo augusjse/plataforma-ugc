@@ -2,21 +2,22 @@
 
 import { useState } from "react";
 import Icon from "./Icon";
-import { dailyBilling } from "@/lib/mock/chart";
+import type { DashboardSale } from "@/lib/dashboard-data";
 
-type Props = { subtitle?: string };
+type Props = { subtitle?: string; sales?: DashboardSale[]; periodDays?: number };
 type Key = "sales" | "commission" | "payable";
-type Axis = "left" | "right";
 type Series = { key: Key; label: string; className: string; labelOffset: number };
 
 const series: Series[] = [
-  { key: "sales", label: "Vendas", className: "series-one", labelOffset: -12 },
-  { key: "commission", label: "Comissões", className: "series-two", labelOffset: -10 },
+  { key: "commission", label: "Comissão", className: "series-two", labelOffset: -10 },
   { key: "payable", label: "A pagar", className: "series-three", labelOffset: 18 },
+  { key: "sales", label: "Vendas", className: "series-one", labelOffset: -12 },
 ];
 
 export default function PerformanceChart({
-  subtitle = "Últimos 15 dias",
+  subtitle,
+  sales = [],
+  periodDays = 15,
 }: Props) {
   const [visible, setVisible] = useState<Record<Key, boolean>>({
     sales: true,
@@ -26,21 +27,36 @@ export default function PerformanceChart({
   const [hover, setHover] = useState<number | null>(null);
   const width = 760;
   const height = 280;
+  const days = Math.max(1, periodDays);
+  const today = new Date();
+  const dailyBilling = Array.from({ length: days }, (_, index) => {
+    const date = new Date(today);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (days - 1 - index));
+    const key = date.toISOString().slice(0, 10);
+    const daySales = sales.filter((sale) => sale.date.slice(0, 10) === key);
+    return {
+      label: date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      sales: daySales.reduce((sum, sale) => sum + sale.revenue, 0),
+      commission: daySales.reduce((sum, sale) => sum + sale.platformCommission, 0),
+      payable: daySales.reduce((sum, sale) => sum + sale.creatorCommission, 0),
+    };
+  });
+  const chartSubtitle = subtitle ?? `Vendas e comissões nos últimos ${days} dias`;
+  const hoverIndex = hover ?? 0;
   // Keep only the space needed for axis labels so the plotted area uses the card.
   const pad = { left: 52, right: 12, top: 12, bottom: 24 };
   const leftAxisMax = 80000;
-  const rightAxisMax = 4000;
+  const chartMax = Math.max(leftAxisMax, ...dailyBilling.flatMap((point) => [point.sales, point.commission, point.payable]));
   const x = (index: number) =>
-    pad.left + (index / 29) * (width - pad.left - pad.right);
-  const y = (value: number, axis: Axis = "left") => {
-    const max = axis === "right" ? rightAxisMax : leftAxisMax;
-    return pad.top + (1 - value / max) * (height - pad.top - pad.bottom);
+    pad.left + (index / Math.max(1, days - 1)) * (width - pad.left - pad.right);
+  const y = (value: number) => {
+    return pad.top + (1 - value / chartMax) * (height - pad.top - pad.bottom);
   };
-  const axisFor = (key: Key): Axis => (key === "payable" ? "right" : "left");
   const points = (key: Key) =>
     dailyBilling.map((point, index) => ({
       x: x(index),
-      y: y(point[key], axisFor(key)),
+      y: y(point[key]),
       value: point[key],
     }));
   // Convert the data points into a smooth Catmull-Rom spline without adding a dependency.
@@ -62,10 +78,7 @@ export default function PerformanceChart({
   const path = (key: Key) =>
     smoothPath(key);
   const area = (key: Key) =>
-    `${path(key)} L${x(29)},${height - pad.bottom} L${x(0)},${height - pad.bottom} Z`;
-
-  const compactValue = (value: number) =>
-    `${(value / 1000).toFixed(1).replace(".", ",")}k`;
+    `${path(key)} L${x(days - 1)},${height - pad.bottom} L${x(0)},${height - pad.bottom} Z`;
 
   function move(event: React.MouseEvent<SVGSVGElement>) {
     const box = event.currentTarget.getBoundingClientRect();
@@ -74,9 +87,9 @@ export default function PerformanceChart({
       Math.max(
         0,
         Math.min(
-          29,
+          days - 1,
           Math.round(
-            (position - pad.left) / ((width - pad.left - pad.right) / 29),
+            (position - pad.left) / ((width - pad.left - pad.right) / Math.max(1, days - 1)),
           ),
         ),
       ),
@@ -93,9 +106,8 @@ export default function PerformanceChart({
             </span>
             Faturamento Diário
           </h3>
-          <span>{subtitle}</span>
+          <span>{chartSubtitle}</span>
         </div>
-        <span className="badge badge-success">+24,8%</span>
       </div>
       <div
         className="chart-area chart-area-large"
@@ -125,17 +137,6 @@ export default function PerformanceChart({
                 y1={y(value)}
                 y2={y(value)}
               />
-              <text className="chart-axis-label" x="0" y={y(value) + 4}>
-                R$ {value / 1000} mil
-              </text>
-              <text
-                className="chart-axis-label"
-                x={width - 2}
-                y={y((value / leftAxisMax) * rightAxisMax, "right") + 4}
-                textAnchor="end"
-              >
-                R$ {(value / leftAxisMax) * rightAxisMax / 1000} mil
-              </text>
             </g>
           ))}
           {series.map(
@@ -155,11 +156,6 @@ export default function PerformanceChart({
                     <g className={`chart-point-group ${hover === index ? "is-hovered" : ""}`} key={`${item.key}-${index}`}>
                       <circle className={`chart-point-halo ${item.className}`} cx={point.x} cy={point.y} r="7" />
                       <circle className={`chart-point ${item.className}`} cx={point.x} cy={point.y} r="3.5" />
-                      {(index % 7 === 0 || index === points(item.key).length - 1 || hover === index) && (
-                        <text className={`chart-point-value ${item.className}`} x={point.x} y={point.y + item.labelOffset} textAnchor="middle">
-                          {compactValue(point.value)}
-                        </text>
-                      )}
                     </g>
                   ))}
                 </g>
@@ -175,12 +171,12 @@ export default function PerformanceChart({
             />
           )}
         </svg>
-        {hover !== null && (
+        {false && hover !== null && (
           <div
             className="chart-tooltip"
-            style={{ left: `${(x(hover) / width) * 100}%` }}
+            style={{ left: `${(x(hoverIndex) / width) * 100}%` }}
           >
-            <strong>{dailyBilling[hover].label}</strong>
+            <strong>{dailyBilling[hoverIndex].label}</strong>
             {series
               .filter((item) => visible[item.key])
               .map((item) => (
@@ -189,7 +185,7 @@ export default function PerformanceChart({
                   {item.label}
                   <b>
                     R${" "}
-                    {(dailyBilling[hover][item.key] / 1000)
+                    {(dailyBilling[hoverIndex][item.key] / 1000)
                       .toFixed(1)
                       .replace(".", ",")}{" "}
                     mil

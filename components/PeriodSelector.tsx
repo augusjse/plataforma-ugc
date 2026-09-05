@@ -1,13 +1,7 @@
-import Icon from "./Icon";
+import PeriodSelectorClient from "./PeriodSelectorClient";
 
-type Props = { label?: string };
+type Props = { periodDays?: number };
 
-export default function PeriodSelector({ label = "Últimos 15 dias" }: Props) {
-  return (
-    <button className="period-selector">
-      <Icon name="calendar" size={16} />
-      {label}
-      <Icon name="chevron" size={15} />
-    </button>
-  );
+export default function PeriodSelector({ periodDays = 15 }: Props) {
+  return <PeriodSelectorClient periodDays={periodDays} />;
 }

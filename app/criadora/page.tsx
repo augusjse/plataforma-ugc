@@ -8,9 +8,12 @@ import { getCreatorDashboard } from "@/lib/dashboard-data";
 import ReferralBanner from "@/components/ReferralBanner";
 import PerformanceChart from "@/components/PerformanceChart";
 import GoalCard from "@/components/GoalCard";
+import PeriodSelector from "@/components/PeriodSelector";
+import { normalizeDashboardPeriod } from "@/lib/dashboard-data";
 
-export default async function CreatorHome() {
-  const { products, videos, sales } = await getCreatorDashboard();
+export default async function CreatorHome({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const periodDays = normalizeDashboardPeriod((await searchParams).period);
+  const { products, videos, sales } = await getCreatorDashboard(periodDays);
   const nextProduct =
     products.find((product) => product.videoCount === 0) ?? products[0];
   return (
@@ -38,6 +41,7 @@ export default async function CreatorHome() {
         </Link>
       </div>
       <ReferralBanner />
+      <div className="dashboard-tools"><PeriodSelector periodDays={periodDays} /></div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
         <div className="withdraw-copy">
@@ -51,7 +55,7 @@ export default async function CreatorHome() {
       </div>
       <SectionTitle icon="chart">Desempenho financeiro</SectionTitle>
       <div className="creator-revenue-layout">
-        <PerformanceChart subtitle="Vendas e comissões nos últimos 15 dias" />
+        <PerformanceChart sales={sales} periodDays={periodDays} />
         <aside className="creator-revenue-summary">
           <div className="finance-card">
             <SectionTitle icon="wallet">Resumo financeiro</SectionTitle>

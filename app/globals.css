@@ -1413,7 +1413,7 @@
   stroke: none;
 }
 .chart-series-line.series-one {
-  stroke: var(--chart-blue);
+  stroke: var(--chart-purple);
 }
 .chart-series-line.series-two {
   stroke: var(--chart-green);
@@ -1422,7 +1422,7 @@
   stroke: var(--chart-orange);
 }
 .chart-series-fill.series-one {
-  fill: var(--chart-blue);
+  fill: var(--chart-purple);
 }
 .chart-series-fill.series-two {
   fill: var(--chart-green);
@@ -1430,7 +1430,7 @@
 .chart-series-fill.series-three {
   fill: var(--chart-orange);
 }
-.chart-gradient-start.series-one { stop-color: var(--chart-blue); stop-opacity: .3; }
+.chart-gradient-start.series-one { stop-color: var(--chart-purple); stop-opacity: .3; }
 .chart-gradient-start.series-two { stop-color: var(--chart-green); stop-opacity: .24; }
 .chart-gradient-start.series-three { stop-color: var(--chart-orange); stop-opacity: .22; }
 .chart-gradient-end.series-one, .chart-gradient-end.series-two, .chart-gradient-end.series-three { stop-color: var(--surface); stop-opacity: 0; }
@@ -1491,7 +1491,7 @@
   stroke: var(--surface);
   stroke-width: 2;
 }
-.chart-point.series-one { fill: var(--chart-blue); stroke: var(--surface); }
+.chart-point.series-one { fill: var(--chart-purple); stroke: var(--surface); }
 .chart-point.series-two { fill: var(--chart-green); stroke: var(--surface); }
 .chart-point.series-three { fill: var(--chart-orange); stroke: var(--surface); }
 .chart-point-halo {
@@ -1499,7 +1499,7 @@
   opacity: .18;
   stroke-width: 5;
 }
-.chart-point-halo.series-one { stroke: var(--chart-blue); }
+.chart-point-halo.series-one { stroke: var(--chart-purple); }
 .chart-point-halo.series-two { stroke: var(--chart-green); }
 .chart-point-halo.series-three { stroke: var(--chart-orange); }
 .chart-point-group { transition: opacity .18s ease; }
@@ -1529,8 +1529,8 @@
 }
 .legend-chip.series-one {
   background: var(--chart-purple-bg);
-  background: color-mix(in srgb, var(--chart-blue) 12%, var(--surface));
-  color: var(--chart-blue);
+  background: color-mix(in srgb, var(--chart-purple) 12%, var(--surface));
+  color: var(--chart-purple);
 }
 .legend-chip.series-two {
   background: color-mix(in srgb, var(--chart-green) 12%, var(--surface));

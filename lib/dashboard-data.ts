@@ -138,11 +138,21 @@ export async function getPendingVideosCount(): Promise<number> {
   }
 }
 
-export async function getSales(videoIds?: string[]): Promise<DashboardSale[]> {
+export const DASHBOARD_PERIODS = [15, 30, 60, 90] as const;
+export type DashboardPeriod = (typeof DASHBOARD_PERIODS)[number];
+
+export function normalizeDashboardPeriod(value?: string | number): DashboardPeriod {
+  const period = Number(value);
+  return DASHBOARD_PERIODS.includes(period as DashboardPeriod) ? period as DashboardPeriod : 15;
+}
+
+export async function getSales(videoIds?: string[], periodDays: DashboardPeriod = 15): Promise<DashboardSale[]> {
   try {
     const config = await getAdminConfig();
     let query = supabaseAdmin.from("sales_ugc").select("*").order("sale_date", { ascending: false });
     if (videoIds) query = videoIds.length ? query.in("video_id", videoIds) : query.eq("video_id", "00000000-0000-0000-0000-000000000000");
+    const cutoff = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
+    query = query.gte("sale_date", cutoff);
     const { data } = await query;
     return (data ?? []).map((row) => {
       const value = Number(row.sale_value ?? 0);
@@ -158,15 +168,15 @@ export async function getSales(videoIds?: string[]): Promise<DashboardSale[]> {
   } catch { return []; }
 }
 
-export async function getCreatorDashboard() {
+export async function getCreatorDashboard(periodDays: DashboardPeriod = 15) {
   const account = await currentAccount();
   const videos = await getVideos(account?.id);
-  const sales = await getSales(videos.map((video) => video.id));
-  return { account, videos, sales, products: await getProducts() };
+  const sales = await getSales(videos.map((video) => video.id), periodDays);
+  return { account, videos, sales, products: await getProducts(), periodDays };
 }
 
-export async function getAdminDashboard() {
-  const [account, videos, sales, products] = await Promise.all([currentAccount(), getVideos(), getSales(), getProducts()]);
+export async function getAdminDashboard(periodDays: DashboardPeriod = 15) {
+  const [account, videos, sales, products] = await Promise.all([currentAccount(), getVideos(), getSales(undefined, periodDays), getProducts()]);
   const { data: creators } = await supabaseAdmin.from("users").select("*").eq("role", "criadora").order("created_at", { ascending: false });
-  return { account, videos, sales, products, creators: creators ?? [] };
+  return { account, videos, sales, products, creators: creators ?? [], periodDays };
 }

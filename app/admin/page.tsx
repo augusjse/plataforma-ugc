@@ -8,10 +8,11 @@ import GuideCard from "@/components/GuideCard";
 import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
-import { getAdminDashboard, getPendingVideosCount } from "@/lib/dashboard-data";
-export default async function Admin() {
+import { getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod } from "@/lib/dashboard-data";
+export default async function Admin({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const periodDays = normalizeDashboardPeriod((await searchParams).period);
   const [{ sales, videos, creators }, pendingVideosCount] = await Promise.all([
-    getAdminDashboard(),
+    getAdminDashboard(periodDays),
     getPendingVideosCount(),
   ]);
   const closedRevenue = sales
@@ -58,7 +59,7 @@ export default async function Admin() {
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
         />
-        <PeriodSelector />
+        <PeriodSelector periodDays={periodDays} />
       </div>
       <div className="overview-top">
         <div className="overview-left">
@@ -97,7 +98,7 @@ export default async function Admin() {
         <strong>{pendingVideosCount.toLocaleString("pt-BR")} vídeos aguardando aprovação</strong>
         <Link href="/admin/aprovacoes">Abrir fila →</Link>
       </div>
-      <PerformanceChart subtitle="Vendas e comissões nos últimos 15 dias" />
+      <PerformanceChart sales={sales} periodDays={periodDays} />
       <div className="overview-grid">
         <div className="finance-card">
           <SectionTitle icon="wallet">Resumo financeiro</SectionTitle>
