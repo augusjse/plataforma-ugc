@@ -6,12 +6,14 @@ export type AdminConfig = {
   repasse_organico_percent: number;
   repasse_impulsionado_percent: number;
   custo_anuncio_por_venda: number;
+  saque_minimo: number;
 };
 
 const defaultAdminConfig: AdminConfig = {
   repasse_organico_percent: ORGANIC_SHARE,
   repasse_impulsionado_percent: PAID_SHARE,
   custo_anuncio_por_venda: PAID_AD_COST_PER_SALE,
+  saque_minimo: 50,
 };
 
 export type DashboardProduct = {
@@ -85,11 +87,12 @@ export async function currentAccount() {
 
 export async function getAdminConfig(): Promise<AdminConfig> {
   try {
-    const { data } = await supabaseAdmin.from("admin_config").select("repasse_organico_percent,repasse_impulsionado_percent,custo_anuncio_por_venda").eq("id", true).maybeSingle();
+    const { data } = await supabaseAdmin.from("admin_config").select("repasse_organico_percent,repasse_impulsionado_percent,custo_anuncio_por_venda,saque_minimo").eq("id", true).maybeSingle();
     return {
       repasse_organico_percent: Number(data?.repasse_organico_percent ?? defaultAdminConfig.repasse_organico_percent),
       repasse_impulsionado_percent: Number(data?.repasse_impulsionado_percent ?? defaultAdminConfig.repasse_impulsionado_percent),
       custo_anuncio_por_venda: Number(data?.custo_anuncio_por_venda ?? defaultAdminConfig.custo_anuncio_por_venda),
+      saque_minimo: Number(data?.saque_minimo ?? defaultAdminConfig.saque_minimo),
     };
   } catch { return defaultAdminConfig; }
 }
@@ -222,7 +225,16 @@ export async function getCreatorDashboard(periodDays: number | DashboardDateRang
   const account = await currentAccount();
   const videos = await getVideos(account?.id);
   const sales = await getSales(videos.map((video) => video.id), periodDays);
-  return { account, videos, sales, products: await getProducts(), periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
+  const config = await getAdminConfig();
+  let saldoDisponivel = 0;
+  if (account?.id) {
+    const { data: balanceRows } = await supabaseAdmin
+      .from("sales_ugc")
+      .select("commission_creator, videos_ugc!inner(creator_id)")
+      .eq("videos_ugc.creator_id", account.id);
+    saldoDisponivel = (balanceRows ?? []).reduce((sum, row) => sum + Number(row.commission_creator ?? 0), 0);
+  }
+  return { account, videos, sales, products: await getProducts(), saldoDisponivel, saqueMinimo: config.saque_minimo, periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
 }
 
 export async function getAdminDashboard(periodDays: number | DashboardDateRange = 15) {

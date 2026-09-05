@@ -177,6 +177,14 @@ begin
   end if;
 end $$;
 
+-- 20260906_saque_minimo.sql
+alter table public.admin_config
+  add column if not exists saque_minimo numeric(12,2) not null default 50
+  check (saque_minimo >= 0);
+
+comment on column public.admin_config.saque_minimo is
+  'Minimum creator payout amount in BRL; default 50 is configurable by admins.';
+
 create or replace view public.video_janelas as
 select v.id as video_id, v.creator_id, v.product_id, v.janela_inicio, v.janela_fim,
   v.status, v.created_at,

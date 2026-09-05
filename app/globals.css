@@ -402,9 +402,6 @@
   white-space: nowrap;
   width: 100%;
 }
-.topbar {
-  width: calc(100% - 40px);
-}
 .topbar nav {
   flex: 1 1 auto;
   min-width: 0;
@@ -1005,19 +1002,6 @@
     overflow-x: hidden;
   }
 
-  .topbar-container {
-    margin-top: 10px;
-    padding: 0 32px;
-  }
-
-  .topbar {
-    position: relative;
-    width: 100%;
-    margin: 0;
-    gap: 8px;
-    padding: 0 12px;
-  }
-
   .topbar .logo {
     min-width: 0;
     overflow: hidden;
@@ -1221,14 +1205,6 @@
 }
 
 @media (max-width: 320px) {
-  .topbar-container {
-    padding: 0 32px;
-  }
-
-  .topbar {
-    padding: 0 8px;
-  }
-
   .icon-button {
     height: 34px;
     width: 34px;
@@ -1318,9 +1294,6 @@
 }
 
 /* Compact page rhythm */
-.topbar {
-  margin-top: 16px !important;
-}
 .container {
   padding-top: 12px !important;
 }
@@ -1799,6 +1772,7 @@ button {
   margin: 16px auto 0;
   max-width: var(--content-max);
   padding: 0 24px;
+  width: 100%;
 }
 .topbar {
   align-items: center;
@@ -1811,6 +1785,7 @@ button {
   margin: 0;
   max-width: none;
   padding: 0 20px;
+  width: 100%;
 }
 .logo {
   align-items: center;
@@ -2316,7 +2291,7 @@ button {
 .upload-progress-bar { background: var(--brand-light); border-radius: 999px; height: 7px; overflow: hidden; position: relative; }
 .upload-progress-bar::after { animation: upload-progress 1.5s ease-in-out infinite; background: var(--brand); border-radius: inherit; content: ""; height: 100%; left: 0; position: absolute; width: 35%; }
 @keyframes upload-progress { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
-.approval-video { border-radius: 8px; display: block; max-width: 320px; width: 100%; }
+.approval-video { aspect-ratio: 9 / 16; background: #111; border-radius: 10px; display: block; max-height: 460px; max-width: 260px; object-fit: contain; width: min(100%, 260px); }
 .form-label { color: var(--text-muted); font-size: 12px; font-weight: 700; }
 .text-input { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; min-height: 48px; padding: 0 13px; width: 100%; }
 .text-input:focus { border-color: var(--brand); outline: 2px solid rgba(255,107,38,.15); }
@@ -2326,7 +2301,7 @@ button {
 .affiliate-result { background: var(--success-bg); border-radius: 10px; display: grid; gap: 5px; padding: 12px 14px; }
 .affiliate-result a, .affiliate-small { color: var(--brand-deep); font-size: 12px; overflow-wrap: anywhere; }
 .approval-list { background: var(--surface); border: 1px solid var(--border-card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; }
-.approval-list-item { align-items: center; border-bottom: 1px solid var(--divider); display: flex; gap: 20px; padding: 14px 18px; }
+.approval-list-item { align-items: center; border-bottom: 1px solid var(--divider); display: grid; gap: 20px; grid-template-columns: 48px minmax(260px, 1fr) auto; padding: 20px 18px; }
 .approval-list-item:last-child { border-bottom: 0; }
 .approval-list-item > img { border-radius: 8px; object-fit: cover; }
 .approval-list-main { display: grid; flex: 1; gap: 3px; min-width: 0; }
@@ -2338,12 +2313,18 @@ button {
 .reject-reason-panel label { color: var(--text-main); font-size: 12px; font-weight: 750; }
 .reject-reason-panel textarea { background: var(--surface); border: 1px solid var(--border-card); border-radius: 8px; color: var(--text-main); font: inherit; font-size: 13px; padding: 9px 10px; resize: vertical; width: 100%; }
 .reject-reason-panel > div { display: flex; gap: 8px; justify-content: flex-end; }
+.reject-modal-backdrop { align-items: center; background: rgba(20, 14, 12, .58); display: flex; inset: 0; justify-content: center; padding: 20px; position: fixed; z-index: 100; }
+.reject-modal { background: var(--surface); border: 1px solid var(--border-card); border-radius: var(--radius-card); box-shadow: 0 20px 70px rgba(0,0,0,.25); display: grid; gap: 12px; max-width: 520px; padding: 24px; width: 100%; }
+.reject-modal h2 { color: var(--text-main); font-size: 20px; margin: 0; }
+.reject-modal p { color: var(--text-muted); font-size: 13px; margin: 0; }
+.reject-modal textarea { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; padding: 12px; resize: vertical; width: 100%; }
+.reject-modal > div { display: flex; gap: 8px; justify-content: flex-end; }
 .rejected-video-notice { background: var(--danger-bg); border-radius: 9px; color: var(--danger-text); display: grid; gap: 4px; min-width: 180px; padding: 9px 10px; }
 .rejected-video-notice strong { font-size: 12px; }
 .rejected-video-notice span { font-size: 12px; line-height: 1.4; }
 .rejected-video-notice a { color: var(--danger-text); font-size: 11px; font-weight: 750; text-decoration: underline; }
 @media (max-width: 767px) { .enviar-video-columns { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .approval-list-item { align-items: flex-start; flex-wrap: wrap; gap: 12px; } .approval-list-main { min-width: calc(100% - 68px); } .approval-actions { margin-left: 68px; } }
+@media (max-width: 640px) { .approval-list-item { align-items: flex-start; grid-template-columns: 48px 1fr; gap: 12px; } .approval-list-main { grid-column: 1 / -1; grid-row: 1; margin-left: 60px; min-width: 0; } .approval-list-item > img { grid-row: 1; } .approval-actions { grid-column: 1 / -1; justify-content: flex-end; } }
 footer {
   border-top: 1px solid var(--divider);
   color: var(--text-subtle);
@@ -2455,11 +2436,6 @@ footer code {
 .empty-users { color: var(--text-muted); padding: 28px; text-align: center; }
 .profile-logout { background: transparent; border: 0; cursor: pointer; display: flex; font: inherit; text-align: left; width: 100%; }
 @media (max-width: 800px) {
-  .topbar {
-    height: 62px;
-    margin: 10px 12px 0;
-    padding: 0 14px;
-  }
   .topbar nav {
     display: none;
   }
@@ -3367,9 +3343,6 @@ footer code {
 }
 
 /* Final compact reference layout */
-.topbar {
-  width: 100%;
-}
 .topbar nav {
   flex: 1 1 auto;
   min-width: 0;
@@ -4110,10 +4083,18 @@ footer code {
 .mobile-drawer a:hover, .mobile-drawer-logout:hover { background: var(--brand-light); color: var(--brand-deep); }
 .mobile-drawer-logout { border: 0; color: var(--danger-text); cursor: pointer; font: inherit; }
 @media (max-width: 767px) {
-  .topbar-container { margin: 0; max-width: none; padding: 0; width: 100%; }
+  .topbar-container {
+    margin: 0;
+    max-width: none;
+    padding: 0;
+    width: 100%;
+  }
   .topbar {
     border-radius: 0;
     box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+    gap: 8px;
+    height: 62px;
+    margin: 0;
     padding: 0 32px;
     position: sticky;
     top: 0;

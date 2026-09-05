@@ -18,7 +18,11 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
   const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
-  const { products, videos, sales } = await getCreatorDashboard(customRange ?? periodDays);
+  const { products, videos, sales, saldoDisponivel, saqueMinimo } = await getCreatorDashboard(customRange ?? periodDays);
+  const faltaSaque = Math.max(0, saqueMinimo - saldoDisponivel);
+  const progressoSaque = saqueMinimo > 0 ? Math.min(100, Math.round(saldoDisponivel / saqueMinimo * 100)) : 100;
+  const disponivelParaSaque = saldoDisponivel >= saqueMinimo;
+  const saldoFormatado = saldoDisponivel.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
   const nextProduct =
     products.find((product) => product.videoCount === 0) ?? products[0];
   return (
@@ -29,7 +33,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <div className="notice-period-row">
             <NoticeBar
               title="Seu próximo pagamento está quase lá"
-              description="Continue criando: faltam R$ 18 para completar o próximo ciclo."
+              description={disponivelParaSaque ? "Seu saldo já atingiu o mínimo para saque." : `Continue criando: faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para completar o próximo ciclo.`}
               action="Ver ganhos"
             />
             <div className="mobile-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} compact /></div>
@@ -82,13 +86,13 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
         <div className="withdraw-copy">
-          <strong>Faltam R$ 18 para você poder sacar</strong>
-          <span>Você já está bem perto de alcançar o mínimo.</span>
+          <strong>{disponivelParaSaque ? "Você já pode sacar!" : `Faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para você poder sacar`}</strong>
+          <span>{disponivelParaSaque ? `Saldo disponível: R$ ${saldoFormatado}.` : `Seu saldo disponível é R$ ${saldoFormatado} de R$ ${saqueMinimo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}.`}</span>
         </div>
         <div className="progress">
-          <i style={{ width: "82%" }} />
+          <i style={{ width: `${progressoSaque}%` }} />
         </div>
-        <span className="withdraw-percent">82%</span>
+        <span className="withdraw-percent">{progressoSaque}%</span>
       </div>
       <SectionTitle icon="chart">Desempenho financeiro</SectionTitle>
       <div className="creator-revenue-layout">
