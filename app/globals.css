@@ -368,7 +368,7 @@
 }
 .overview-top > .promo-card {
   grid-row: span 2;
-  min-height: 0;
+  min-height: 320px;
 }
 .stats-grid {
   gap: 16px;
@@ -747,12 +747,12 @@
   display: flex;
   justify-content: space-between;
   margin-top: 18px;
-  min-height: 270px;
+  min-height: 320px;
   overflow: hidden;
   padding: 30px 34px;
   position: relative;
 }
-.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; min-height: 270px; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; min-height: 320px; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
 .referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
 .referral-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
@@ -782,7 +782,7 @@
 .referral-indicators button.is-active { background: var(--brand); transform: scale(1.35); }
 .creator-hero > .button, .referral-button { font-size: 13px; font-weight: 700; }
 @media (max-width: 767px) {
-  .referral-banner { min-height: 270px; padding: 25px 22px; }
+  .referral-banner { min-height: 300px; padding: 25px 22px; }
   .referral-slide { padding: 25px 22px; }
   .referral-banner h2 { font-size: 26px; max-width: 300px; }
   .referral-banner p { line-height: 1.45; max-width: 290px; }
@@ -851,7 +851,7 @@
   }
   .overview-top > .promo-card {
     grid-row: auto;
-    min-height: 240px;
+    min-height: 280px;
   }
   .dashboard-tools {
     justify-content: space-between;
@@ -1370,7 +1370,7 @@
 .creator-top-right .referral-banner {
   flex: 0 0 auto;
   margin-top: 0;
-  min-height: 0;
+  min-height: 320px;
 }
 .new-video-card {
   align-items: center;
@@ -1713,7 +1713,7 @@
   }
 
   .creator-top-right .referral-banner {
-    min-height: 0;
+    min-height: 300px;
   }
 }
 @media (max-width: 900px) {
@@ -3111,7 +3111,7 @@ footer code {
   flex-direction: column;
   gap: 8px;
   justify-content: end;
-  min-height: 260px;
+  min-height: 320px;
   overflow: hidden;
   padding: 22px;
   position: relative;
@@ -3501,7 +3501,7 @@ footer code {
 }
 .overview-top > .promo-card {
   grid-row: span 2;
-  min-height: 0;
+  min-height: 320px;
 }
 .stats-grid {
   gap: 16px;
@@ -3567,7 +3567,7 @@ footer code {
   }
   .overview-top > .promo-card {
     grid-row: auto;
-    min-height: 240px;
+    min-height: 280px;
   }
   .stat-card {
     min-height: 96px;
