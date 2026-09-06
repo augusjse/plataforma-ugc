@@ -3092,6 +3092,20 @@ footer code {
 .promo-card > * {
   position: relative;
 }
+/* Slides are the card's layered viewport, not normal flex children. The
+   generic direct-child rule above otherwise wins on specificity and changes
+   their inset positioning to relative flow, hiding the slide content behind
+   the card overlay after the fixed-height refactor. */
+.promo-card > .promo-slide {
+  height: 100%;
+  inset: 0;
+  min-height: 0;
+  position: absolute;
+  width: 100%;
+}
+.promo-card > .promo-slide.is-active {
+  z-index: 2;
+}
 .promo-card span {
   color: var(--brand-light);
   font-size: 11px;
