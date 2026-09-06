@@ -1958,6 +1958,15 @@ button {
 .account-fields label { color: var(--text-muted); display: grid; font-size: 10px; font-weight: 700; gap: 7px; letter-spacing: .04em; }
 .account-fields input { background: var(--surface); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; letter-spacing: 0; min-width: 0; padding: 11px 12px; width: 100%; }
 .account-fields input:focus { border-color: var(--brand); outline: 2px solid var(--brand-glow); }
+.account-financial-goals { border-top: 1px solid var(--divider); }
+.account-goal-fields { border-top: 1px solid var(--divider); display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 24px 26px; }
+.account-goal-field { border: 1px solid var(--divider); border-radius: 12px; display: grid; gap: 12px; margin: 0; min-width: 0; padding: 14px; }
+.account-goal-field legend { color: var(--text-main); font-size: 13px; font-weight: 700; padding: 0 4px; }
+.account-goal-field legend small { color: var(--brand-deep); font-size: 10px; margin-left: 4px; text-transform: uppercase; }
+.account-goal-field label { color: var(--text-muted); display: grid; font-size: 10px; font-weight: 700; gap: 7px; letter-spacing: .04em; }
+.account-goal-field label small { font-size: 9px; font-weight: 400; letter-spacing: 0; }
+.account-goal-field input { background: var(--surface); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; min-width: 0; padding: 11px 12px; width: 100%; }
+.account-goal-field input:focus { border-color: var(--brand); outline: 2px solid var(--brand-glow); }
 .account-fields input[readonly] { background: var(--surface-muted); color: var(--text-muted); padding-right: 38px; }
 .account-fields label > small { font-size: 10px; font-weight: 400; letter-spacing: 0; }
 .account-locked-input { position: relative; }
@@ -1982,6 +1991,7 @@ button {
 }
 @media (max-width: 560px) {
   .account-fields { grid-template-columns: 1fr; }
+  .account-goal-fields { grid-template-columns: 1fr; padding-left: 18px; padding-right: 18px; }
   .account-section-header, .account-photo-section, .account-fields, .account-form-actions, .account-preference-row { padding-left: 18px; padding-right: 18px; }
   .account-photo-section { align-items: flex-start; }
   .account-avatar { flex-basis: 60px; height: 60px; }

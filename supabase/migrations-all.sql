@@ -191,6 +191,15 @@ alter table public.admin_config
 comment on column public.admin_config.saque_minimo is
   'Minimum creator payout amount in BRL; default 50 is configurable by admins.';
 
+-- 20260906_metas_financeiras_criadora.sql
+alter table public.users
+  add column if not exists meta_diaria numeric(10,2) not null default 0 check (meta_diaria >= 0),
+  add column if not exists meta_semanal numeric(10,2) not null default 0 check (meta_semanal >= 0),
+  add column if not exists meta_mensal numeric(10,2) not null default 0 check (meta_mensal >= 0),
+  add column if not exists bonus_diario numeric(10,2) not null default 0 check (bonus_diario >= 0),
+  add column if not exists bonus_semanal numeric(10,2) not null default 0 check (bonus_semanal >= 0),
+  add column if not exists bonus_mensal numeric(10,2) not null default 0 check (bonus_mensal >= 0);
+
 create or replace view public.video_janelas as
 select v.id as video_id, v.creator_id, v.product_id, v.janela_inicio, v.janela_fim,
   v.status, v.created_at,

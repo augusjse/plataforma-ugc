@@ -39,6 +39,7 @@ export async function PUT(request: Request) {
 
   const input = body as Record<string, unknown>;
   const fields = ["name", "phone", "instagram", "youtube", "tiktok"] as const;
+  const financialFields = ["meta_diaria", "meta_semanal", "meta_mensal", "bonus_diario", "bonus_semanal", "bonus_mensal"] as const;
   const limits = { name: 120, phone: 30, instagram: 160, youtube: 160, tiktok: 160 };
   const updates: Record<(typeof fields)[number], string> = {
     name: "",
@@ -59,15 +60,29 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Informe seu nome" }, { status: 400 });
   }
 
+  const financialUpdates: Record<(typeof financialFields)[number], number> = {
+    meta_diaria: 0, meta_semanal: 0, meta_mensal: 0, bonus_diario: 0, bonus_semanal: 0, bonus_mensal: 0,
+  };
+  for (const field of financialFields) {
+    const value = typeof input[field] === "string" ? Number(input[field].replace(",", ".")) : Number(input[field]);
+    if (!Number.isFinite(value) || value < 0 || value > 99_999_999.99) {
+      return NextResponse.json({ error: `Campo ${field} inválido` }, { status: 400 });
+    }
+    financialUpdates[field] = value;
+  }
+
   let { data, error } = await supabaseAdmin
     .from("users")
-    .update(updates)
+    .update({ ...updates, ...financialUpdates })
     .eq("id", account.id)
-    .select("name, phone, instagram, youtube, tiktok")
+    .select("name, phone, instagram, youtube, tiktok, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal")
     .single();
 
   const missingSocialColumns = error?.code === "42703" || error?.code === "PGRST204";
   if (missingSocialColumns) {
+    if (error?.message.includes("meta_") || error?.message.includes("bonus_")) {
+      return NextResponse.json({ error: "As metas financeiras ainda precisam da migration do banco de dados" }, { status: 503 });
+    }
     const basicUpdate = await supabaseAdmin
       .from("users")
       .update({ name: updates.name, phone: updates.phone })
@@ -80,7 +95,7 @@ export async function PUT(request: Request) {
     }
 
     data = basicUpdate.data
-      ? { ...basicUpdate.data, instagram: updates.instagram, youtube: updates.youtube, tiktok: updates.tiktok }
+      ? { ...basicUpdate.data, instagram: updates.instagram, youtube: updates.youtube, tiktok: updates.tiktok, ...financialUpdates }
       : null;
     error = null;
 

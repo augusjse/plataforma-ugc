@@ -18,7 +18,11 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
   const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
-  const { products, videos, sales, saldoDisponivel, saqueMinimo } = await getCreatorDashboard(customRange ?? periodDays);
+  const { products, videos, sales, saldoDisponivel, saqueMinimo, metaMensalCriadora } = await getCreatorDashboard(customRange ?? periodDays);
+  const receitaReal = sales.reduce((sum, sale) => sum + sale.creatorCommission, 0);
+  const temMetaMensal = metaMensalCriadora > 0;
+  const progressoMetaReceita = temMetaMensal ? Math.min(100, Math.round(receitaReal / metaMensalCriadora * 100)) : 0;
+  const formatarMoeda = (valor: number) => `R$ ${valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const faltaSaque = Math.max(0, saqueMinimo - saldoDisponivel);
   const progressoSaque = saqueMinimo > 0 ? Math.min(100, Math.round(saldoDisponivel / saqueMinimo * 100)) : 100;
   const disponivelParaSaque = saldoDisponivel >= saqueMinimo;
@@ -44,10 +48,10 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <div className="creator-hero">
             <div>
               <p className="eyebrow">Quanto você já ganhou</p>
-              <h1><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}`} /></h1>
+              <h1><MoneyValue value={formatarMoeda(receitaReal)} /></h1>
               <div className="creator-pills">
                 <span>
-                  Disponível para saque <b><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}`} /></b>
+                  Disponível para saque <b><MoneyValue value={formatarMoeda(receitaReal)} /></b>
                 </span>
                 <span>
                   Já recebido <b><MoneyValue value="R$ 0,00" /></b>
@@ -117,7 +121,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
               </div>
             </div>
           </div>
-          <GoalCard value={82} title="Meta de receita" detail="R$ 1.640 de R$ 2.000" />
+          <GoalCard value={progressoMetaReceita} title={temMetaMensal ? "Meta de receita" : "Defina sua meta mensal"} detail={temMetaMensal ? `${formatarMoeda(receitaReal)} de ${formatarMoeda(metaMensalCriadora)}` : "Defina sua meta em Minha conta"} />
         </aside>
       </div>
       <SectionTitle icon="play">

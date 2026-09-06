@@ -12,6 +12,12 @@ type Account = {
   instagram: string;
   youtube: string;
   tiktok: string;
+  metaDiaria: number;
+  metaSemanal: number;
+  metaMensal: number;
+  bonusDiario: number;
+  bonusSemanal: number;
+  bonusMensal: number;
   role: "admin" | "criadora" | null;
   avatarUrl: string;
 };
@@ -26,6 +32,12 @@ export default function AccountSettings({ account, initials }: { account: Accoun
     instagram: account.instagram,
     youtube: account.youtube,
     tiktok: account.tiktok,
+    meta_diaria: String(account.metaDiaria),
+    meta_semanal: String(account.metaSemanal),
+    meta_mensal: String(account.metaMensal),
+    bonus_diario: String(account.bonusDiario),
+    bonus_semanal: String(account.bonusSemanal),
+    bonus_mensal: String(account.bonusMensal),
   });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -64,6 +76,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
       <aside className="account-settings-nav card" aria-label="Configurações da conta">
         <h2>Configurações</h2>
         <a className="active" href="#perfil"><Icon name="users" size={17} /> Meus Dados</a>
+        {account.role === "criadora" && <a href="#metas"><Icon name="chart" size={17} /> Metas Financeiras</a>}
         <a href="#seguranca"><Icon name="settings" size={17} /> Segurança</a>
         <a href="#preferencias"><Icon name="eye" size={17} /> Preferências</a>
         {futureItems.slice(1).map((item) => (
@@ -94,6 +107,15 @@ export default function AccountSettings({ account, initials }: { account: Accoun
             <label>TIKTOK<input maxLength={160} placeholder="@seuusuario" value={form.tiktok} onChange={(event) => change("tiktok", event.target.value)} /></label>
           </div>
 
+          {account.role === "criadora" && <section className="account-financial-goals" id="metas">
+            <header className="account-section-header"><div><p className="eyebrow">Metas Financeiras</p><h2>Defina suas metas de comissão</h2><p>Acompanhe seu progresso no dashboard conforme suas próprias metas.</p></div></header>
+            <div className="account-goal-fields">
+              <GoalField label="Meta diária" hint="Mínima" goalField="meta_diaria" bonusField="bonus_diario" form={form} change={change} />
+              <GoalField label="Meta semanal" hint="Ideal" goalField="meta_semanal" bonusField="bonus_semanal" form={form} change={change} />
+              <GoalField label="Meta mensal" hint="Ousada" goalField="meta_mensal" bonusField="bonus_mensal" form={form} change={change} />
+            </div>
+          </section>}
+
           {error && <p className="form-error" role="alert">{error}</p>}
           {message && <p className="form-success" role="status"><Icon name="check" size={16} />{message}</p>}
           <footer className="account-form-actions"><LogoutButton /><button className="button button-primary" disabled={saving} type="submit">{saving ? "Salvando..." : "Salvar alterações"}</button></footer>
@@ -114,4 +136,17 @@ export default function AccountSettings({ account, initials }: { account: Accoun
       </div>
     </div>
   );
+}
+
+type FinancialForm = {
+  meta_diaria: string;
+  meta_semanal: string;
+  meta_mensal: string;
+  bonus_diario: string;
+  bonus_semanal: string;
+  bonus_mensal: string;
+};
+
+function GoalField({ label, hint, goalField, bonusField, form, change }: { label: string; hint: string; goalField: "meta_diaria" | "meta_semanal" | "meta_mensal"; bonusField: "bonus_diario" | "bonus_semanal" | "bonus_mensal"; form: FinancialForm; change: (field: keyof FinancialForm, value: string) => void }) {
+  return <fieldset className="account-goal-field"><legend>{label} <small>{hint}</small></legend><label>Valor (R$)<input type="number" min="0" step="0.01" inputMode="decimal" value={form[goalField]} onChange={(event) => change(goalField, event.target.value)} /></label><label>Bônus (R$) <small>opcional</small><input type="number" min="0" step="0.01" inputMode="decimal" value={form[bonusField]} onChange={(event) => change(bonusField, event.target.value)} /></label></fieldset>;
 }

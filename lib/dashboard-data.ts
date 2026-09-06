@@ -242,7 +242,7 @@ export async function getCreatorDashboard(periodDays: number | DashboardDateRang
       .eq("videos_ugc.creator_id", account.id);
     saldoDisponivel = (balanceRows ?? []).reduce((sum, row) => sum + Number(row.commission_creator ?? 0), 0);
   }
-  return { account, videos, sales, products: await getProducts(), saldoDisponivel, saqueMinimo: config.saque_minimo, periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
+  return { account, videos, sales, products: await getProducts(), saldoDisponivel, saqueMinimo: config.saque_minimo, metaMensalCriadora: Number(account?.meta_mensal ?? 0), periodDays: typeof periodDays === "number" ? periodDays : periodDays.days };
 }
 
 export async function getAdminDashboard(periodDays: number | DashboardDateRange = 15) {

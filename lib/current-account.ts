@@ -14,6 +14,12 @@ export type CurrentAccount = {
   instagram: string;
   youtube: string;
   tiktok: string;
+  metaDiaria: number;
+  metaSemanal: number;
+  metaMensal: number;
+  bonusDiario: number;
+  bonusSemanal: number;
+  bonusMensal: number;
   role: AccountRole | null;
   status: string | null;
   avatarUrl: string;
@@ -29,7 +35,7 @@ export async function getCurrentAccount(): Promise<CurrentAccount | null> {
 
   const { data: extendedAccount, error: extendedError } = await supabaseAdmin
     .from("users")
-    .select("id, name, email, phone, instagram, youtube, tiktok, role, status")
+    .select("id, name, email, phone, instagram, youtube, tiktok, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal, role, status")
     .eq("email", user.email)
     .maybeSingle();
 
@@ -55,6 +61,12 @@ export async function getCurrentAccount(): Promise<CurrentAccount | null> {
     instagram: String(extendedAccount?.instagram ?? metadata.instagram ?? ""),
     youtube: String(extendedAccount?.youtube ?? metadata.youtube ?? ""),
     tiktok: String(extendedAccount?.tiktok ?? metadata.tiktok ?? ""),
+    metaDiaria: Number(extendedAccount?.meta_diaria ?? 0),
+    metaSemanal: Number(extendedAccount?.meta_semanal ?? 0),
+    metaMensal: Number(extendedAccount?.meta_mensal ?? 0),
+    bonusDiario: Number(extendedAccount?.bonus_diario ?? 0),
+    bonusSemanal: Number(extendedAccount?.bonus_semanal ?? 0),
+    bonusMensal: Number(extendedAccount?.bonus_mensal ?? 0),
     role,
     status: account?.status ? String(account.status) : null,
     avatarUrl: String(metadata.avatar_url ?? metadata.picture ?? ""),
