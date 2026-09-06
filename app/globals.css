@@ -354,22 +354,6 @@
 .dashboard-tools .guide-card p {
   display: none;
 }
-.overview-top {
-  align-items: stretch;
-  display: grid;
-  gap: 36px;
-  grid-template-columns: 3fr 1fr;
-}
-.overview-left {
-  display: grid;
-  gap: 16px;
-  grid-template-rows: auto auto;
-  min-width: 0;
-}
-.overview-top > .promo-card {
-  grid-row: span 2;
-  min-height: 320px;
-}
 .stats-grid {
   gap: 16px;
 }
@@ -570,8 +554,7 @@
 .goal-card,
 .chart-card,
 .guide-card,
-.withdraw-card,
-.promo-card {
+.withdraw-card {
   background: #ffffff;
   border-color: #e8e8e8;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -742,6 +725,7 @@
   background: linear-gradient(115deg, #211c1b 0%, #171413 72%);
   border: 1px solid #302624;
   border-radius: var(--radius-card);
+  box-sizing: border-box;
   box-shadow: 0 12px 28px rgba(26, 21, 19, .12);
   color: var(--text-on-inverse);
   display: flex;
@@ -752,7 +736,7 @@
   padding: 30px 34px;
   position: relative;
 }
-.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; min-height: 320px; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.referral-slide { align-items: center; box-sizing: border-box; display: flex; height: 100%; inset: 0; justify-content: space-between; min-height: 100%; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
 .referral-slide-image { height: 100%; inset: 0; object-fit: cover; opacity: 0; pointer-events: none; position: absolute; width: 100%; }
 .referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
@@ -845,23 +829,6 @@
   .overview-left .stat-card { min-height: 124px; }
   .chart-area-large { height: 240px; }
 }
-@media (max-width: 800px) {
-  .overview-top {
-    gap: 16px;
-    grid-template-columns: 1fr;
-  }
-  .overview-top > .promo-card {
-    grid-row: auto;
-    min-height: 280px;
-  }
-  .dashboard-tools {
-    justify-content: space-between;
-  }
-  .stat-card {
-    min-height: 96px;
-  }
-}
-
 /* Final light-theme hierarchy overrides */
 .section-title {
   border-top: 1px solid #eeeeee;
@@ -889,8 +856,7 @@
 .goal-card,
 .chart-card,
 .guide-card,
-.withdraw-card,
-.promo-card {
+.withdraw-card {
   background: #ffffff;
   border-color: #e8e8e8;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -960,8 +926,7 @@
 .goal-card,
 .chart-card,
 .guide-card,
-.withdraw-card,
-.promo-card {
+.withdraw-card {
   background: var(--surface);
   border-color: var(--border-card);
   box-shadow: var(--shadow-card);
@@ -3107,16 +3072,53 @@ footer code {
   background-color: var(--surface);
   background-position: center;
   background-size: cover;
-  border-radius: var(--radius-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-card-large);
+  box-shadow: var(--shadow-hero);
+  box-sizing: border-box;
   color: var(--text-main);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  height: 100%;
   justify-content: end;
   min-height: 320px;
   overflow: hidden;
   padding: 22px;
   position: relative;
+}
+
+/* Admin overview: the promo occupies the same two grid rows as the revenue
+   hero and stat cards, without introducing an independent desktop height. */
+.overview-top {
+  align-items: stretch;
+  display: grid;
+  gap: 36px;
+  grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+}
+.overview-left {
+  display: grid;
+  gap: 16px;
+  grid-template-rows: auto auto;
+  min-width: 0;
+}
+.overview-top > .promo-card {
+  align-self: stretch;
+  grid-row: span 2;
+  min-height: 320px;
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .overview-top { gap: 20px; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr); }
+  .creator-top-layout { gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); }
+  .creator-revenue-layout { grid-template-columns: minmax(0, 1.4fr) minmax(250px, 1fr); }
+  .dashboard-tools { flex-wrap: wrap; }
+  .dashboard-tools .guide-card { flex: 1 1 220px; min-width: 0; }
+}
+
+@media (max-width: 767px) {
+  .overview-top { gap: 16px; grid-template-columns: 1fr; }
+  .overview-top > .promo-card { grid-row: auto; height: auto; min-height: 280px; }
 }
 .promo-card::before {
   background: transparent;
@@ -3489,22 +3491,6 @@ footer code {
 .dashboard-tools .guide-card p {
   display: none;
 }
-.overview-top {
-  align-items: stretch;
-  display: grid;
-  gap: 36px;
-  grid-template-columns: 3fr 1fr;
-}
-.overview-left {
-  display: grid;
-  gap: 16px;
-  grid-template-rows: auto auto;
-  min-width: 0;
-}
-.overview-top > .promo-card {
-  grid-row: span 2;
-  min-height: 320px;
-}
 .stats-grid {
   gap: 16px;
 }
@@ -3562,25 +3548,11 @@ footer code {
 .compact-queue {
   margin-top: 24px;
 }
-@media (max-width: 800px) {
-  .overview-top {
-    gap: 16px;
-    grid-template-columns: 1fr;
-  }
-  .overview-top > .promo-card {
-    grid-row: auto;
-    min-height: 280px;
-  }
-  .stat-card {
-    min-height: 96px;
-  }
-}
-
 /* Final cascade: light Shopainel hierarchy */
 .section-title { border-top: 1px solid #eeeeee; margin-top: 42px !important; padding-top: 26px; }
 .section-title h2 { color: #1a1a1a; font-weight: 800; }
 .section-icon, .chart-title-icon, .stat-icon, .stat-icon.green, .stat-icon.purple { background: #fff0e8; color: #ff6b26; }
-.stat-card, .card, .product-card, .approval-card, .finance-card, .ranking-card, .goal-card, .chart-card, .guide-card, .withdraw-card, .promo-card { background: #ffffff; border-color: #e8e8e8; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+.stat-card, .card, .product-card, .approval-card, .finance-card, .ranking-card, .goal-card, .chart-card, .guide-card, .withdraw-card { background: #ffffff; border-color: #e8e8e8; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
 .stats-grid, .product-grid, .approval-grid, .video-list, .settings-stack { gap: 20px; }
 .stat-card, .card, .finance-card, .ranking-card, .goal-card { padding: 24px; }
 .button { min-height: 40px; }
@@ -3843,8 +3815,7 @@ footer code {
 [data-theme="dark"] .goal-card,
 [data-theme="dark"] .chart-card,
 [data-theme="dark"] .guide-card,
-[data-theme="dark"] .withdraw-card,
-[data-theme="dark"] .promo-card {
+[data-theme="dark"] .withdraw-card {
   background: var(--surface);
   border-color: var(--border-card);
   box-shadow: var(--shadow-card);
@@ -4124,8 +4095,7 @@ footer code {
 
 /* Final token overrides keep the visual language consistent on desktop and mobile. */
 .hero,
-.creator-hero,
-.promo-card {
+.creator-hero {
   border-radius: var(--radius-card-large);
   box-shadow: var(--shadow-hero);
 }
