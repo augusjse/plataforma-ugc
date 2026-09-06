@@ -5,8 +5,8 @@ import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import { useToast } from "@/components/ToastProvider";
 
-type Config = { repasse_organico_percent: number; repasse_impulsionado_percent: number; custo_anuncio_por_venda: number; saque_minimo: number };
-const defaults: Config = { repasse_organico_percent: 50, repasse_impulsionado_percent: 10, custo_anuncio_por_venda: 9, saque_minimo: 50 };
+type Config = { repasse_organico_percent: number; repasse_impulsionado_percent: number; custo_anuncio_por_venda: number; saque_minimo: number; imposto_meta_ads_percent: number; imposto_nota_fiscal_percent: number };
+const defaults: Config = { repasse_organico_percent: 50, repasse_impulsionado_percent: 10, custo_anuncio_por_venda: 9, saque_minimo: 50, imposto_meta_ads_percent: 13, imposto_nota_fiscal_percent: 0 };
 
 export default function Config() {
   const { showToast } = useToast();
@@ -53,6 +53,8 @@ export default function Config() {
       <ConfigSlider label="Repasse impulsionado" value={config.repasse_impulsionado_percent} suffix="%" min={0} max={100} step={1} onChange={(value) => update("repasse_impulsionado_percent", value)} />
       <ConfigSlider label="Custo de anúncio por venda" value={config.custo_anuncio_por_venda} suffix="R$" min={0} max={1000} step={0.5} onChange={(value) => update("custo_anuncio_por_venda", value)} />
       <ConfigSlider label="Saque mínimo" value={config.saque_minimo} suffix="R$" min={0} max={5000} step={1} onChange={(value) => update("saque_minimo", value)} />
+      <ConfigSlider label="Imposto Meta Ads" value={config.imposto_meta_ads_percent} suffix="%" min={0} max={100} step={0.01} onChange={(value) => update("imposto_meta_ads_percent", value)} />
+      <ConfigSlider label="Imposto Nota Fiscal" value={config.imposto_nota_fiscal_percent} suffix="%" min={0} max={100} step={0.01} onChange={(value) => update("imposto_nota_fiscal_percent", value)} />
       <small className="muted" aria-live="polite">{status}</small>
     </div>
   </Shell>;

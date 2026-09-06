@@ -1976,6 +1976,22 @@ button {
 .account-logout { color: var(--danger-text); }
 .account-settings-section { padding: 0; }
 .account-settings-section > p { border-top: 1px solid var(--divider); color: var(--text-muted); font-size: 13px; line-height: 1.55; margin: 0; padding: 20px 26px; }
+.account-tax-form { border-top: 1px solid var(--divider); }
+.account-tax-fields { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 24px 26px; }
+.account-tax-fields > label { color: var(--text-muted); display: grid; font-size: 10px; font-weight: 700; gap: 7px; letter-spacing: .04em; }
+.account-tax-fields > label > small { color: var(--brand-deep); font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: none; }
+.account-percent-input { position: relative; }
+.account-percent-input input { background: var(--surface); border: 1px solid var(--divider); border-radius: 10px; color: var(--text-main); font: inherit; font-size: 13px; min-width: 0; padding: 11px 34px 11px 12px; width: 100%; }
+.account-percent-input input:focus { border-color: var(--brand); outline: 2px solid var(--brand-glow); }
+.account-percent-input span { color: var(--text-muted); font-size: 13px; font-weight: 700; position: absolute; right: 13px; top: 11px; }
+.account-tax-simulation { background: var(--surface-muted); border: 1px solid var(--divider); border-radius: 12px; display: grid; gap: 12px; margin: 0 26px 24px; padding: 16px; }
+.account-tax-simulation > p { color: var(--text-main); font-size: 10px; font-weight: 700; letter-spacing: .05em; margin: 0; }
+.account-tax-simulation > p span { color: var(--text-muted); font-weight: 400; }
+.account-tax-simulation > div { align-items: center; display: flex; justify-content: space-between; gap: 12px; }
+.account-tax-simulation span { color: var(--text-main); display: grid; font-size: 13px; gap: 2px; }
+.account-tax-simulation small { color: var(--text-muted); font-size: 11px; }
+.account-tax-simulation strong { color: var(--brand-deep); font-size: 14px; white-space: nowrap; }
+.account-tax-section .form-error, .account-tax-section .form-success { margin: 0 26px 18px; }
 .account-preference-row { align-items: center; border-top: 1px solid var(--divider); display: flex; justify-content: space-between; padding: 20px 26px; }
 .account-preference-row strong { font-size: 13px; }
 .account-preference-row p { color: var(--text-muted); font-size: 12px; margin: 5px 0 0; }
@@ -1991,8 +2007,9 @@ button {
 }
 @media (max-width: 560px) {
   .account-fields { grid-template-columns: 1fr; }
-  .account-goal-fields { grid-template-columns: 1fr; padding-left: 18px; padding-right: 18px; }
+  .account-goal-fields, .account-tax-fields { grid-template-columns: 1fr; padding-left: 18px; padding-right: 18px; }
   .account-section-header, .account-photo-section, .account-fields, .account-form-actions, .account-preference-row { padding-left: 18px; padding-right: 18px; }
+  .account-tax-simulation { margin-left: 18px; margin-right: 18px; }
   .account-photo-section { align-items: flex-start; }
   .account-avatar { flex-basis: 60px; height: 60px; }
   .account-form-actions { align-items: stretch; flex-direction: column-reverse; gap: 10px; }

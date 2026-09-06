@@ -8,15 +8,16 @@ import GuideCard from "@/components/GuideCard";
 import PromoCard from "@/components/PromoCard";
 import GoalCard from "@/components/GoalCard";
 import PerformanceChart from "@/components/PerformanceChart";
-import { getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
+import { getAdminConfig, getAdminDashboard, getPendingVideosCount, normalizeDashboardPeriod, normalizeDashboardRange } from "@/lib/dashboard-data";
 import { MoneyValue } from "@/components/ValuesVisibilityContext";
 export default async function Admin({ searchParams }: { searchParams: Promise<{ period?: string; from?: string; to?: string }> }) {
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
   const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
-  const [{ sales, videos, creators, products }, pendingVideosCount] = await Promise.all([
+  const [{ sales, videos, creators, products }, pendingVideosCount, config] = await Promise.all([
     getAdminDashboard(customRange ?? periodDays),
     getPendingVideosCount(),
+    getAdminConfig(),
   ]);
   const closedRevenue = sales
     .filter((sale) => {
@@ -25,6 +26,10 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     })
     .reduce((sum, sale) => sum + sale.revenue, 0);
   const netMargin = sales.reduce((sum, sale) => sum + sale.netMargin, 0);
+  const totalRevenue = sales.reduce((sum, sale) => sum + sale.revenue, 0);
+  const metaAdsTax = totalRevenue * config.imposto_meta_ads_percent / 100;
+  const notaFiscalTax = totalRevenue * config.imposto_nota_fiscal_percent / 100;
+  const estimatedProfit = netMargin - metaAdsTax - notaFiscalTax;
 
   const top10Creators = creators
     .map((creator) => {
@@ -84,7 +89,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="overview-left">
           <div className="hero">
             <p className="eyebrow">Receita gerada este mês</p>
-            <h2><MoneyValue value={`R$ ${sales.reduce((sum, sale) => sum + sale.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} /></h2>
+            <h2><MoneyValue value={`R$ ${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} /></h2>
             <p>Dados reais das vendas registradas</p>
             <span className="hero-tag">Sem dados mockados</span>
           </div>
@@ -125,27 +130,27 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <div>
               <span>Investimento em tráfego</span>
               <strong>
-                <MoneyValue value={`R$ ${(netMargin * 0.15).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+                <MoneyValue value={`R$ ${metaAdsTax.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
               </strong>
             </div>
             <div>
               <span>Lucro estimado</span>
               <strong>
-                <MoneyValue value={`R$ ${netMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+                <MoneyValue value={`R$ ${estimatedProfit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
               </strong>
             </div>
           </div>
         </div>
         <GoalCard
           value={
-            sales.reduce((sum, s) => sum + s.revenue, 0) > 180000
+            totalRevenue > 180000
               ? 100
               : Math.round(
-                  (sales.reduce((sum, s) => sum + s.revenue, 0) / 180000) * 100
+                  (totalRevenue / 180000) * 100
                 )
           }
           title="Meta de receita"
-          detail={`R$ ${sales.reduce((sum, s) => sum + s.revenue, 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} de R$ 180.000`}
+          detail={`R$ ${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} de R$ 180.000`}
         />
       </div>
       <div className="compact-queue">
