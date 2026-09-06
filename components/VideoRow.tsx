@@ -1,9 +1,16 @@
 import Badge from "./Badge";
 import { DashboardVideo as Video } from "@/lib/dashboard-data";
 import Icon from "./Icon";
+import Link from "next/link";
 export default function VideoRow({ video }: { video: Video }) {
+  const moderationRejected = video.moderationStatus === "reprovado";
+  const moderationPending = video.moderationStatus === "pendente";
   const tone =
-    video.status === "Impulsionado" || video.status === "Aprovado"
+    moderationRejected
+      ? "danger"
+      : moderationPending
+        ? "warning"
+        : video.status === "Impulsionado" || video.status === "Aprovado"
       ? "success"
       : video.status === "Reprovado"
         ? "danger"
@@ -18,8 +25,15 @@ export default function VideoRow({ video }: { video: Video }) {
         <span>
           {video.product} · {video.date}
         </span>
+        {moderationRejected && (
+          <div className="rejected-video-notice video-row-rejection">
+            <strong>Recusado</strong>
+            <span>{video.rejectionReason || "O vídeo precisa de ajustes antes de ser reenviado."}</span>
+            <Link href={`/criadora/enviar?produto=${encodeURIComponent(video.productId)}`}>Enviar outro vídeo</Link>
+          </div>
+        )}
       </div>
-      <Badge tone={tone}>{video.status}</Badge>
+      <Badge tone={tone}>{moderationRejected ? "Recusado" : moderationPending ? "Em análise" : video.status}</Badge>
       <div className="video-metrics">
         <span>Cliques <b>{video.clicks.toLocaleString("pt-BR")}</b></span>
         <span>Vendas <b>{video.sales}</b></span>

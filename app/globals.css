@@ -754,6 +754,7 @@
 }
 .referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; min-height: 320px; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
+.referral-slide-image { height: 100%; inset: 0; object-fit: cover; opacity: 0; pointer-events: none; position: absolute; width: 100%; }
 .referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
 .referral-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
 @keyframes referral-ken-burns { from { transform: scale(1); } to { transform: scale(1.1); } }
@@ -1442,6 +1443,7 @@
 }
 .promo-slide { align-items: flex-end; display: flex; inset: 0; opacity: 0; padding: 22px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .promo-slide::before { background: linear-gradient(180deg, rgba(20, 15, 13, .16), rgba(20, 15, 13, .84)), var(--promo-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); }
+.promo-slide-image { height: 100%; inset: 0; object-fit: cover; opacity: 0; pointer-events: none; position: absolute; width: 100%; }
 .promo-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
 .promo-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
 .promo-slide > * { position: relative; }
@@ -3672,6 +3674,15 @@ footer code {
   .creator-dashboard .creator-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .creator-mini-stats .stat-card { min-height: 112px; }
 }
+
+/* Both the real-product and empty states contain two cards on mobile. */
+@media (max-width: 767px) {
+  .creator-dashboard .stats-grid.creator-mini-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+.video-row-rejection { grid-column: 1 / -1; margin-top: 8px; }
 
 /* Creator dashboard final alignment and native select reset. */
 .creator-dashboard > * {

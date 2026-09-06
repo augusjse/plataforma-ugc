@@ -40,6 +40,8 @@ export type DashboardVideo = {
   productId: string;
   creatorId: string;
   status: string;
+  moderationStatus: "pendente" | "aprovado" | "reprovado";
+  rejectionReason: string | null;
   clicks: number;
   sales: number;
   commission: number;
@@ -128,6 +130,8 @@ function mapVideo(row: Record<string, unknown>, productName = "Produto"): Dashbo
   return {
     id: String(row.video_id ?? row.id), title: String(row.title ?? `Vídeo ${String(row.video_id ?? row.id).slice(0, 8)}`),
     product: productName, productId: String(row.product_id ?? ""), creatorId: String(row.creator_id ?? ""), status,
+    moderationStatus: String(row.moderation_status ?? "pendente") as DashboardVideo["moderationStatus"],
+    rejectionReason: row.motivo_reprovacao ? String(row.motivo_reprovacao) : null,
     clicks: Number(row.clicks ?? row.total_clicks ?? 0), sales: Number(row.total_sales ?? 0),
     commission: Number(row.total_ganho_criadora ?? 0), date: row.created_at ? new Date(String(row.created_at)).toLocaleDateString("pt-BR") : "",
     myLink: String(row.affiliate_link_bruto ?? ""), janela_inicio: start, janela_fim: end,

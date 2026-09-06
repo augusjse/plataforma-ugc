@@ -12,12 +12,18 @@ export default function PromoCard({ eyebrow, title, image, action }: Props) {
     { title: "Compartilhe o Studio com quem cria conteúdo", image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80" },
   ];
   useEffect(() => {
+    // Keep both carousel images in the browser cache before crossfade starts.
+    slides.forEach((slide) => {
+      const preload = new window.Image();
+      preload.src = slide.image;
+    });
     const timer = window.setInterval(() => setActiveSlide((current) => (current + 1) % slides.length), 5600);
     return () => window.clearInterval(timer);
   }, [slides.length]);
   return (
     <div className="promo-card" aria-roledescription="carousel" aria-label={eyebrow}>
       {slides.map((slide, index) => <div className={`promo-slide${index === activeSlide ? " is-active" : ""}`} key={slide.title} style={{ "--promo-image": `url("${slide.image}")` } as CSSProperties} aria-hidden={index !== activeSlide}>
+        <img className="promo-slide-image" src={slide.image} alt="" aria-hidden="true" loading="eager" decoding="async" />
         <span className="promo-warmth" />
         <span className="promo-badge">{eyebrow}</span>
         <div className="promo-content">

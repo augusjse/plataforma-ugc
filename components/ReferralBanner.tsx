@@ -15,6 +15,12 @@ export default function ReferralBanner() {
   const referralLink = "https://plataforma-ugc.vercel.app/join?ref=maria-souza";
 
   useEffect(() => {
+    // Backgrounds are CSS-driven, so explicitly warm both URLs before the
+    // first rotation. This prevents a blank frame while the next slide fades in.
+    slides.forEach((slide) => {
+      const preload = new window.Image();
+      preload.src = slide.image;
+    });
     const timer = window.setInterval(() => setActiveSlide((current) => (current + 1) % slides.length), 5600);
     return () => window.clearInterval(timer);
   }, []);
@@ -41,6 +47,7 @@ export default function ReferralBanner() {
     <section className="referral-banner" aria-roledescription="carousel" aria-label="Anúncios para criadoras">
       {slides.map((slide, index) => (
         <div className={`referral-slide${index === activeSlide ? " is-active" : ""}`} key={slide.title} style={{ "--referral-image": `url("${slide.image}")` } as CSSProperties} aria-hidden={index !== activeSlide}>
+          <img className="referral-slide-image" src={slide.image} alt="" aria-hidden="true" loading="eager" decoding="async" />
           <div className="referral-copy">
             <span className="referral-badge">{slide.badge}</span>
             <h2 id={index === activeSlide ? "referral-title" : undefined}>{slide.title}</h2>
