@@ -13,8 +13,21 @@ const BUCKET = "videos-ugc";
 async function compressVideo(file: File): Promise<File> {
   const [{ FFmpeg }, { fetchFile, toBlobURL }] = await Promise.all([import("@ffmpeg/ffmpeg"), import("@ffmpeg/util")]);
   const ffmpeg = new FFmpeg();
-  const cdnBase = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
-  await ffmpeg.load({ coreURL: await toBlobURL(`${cdnBase}/ffmpeg-core.js`, "text/javascript"), wasmURL: await toBlobURL(`${cdnBase}/ffmpeg-core.wasm`, "application/wasm") });
+  const cdnBase = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
+  if (typeof crossOriginIsolated !== "undefined" && !crossOriginIsolated) {
+    console.warn("[video compression] cross-origin isolation is unavailable; ffmpeg core-mt may fail to start", {
+      crossOriginIsolated,
+    });
+  }
+  await ffmpeg.load({
+    coreURL: await toBlobURL(`${cdnBase}/ffmpeg-core.js`, "text/javascript"),
+    wasmURL: await toBlobURL(`${cdnBase}/ffmpeg-core.wasm`, "application/wasm"),
+    workerURL: await toBlobURL(`${cdnBase}/ffmpeg-core.worker.js`, "text/javascript"),
+  });
+  // Keep these listeners registered before every exec: browser console logs
+  // are the only useful diagnosis when a creator's codec or memory fails.
+  ffmpeg.on("log", ({ message }) => console.log("[ffmpeg]", message));
+  ffmpeg.on("progress", (progress) => console.log("[ffmpeg progress]", progress));
   const inputName = "input-video";
   const outputName = "compressed-video.mp4";
   try {
@@ -22,24 +35,39 @@ async function compressVideo(file: File): Promise<File> {
     if (input.byteLength === 0) throw new Error("O arquivo de vídeo selecionado está vazio.");
     await ffmpeg.writeFile(inputName, input);
     for (const crf of [28, 32]) {
-      const exitCode = await ffmpeg.exec(["-i", inputName, "-vf", "scale=-2:min(720,ih)", "-c:v", "libx264", "-preset", "fast", "-crf", String(crf), "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-threads", "1", "-y", outputName]);
-      if (exitCode !== 0) throw new Error("A compactação do vídeo falhou.");
-      const output = await ffmpeg.readFile(outputName);
-      if (typeof output === "string") throw new Error("A compactação não retornou um arquivo válido.");
-      if (output.byteLength < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
-      // Keep the exact bytes returned by ffmpeg. Verifying the reconstructed File
-      // prevents an empty Blob from reaching Storage if the browser conversion fails.
-      const compressed = new File([output.slice()], file.name.replace(/\.[^.]+$/, "") + "-compactado.mp4", { type: "video/mp4" });
-      if (compressed.size < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
-      await ffmpeg.deleteFile(outputName);
-      if (compressed.size <= MAX_UPLOAD_VIDEO_BYTES) return compressed;
+      // A second, more tolerant invocation helps with malformed timestamps and
+      // unusual MOV metadata. It cannot add a decoder absent from the core;
+      // unsupported HEVC/ProRes input will still be reported in the logs.
+      const attempts = [
+        ["-i", inputName],
+        ["-fflags", "+genpts", "-analyzeduration", "100M", "-probesize", "100M", "-i", inputName, "-strict", "-2"],
+      ];
+      let lastError: Error | null = null;
+      for (const inputArgs of attempts) {
+        try {
+          const exitCode = await ffmpeg.exec([...inputArgs, "-vf", "scale=-2:min(720,ih)", "-c:v", "libx264", "-preset", "fast", "-crf", String(crf), "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-y", outputName]);
+          if (exitCode !== 0) throw new Error(`ffmpeg encerrou com código ${exitCode}`);
+          const output = await ffmpeg.readFile(outputName);
+          if (typeof output === "string") throw new Error("A compactação não retornou um arquivo válido.");
+          if (output.byteLength < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
+          const compressed = new File([output.slice()], file.name.replace(/\.[^.]+$/, "") + "-compactado.mp4", { type: "video/mp4" });
+          if (compressed.size < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
+          await ffmpeg.deleteFile(outputName);
+          if (compressed.size <= MAX_UPLOAD_VIDEO_BYTES) return compressed;
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error));
+          console.error("[video compression] attempt failed", { crf, inputArgs, error: lastError });
+          try { await ffmpeg.deleteFile(outputName); } catch { /* best effort cleanup */ }
+        }
+      }
+      if (lastError) console.error("[video compression] all attempts failed for CRF", crf, lastError);
     }
   } finally {
     try { await ffmpeg.deleteFile(inputName); } catch { /* best effort cleanup */ }
     try { await ffmpeg.deleteFile(outputName); } catch { /* best effort cleanup */ }
     ffmpeg.terminate();
   }
-  throw new Error("Não foi possível compactar o vídeo para menos de 45 MB.");
+  throw new Error("A compactação do vídeo falhou. Não foi possível gerar um arquivo menor que 45 MB.");
 }
 
 export default function EnviarForm({ product, creatorId }: { product: DashboardProduct | null; creatorId: string }) {
