@@ -23,7 +23,19 @@ export default async function ContaPage({ searchParams }: Props) {
         </div>
       </div>
 
-      <AccountSettings account={account} initials={initials} />
+      <AccountSettings
+        account={{
+          name: account.name,
+          email: account.email,
+          phone: account.phone,
+          instagram: account.instagram,
+          youtube: account.youtube,
+          tiktok: account.tiktok,
+          role: account.role,
+          avatarUrl: account.avatarUrl,
+        }}
+        initials={initials}
+      />
     </Shell>
   );
 }
