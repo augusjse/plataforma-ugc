@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Icon from "./Icon";
 import LogoutButton from "./LogoutButton";
+import { useToast } from "./ToastProvider";
 import { useValuesVisibility } from "./ValuesVisibilityContext";
 
 type Account = {
@@ -45,6 +46,7 @@ const defaultAdminConfig: AdminConfig = {
 
 export default function AccountSettings({ account, initials }: { account: Account; initials: string }) {
   const { hidden, toggle } = useValuesVisibility();
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     name: account.name,
     phone: account.phone,
@@ -59,9 +61,18 @@ export default function AccountSettings({ account, initials }: { account: Accoun
     bonus_semanal: String(account.bonusSemanal),
     bonus_mensal: String(account.bonusMensal),
   });
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const initialProfile = {
+    name: account.name,
+    phone: account.phone,
+    instagram: account.instagram,
+    youtube: account.youtube,
+    tiktok: account.tiktok,
+    pix_key: account.pixKey,
+  };
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [financialSaving, setFinancialSaving] = useState(false);
+  const [financialError, setFinancialError] = useState("");
   const [adminConfig, setAdminConfig] = useState<AdminConfig>(defaultAdminConfig);
   const [taxForm, setTaxForm] = useState({ imposto_meta_ads_percent: "13", imposto_nota_fiscal_percent: "0" });
   const [taxSaving, setTaxSaving] = useState(false);
@@ -81,29 +92,68 @@ export default function AccountSettings({ account, initials }: { account: Accoun
 
   function change(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
-    setMessage("");
-    setError("");
+    if (["meta_diaria", "meta_semanal", "meta_mensal", "bonus_diario", "bonus_semanal", "bonus_mensal"].includes(field)) setFinancialError("");
+    else setProfileError("");
   }
 
-  async function save(event: FormEvent<HTMLFormElement>) {
+  async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSaving(true);
-    setMessage("");
-    setError("");
+    setProfileSaving(true);
+    setProfileError("");
 
     try {
       const response = await fetch("/api/account", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          section: "profile",
+          ...Object.fromEntries(
+            (["name", "phone", "instagram", "youtube", "tiktok", "pix_key"] as const)
+              .filter((field) => form[field] !== initialProfile[field])
+              .map((field) => [field, form[field]]),
+          ),
+        }),
       });
       const body = (await response.json()) as { error?: string };
       if (!response.ok) throw new Error(body.error || "Não foi possível salvar as alterações");
-      setMessage("Alterações salvas com sucesso.");
+      showToast({ title: "Perfil salvo", description: "Seus dados de perfil foram atualizados com sucesso.", type: "success" });
     } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : "Não foi possível salvar as alterações");
+      const description = saveError instanceof Error ? saveError.message : "Não foi possível salvar as alterações";
+      setProfileError(description);
+      showToast({ title: "Erro ao salvar perfil", description, type: "error" });
     } finally {
-      setSaving(false);
+      setProfileSaving(false);
+    }
+  }
+
+  async function saveFinancialGoals(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFinancialSaving(true);
+    setFinancialError("");
+    try {
+      const response = await fetch("/api/account", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          section: "financial",
+          meta_diaria: form.meta_diaria,
+          meta_semanal: form.meta_semanal,
+          meta_mensal: form.meta_mensal,
+          bonus_diario: form.bonus_diario,
+          bonus_semanal: form.bonus_semanal,
+          bonus_mensal: form.bonus_mensal,
+        }),
+      });
+      const body = (await response.json()) as { error?: string; unavailableFields?: string[] };
+      if (!response.ok) throw new Error(body.error || "Não foi possível salvar as metas financeiras");
+      if (body.unavailableFields?.length) throw new Error(body.error || "Metas financeiras: aguardando atualização do sistema. Tente novamente mais tarde.");
+      showToast({ title: "Metas salvas", description: "Suas metas financeiras foram atualizadas com sucesso.", type: "success" });
+    } catch (saveError) {
+      const description = saveError instanceof Error ? saveError.message : "Não foi possível salvar as metas financeiras";
+      setFinancialError(description);
+      showToast({ title: "Metas financeiras", description, type: "error" });
+    } finally {
+      setFinancialSaving(false);
     }
   }
 
@@ -157,7 +207,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
       </aside>
 
       <div className="account-settings-content">
-        <form className="card account-profile-form" id="perfil" onSubmit={save}>
+        <form className="card account-profile-form" id="perfil" onSubmit={saveProfile}>
           <header className="account-section-header">
             <div><p className="eyebrow">Meus dados</p><h2>Perfil</h2><p>Mantenha seus dados de contato e redes sociais atualizados.</p></div>
             <span className="account-role">{account.role === "admin" ? "Administrador" : "Criadora"}</span>
@@ -171,7 +221,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
           </section>
 
           <div className="account-fields">
-            <label>NOME<input required maxLength={120} value={form.name} onChange={(event) => change("name", event.target.value)} /></label>
+            <label>NOME<input maxLength={120} value={form.name} onChange={(event) => change("name", event.target.value)} /></label>
             <label>E-MAIL<div className="account-locked-input"><input value={account.email} readOnly aria-readonly="true" /><Icon name="lock" size={16} /></div><small>Vinculado à sua conta Google</small></label>
             <label>WHATSAPP<input type="tel" maxLength={30} placeholder="+55 11 99999-9999" value={form.phone} onChange={(event) => change("phone", event.target.value)} /></label>
             {account.role === "criadora" && <label>CHAVE PIX<input maxLength={200} placeholder="CPF, e-mail, telefone ou chave aleatória" value={form.pix_key} onChange={(event) => change("pix_key", event.target.value)} /><small>Usada para receber seus pagamentos.</small></label>}
@@ -180,19 +230,22 @@ export default function AccountSettings({ account, initials }: { account: Accoun
             <label>TIKTOK<input maxLength={160} placeholder="@seuusuario" value={form.tiktok} onChange={(event) => change("tiktok", event.target.value)} /></label>
           </div>
 
-          {account.role === "criadora" && <section className="account-financial-goals" id="metas">
-            <header className="account-section-header"><div><p className="eyebrow">Metas Financeiras</p><h2>Defina suas metas de comissão</h2><p>Acompanhe seu progresso no dashboard conforme suas próprias metas.</p></div></header>
+          {profileError && <p className="form-error" role="alert">{profileError}</p>}
+          <footer className="account-form-actions"><LogoutButton /><button className="button button-primary" disabled={profileSaving} type="submit">{profileSaving ? "Salvando..." : "Salvar perfil"}</button></footer>
+        </form>
+
+        {account.role === "criadora" && <section className="card account-settings-section account-financial-goals" id="metas">
+          <header className="account-section-header"><div><p className="eyebrow">Metas Financeiras</p><h2>Defina suas metas de comissão</h2><p>Acompanhe seu progresso no dashboard conforme suas próprias metas.</p></div></header>
+          <form onSubmit={saveFinancialGoals}>
             <div className="account-goal-fields">
               <GoalField label="Meta diária" hint="Mínima" goalField="meta_diaria" bonusField="bonus_diario" form={form} change={change} />
               <GoalField label="Meta semanal" hint="Ideal" goalField="meta_semanal" bonusField="bonus_semanal" form={form} change={change} />
               <GoalField label="Meta mensal" hint="Ousada" goalField="meta_mensal" bonusField="bonus_mensal" form={form} change={change} />
             </div>
-          </section>}
-
-          {error && <p className="form-error" role="alert">{error}</p>}
-          {message && <p className="form-success" role="status"><Icon name="check" size={16} />{message}</p>}
-          <footer className="account-form-actions"><LogoutButton /><button className="button button-primary" disabled={saving} type="submit">{saving ? "Salvando..." : "Salvar alterações"}</button></footer>
-        </form>
+            {financialError && <p className="form-error" role="alert">{financialError}</p>}
+            <footer className="account-form-actions"><span /><button className="button button-primary" disabled={financialSaving} type="submit">{financialSaving ? "Salvando..." : "Salvar metas"}</button></footer>
+          </form>
+        </section>}
 
         {account.role === "admin" && <section className="card account-settings-section account-tax-section" id="impostos">
           <header className="account-section-header"><div><p className="eyebrow">Configuração financeira</p><h2>Configuração de Impostos</h2><p>Defina as alíquotas para cálculo automático dos custos.</p></div></header>

@@ -62,7 +62,7 @@ export async function getCurrentAccount(): Promise<CurrentAccount | null> {
     instagram: String(extendedAccount?.instagram ?? metadata.instagram ?? ""),
     youtube: String(extendedAccount?.youtube ?? metadata.youtube ?? ""),
     tiktok: String(extendedAccount?.tiktok ?? metadata.tiktok ?? ""),
-    pixKey: String(extendedAccount?.pix_key ?? ""),
+    pixKey: String(extendedAccount?.pix_key ?? metadata.pix_key ?? ""),
     metaDiaria: Number(extendedAccount?.meta_diaria ?? 0),
     metaSemanal: Number(extendedAccount?.meta_semanal ?? 0),
     metaMensal: Number(extendedAccount?.meta_mensal ?? 0),
