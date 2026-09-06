@@ -3761,6 +3761,9 @@ footer code {
   gap: 10px;
   margin: 24px 0 20px;
 }
+.dashboard-guide-cards {
+  display: contents;
+}
 .dashboard-tools .guide-card {
   min-height: 78px;
   padding: 14px 18px;
@@ -3800,8 +3803,21 @@ footer code {
     align-items: stretch;
     display: grid;
     gap: 10px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     margin: 16px 0;
+  }
+
+  .dashboard-tools .creator-pix-reminder {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .dashboard-guide-cards {
+    display: grid;
+    gap: 10px;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
   }
 
   .dashboard-tools .guide-card {

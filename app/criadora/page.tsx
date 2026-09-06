@@ -73,19 +73,21 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           <span className="new-video-copy"><strong>Cadastre sua chave PIX</strong><small>Configure para receber seus pagamentos</small></span>
           <Icon name="arrow" size={18} />
         </Link>}
-        <GuideCard
-          title="Aprenda como usar"
-          description="Veja em 2 minutos como acompanhar seus resultados."
-          action="Ver guia"
-          href="/criadora/academy"
-        />
-        <GuideCard
-          title="Produtos novos"
-          description="Veja os produtos recém aprovados para gravar."
-          action="Ver produtos novos"
-          href="/criadora/catalogo"
-          icon="cart"
-        />
+        <div className="dashboard-guide-cards">
+          <GuideCard
+            title="Aprenda como usar"
+            description="Veja em 2 minutos como acompanhar seus resultados."
+            action="Ver guia"
+            href="/criadora/academy"
+          />
+          <GuideCard
+            title="Produtos novos"
+            description="Veja os produtos recém aprovados para gravar."
+            action="Ver produtos novos"
+            href="/criadora/catalogo"
+            icon="cart"
+          />
+        </div>
         <Link href="/criadora/catalogo" className="new-video-card creator-new-video-card">
           <span className="new-video-icon"><Icon name="plus" size={21} /></span>
           <span className="new-video-copy">
