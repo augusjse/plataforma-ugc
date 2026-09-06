@@ -31,6 +31,7 @@ const paths: Record<string, string> = {
     "M4.2 7l1.7 1m12.2 8 1.7 1M3 12h2m14 0h2" +
     "M4.2 17l1.7-1m12.2-8 1.7-1",
   warning: "M12 3 2 21h20L12 3Zm0 6v5m0 3h.01",
+  lock: "M6 10V7a6 6 0 0 1 12 0v3M5 10h14v11H5V10Z",
   moon: "M20 15.5A8 8 0 0 1 8.5 4 8 8 0 1 0 20 15.5Z",
 };
 export default function Icon({ name, size = 20 }: Props) {

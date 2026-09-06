@@ -8,11 +8,17 @@ create table if not exists public.users (
   email text unique not null,
   name text,
   phone text,
+  instagram text,
+  youtube text,
+  tiktok text,
   role text not null default 'criadora' check (role in ('admin', 'criadora')),
   status text not null default 'active' check (status in ('active', 'inactive')),
   created_at timestamp not null default now(),
   updated_at timestamp not null default now()
 );
+alter table public.users add column if not exists instagram text;
+alter table public.users add column if not exists youtube text;
+alter table public.users add column if not exists tiktok text;
 create index if not exists idx_users_email on public.users(email);
 create index if not exists idx_users_role on public.users(role);
 

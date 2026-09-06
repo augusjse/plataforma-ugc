@@ -1,20 +1,11 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getCurrentAccount } from "@/lib/current-account";
 
 export default async function CriadoraLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const account = await getCurrentAccount();
 
-  if (!user?.email) redirect("/login");
-
-  const { data: account } = await supabaseAdmin
-    .from("users")
-    .select("role")
-    .eq("email", user.email)
-    .maybeSingle();
-
-  if (account?.role !== "criadora") redirect("/admin");
+  if (!account) redirect("/login");
+  if (account.role !== "criadora" && account.role !== "admin") redirect("/login");
 
   return children;
 }

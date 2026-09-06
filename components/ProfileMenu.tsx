@@ -8,33 +8,21 @@ import Icon from "./Icon";
 
 type Props = { admin: boolean; menu: string | null; setMenu: (menu: string | null) => void };
 
-export default function ProfileMenu({ menu, setMenu }: Props) {
+type Profile = { name: string; email: string; avatarUrl: string; canSwitchAccount: boolean };
+
+export default function ProfileMenu({ admin, menu, setMenu }: Props) {
   const profileRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [profile, setProfile] = useState({ name: "", email: "" });
+  const [profile, setProfile] = useState<Profile>({ name: "", email: "", avatarUrl: "", canSwitchAccount: false });
 
   useEffect(() => {
     let active = true;
 
     async function loadProfile() {
-      const supabase = createSupabaseBrowserClient();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-
-      if (!authUser?.email) return;
-
-      const authName = authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? "";
-      const { data: account } = await supabase
-        .from("users")
-        .select("name, email")
-        .eq("email", authUser.email)
-        .maybeSingle();
-
-      if (active) {
-        setProfile({
-          name: account?.name || authName,
-          email: account?.email || authUser.email,
-        });
-      }
+      const response = await fetch("/api/account");
+      if (!response.ok) return;
+      const body = (await response.json()) as { account?: Profile };
+      if (active && body.account) setProfile(body.account);
     }
 
     void loadProfile();
@@ -84,7 +72,7 @@ export default function ProfileMenu({ menu, setMenu }: Props) {
         onClick={() => setMenu(menu === "profile" ? null : "profile")}
         onMouseEnter={() => setMenu("profile")}
       >
-        {initials || "?"}
+        {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : initials || "?"}
       </button>
       {menu === "profile" && (
       <div
@@ -97,14 +85,14 @@ export default function ProfileMenu({ menu, setMenu }: Props) {
           <strong>{profile.name || "Carregando..."}</strong>
           <span>{profile.email}</span>
         </div>
-        <Link href="/">
+        <Link href={`/conta?visao=${admin ? "admin" : "criadora"}`}>
           <Icon name="settings" size={16} />
           Minha conta
         </Link>
-        <Link href="/">
+        {profile.canSwitchAccount && <Link href={admin ? "/criadora" : "/admin"}>
           <Icon name="users" size={16} />
           Trocar de conta
-        </Link>
+        </Link>}
         <hr />
         <button className="logout profile-logout" type="button" onClick={async () => { await createSupabaseBrowserClient().auth.signOut(); router.push("/login"); }}>
           <Icon name="arrow" size={16} />

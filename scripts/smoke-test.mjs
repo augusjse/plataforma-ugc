@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 const BASE_URL = (process.env.SMOKE_TEST_BASE_URL || "https://plataforma-ugc.vercel.app").replace(/\/$/, "");
 const REQUEST_TIMEOUT_MS = 15_000;
 const pages = [
-  "/criadora", "/criadora/catalogo", "/criadora/enviar", "/criadora/meus-videos",
+  "/conta", "/criadora", "/criadora/catalogo", "/criadora/enviar", "/criadora/meus-videos",
   "/criadora/ganhos", "/criadora/academy", "/admin", "/admin/aprovacoes",
   "/admin/trending", "/admin/config", "/admin/links", "/admin/usuarios", "/admin/criadoras",
 ];
