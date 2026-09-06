@@ -164,20 +164,24 @@ export async function getPendingModerationVideos(): Promise<ModerationVideo[]> {
       .eq("moderation_status", "pendente").order("created_at", { ascending: false });
     if (error) return [];
     const videos = rows ?? [];
-    const creatorIds = [...new Set(videos.map((row) => String(row.creator_id)))];
+    const creatorIds = [...new Set(videos.map((row) => String(row.creator_id ?? "").trim()).filter(Boolean))];
     const productIds = [...new Set(videos.map((row) => String(row.product_id)))];
+    // videos_ugc.creator_id is text for backwards compatibility, while users.id
+    // is uuid. Invalid legacy/text IDs must not poison the whole `in` query.
+    const uuidCreatorIds = creatorIds.filter((id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id));
     const [{ data: creators }, { data: products }, { data: trending }] = await Promise.all([
-      supabaseAdmin.from("users").select("id,name,email").in("id", creatorIds),
+      uuidCreatorIds.length ? supabaseAdmin.from("users").select("id,name,email").in("id", uuidCreatorIds) : Promise.resolve({ data: [] }),
       supabaseAdmin.from("catalog_products").select("*").in("id", productIds),
       supabaseAdmin.from("trending_products_ugc").select("id,name,image").in("id", productIds),
     ]);
-    const creatorMap = new Map((creators ?? []).map((row) => [String(row.id), String(row.name ?? row.email ?? "Criadora")]));
+    const creatorMap = new Map((creators ?? []).map((row) => [String(row.id).trim().toLowerCase(), String(row.name ?? row.email ?? "Criadora")]));
     const productMap = new Map<string, { name: string; image: string }>();
     for (const row of products ?? []) productMap.set(String(row.id), { name: String(row.name ?? "Produto"), image: String(row.image_url ?? row.image ?? "") });
     for (const row of trending ?? []) productMap.set(String(row.id), { name: String(row.name ?? "Produto"), image: String(row.image ?? "") });
     return videos.map((row) => {
       const product = productMap.get(String(row.product_id)) ?? { name: "Produto", image: "" };
-      return { id: String(row.id), creatorId: String(row.creator_id), creatorName: creatorMap.get(String(row.creator_id)) ?? `Criadora ${String(row.creator_id).slice(0, 8)}`, productId: String(row.product_id), productName: product.name, productImage: product.image, videoUrl: String(row.video_url), affiliateLink: String(row.affiliate_link_bruto), moderationStatus: String(row.moderation_status) as ModerationVideo["moderationStatus"] };
+      const creatorId = String(row.creator_id ?? "").trim();
+      return { id: String(row.id), creatorId, creatorName: creatorMap.get(creatorId.toLowerCase()) ?? `Criadora ${creatorId.slice(0, 8)}`, productId: String(row.product_id), productName: product.name, productImage: product.image, videoUrl: String(row.video_url), affiliateLink: String(row.affiliate_link_bruto), moderationStatus: String(row.moderation_status) as ModerationVideo["moderationStatus"] };
     });
   } catch { return []; }
 }

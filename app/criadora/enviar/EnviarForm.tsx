@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_SOURCE_VIDEO_BYTES = 500 * 1024 * 1024;
 const MAX_UPLOAD_VIDEO_BYTES = 45 * 1024 * 1024;
+const MIN_COMPRESSED_VIDEO_BYTES = 10 * 1024;
 const BUCKET = "videos-ugc";
 
 async function compressVideo(file: File): Promise<File> {
@@ -17,14 +18,19 @@ async function compressVideo(file: File): Promise<File> {
   const inputName = "input-video";
   const outputName = "compressed-video.mp4";
   try {
-    await ffmpeg.writeFile(inputName, await fetchFile(file));
+    const input = await fetchFile(file);
+    if (input.byteLength === 0) throw new Error("O arquivo de vídeo selecionado está vazio.");
+    await ffmpeg.writeFile(inputName, input);
     for (const crf of [28, 32]) {
-      await ffmpeg.exec(["-i", inputName, "-vf", "scale=-2:min(720,ih)", "-c:v", "libx264", "-preset", "fast", "-crf", String(crf), "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-threads", "1", "-y", outputName]);
+      const exitCode = await ffmpeg.exec(["-i", inputName, "-vf", "scale=-2:min(720,ih)", "-c:v", "libx264", "-preset", "fast", "-crf", String(crf), "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-threads", "1", "-y", outputName]);
+      if (exitCode !== 0) throw new Error("A compactação do vídeo falhou.");
       const output = await ffmpeg.readFile(outputName);
       if (typeof output === "string") throw new Error("A compactação não retornou um arquivo válido.");
-      const outputBuffer = new ArrayBuffer(output.byteLength);
-      new Uint8Array(outputBuffer).set(output);
-      const compressed = new File([outputBuffer], file.name.replace(/\.[^.]+$/, "") + "-compactado.mp4", { type: "video/mp4" });
+      if (output.byteLength < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
+      // Keep the exact bytes returned by ffmpeg. Verifying the reconstructed File
+      // prevents an empty Blob from reaching Storage if the browser conversion fails.
+      const compressed = new File([output.slice()], file.name.replace(/\.[^.]+$/, "") + "-compactado.mp4", { type: "video/mp4" });
+      if (compressed.size < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("Compactação falhou, arquivo resultante está vazio ou corrompido.");
       await ffmpeg.deleteFile(outputName);
       if (compressed.size <= MAX_UPLOAD_VIDEO_BYTES) return compressed;
     }
@@ -60,6 +66,7 @@ export default function EnviarForm({ product, creatorId }: { product: DashboardP
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setMessage("");
     if (!videoFile) { setMessage("Escolha um arquivo de vídeo para enviar."); return; }
+    if (videoFile.size < MIN_COMPRESSED_VIDEO_BYTES) { setMessage("O arquivo de vídeo está vazio ou corrompido. Selecione outro vídeo."); return; }
     if (videoFile.size > MAX_UPLOAD_VIDEO_BYTES) { setMessage("O vídeo precisa ter no máximo 45 MB após a compactação."); return; }
     if (!product?.id || !product.shopeeLink) { setMessage("Este produto ainda não tem um link Shopee configurado."); return; }
     setLoading(true);
@@ -69,7 +76,9 @@ export default function EnviarForm({ product, creatorId }: { product: DashboardP
       if (!user) throw new Error("Sua sessão expirou. Entre novamente para enviar o vídeo.");
       const safeName = videoFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "video.mp4";
       const path = `${user.id}/${crypto.randomUUID()}-${safeName}`;
-      const { error: uploadError } = await supabaseBrowser.storage.from(BUCKET).upload(path, videoFile, { contentType: videoFile.type, upsert: false });
+      const uploadBytes = await videoFile.arrayBuffer();
+      if (uploadBytes.byteLength < MIN_COMPRESSED_VIDEO_BYTES) throw new Error("O arquivo de vídeo está vazio ou corrompido. Selecione outro vídeo.");
+      const { error: uploadError } = await supabaseBrowser.storage.from(BUCKET).upload(path, new Blob([uploadBytes], { type: "video/mp4" }), { contentType: "video/mp4", upsert: false });
       if (uploadError) throw new Error(uploadError.message || "Não foi possível fazer o upload do vídeo.");
       const { data: publicUrlData } = supabaseBrowser.storage.from(BUCKET).getPublicUrl(path);
       const response = await fetch("/api/videos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ creator_id: creatorId, product_id: product.id, product_link_base: product.shopeeLink, video_url: publicUrlData.publicUrl }) });
