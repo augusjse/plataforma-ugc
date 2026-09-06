@@ -22,6 +22,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
   const faltaSaque = Math.max(0, saqueMinimo - saldoDisponivel);
   const progressoSaque = saqueMinimo > 0 ? Math.min(100, Math.round(saldoDisponivel / saqueMinimo * 100)) : 100;
   const disponivelParaSaque = saldoDisponivel >= saqueMinimo;
+  const temProgressoSaque = saldoDisponivel >= saqueMinimo * 0.1;
   const saldoFormatado = saldoDisponivel.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
   const nextProduct =
     products.find((product) => product.videoCount === 0) ?? products[0];
@@ -32,8 +33,8 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         <div className="creator-top-left">
           <div className="notice-period-row">
             <NoticeBar
-              title="Seu próximo pagamento está quase lá"
-              description={disponivelParaSaque ? "Seu saldo já atingiu o mínimo para saque." : `Continue criando: faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para completar o próximo ciclo.`}
+              title={temProgressoSaque ? "Seu próximo pagamento está quase lá" : "Comece a gravar para ganhar"}
+              description={temProgressoSaque ? (disponivelParaSaque ? "Seu saldo já atingiu o mínimo para saque." : `Continue criando: faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para completar o próximo ciclo.`) : "Envie seu primeiro vídeo e comece a receber comissões."}
               action="Ver ganhos"
             />
             <div className="mobile-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} compact /></div>

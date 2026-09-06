@@ -747,12 +747,12 @@
   display: flex;
   justify-content: space-between;
   margin-top: 18px;
-  min-height: 218px;
+  min-height: 270px;
   overflow: hidden;
   padding: 30px 34px;
   position: relative;
 }
-.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.referral-slide { align-items: center; display: flex; inset: 0; justify-content: space-between; min-height: 270px; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
 .referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
 .referral-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
@@ -1440,6 +1440,11 @@
   padding: 18px 20px;
   position: relative;
 }
+.promo-slide { align-items: flex-end; display: flex; inset: 0; opacity: 0; padding: 22px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.promo-slide::before { background: linear-gradient(180deg, rgba(20, 15, 13, .16), rgba(20, 15, 13, .84)), var(--promo-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); }
+.promo-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
+.promo-slide.is-active::before { animation: referral-ken-burns 5.6s linear forwards; }
+.promo-slide > * { position: relative; }
 .withdraw-copy {
   display: grid;
   gap: 4px;
@@ -3130,6 +3135,7 @@ footer code {
 }
 .promo-content strong {
   font: 800 19px/1.15 var(--font-sans);
+  color: #fff;
   text-shadow: 0 2px 8px var(--surface-inverse);
 }
 .promo-subtitle {
@@ -3158,6 +3164,9 @@ footer code {
     transform 180ms ease,
     box-shadow 180ms ease;
 }
+.promo-indicators { bottom: 12px; display: flex; gap: 6px; left: 22px; position: absolute; z-index: 3; }
+.promo-indicators button { background: rgba(255,255,255,.42); border: 0; border-radius: 50%; cursor: pointer; height: 6px; padding: 0; width: 6px; }
+.promo-indicators button.is-active { background: var(--brand); transform: scale(1.35); }
 .promo-button::after {
   animation: button-shine 3s ease-in-out infinite;
   background: var(--overlay-border);
@@ -3227,11 +3236,11 @@ footer code {
   background: var(--chart-grid);
   border-radius: 50%;
   display: grid;
-  height: 132px;
+  height: 144px;
   margin: 8px auto;
   place-items: center;
   position: relative;
-  width: 132px;
+  width: 144px;
 }
 .radial::after {
   background: var(--surface-inverse);
@@ -3241,7 +3250,7 @@ footer code {
   position: absolute;
 }
 .radial b {
-  font: 700 29px var(--font-sans);
+  font: 700 27px var(--font-sans);
   position: relative;
   z-index: 1;
 }
@@ -3721,8 +3730,8 @@ footer code {
   }
 
   .creator-dashboard .radial {
-    height: 112px;
-    width: 112px;
+    height: 124px;
+    width: 124px;
   }
 
   .creator-dashboard .video-list {
@@ -3907,6 +3916,18 @@ footer code {
 .creator-revenue-summary .section-title {
   margin-top: 0 !important;
   padding-top: 0;
+}
+.finance-card > .section-title { border-top: 0; margin-top: 0 !important; }
+.admin-rankings-grid { display: grid; gap: 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-rankings-grid .ranking-card { min-width: 0; }
+.admin-notice-period-row > .notice-bar { align-items: center; flex-direction: row; }
+@media (max-width: 767px) {
+  .admin-dashboard .dashboard-tools .guide-card { min-height: 0; padding: 10px; }
+  .admin-dashboard .dashboard-tools .guide-copy { min-width: 0; }
+  .admin-dashboard .dashboard-tools .guide-copy strong { font-size: 14px; line-height: 1.2; white-space: normal; }
+  .admin-dashboard .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+  .admin-rankings-grid { grid-template-columns: 1fr; }
+  .admin-notice-period-row > .notice-bar { flex-direction: row; }
 }
 
 @media (max-width: 767px) {

@@ -14,7 +14,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
   const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
-  const [{ sales, videos, creators }, pendingVideosCount] = await Promise.all([
+  const [{ sales, videos, creators, products }, pendingVideosCount] = await Promise.all([
     getAdminDashboard(customRange ?? periodDays),
     getPendingVideosCount(),
   ]);
@@ -39,8 +39,21 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     })
     .sort((a, b) => b.totalRevenue - a.totalRevenue)
     .slice(0, 10);
+  const productNames = new Map(products.map((product) => [product.id, product.name]));
+  const top10Products = [...sales.reduce((totals, sale) => {
+    const video = videos.find((item) => item.id === sale.videoId);
+    const productId = video?.productId;
+    if (!productId) return totals;
+    const current = totals.get(productId) ?? { id: productId, name: productNames.get(productId) ?? "Produto sem nome", totalRevenue: 0 };
+    current.totalRevenue += sale.revenue;
+    totals.set(productId, current);
+    return totals;
+  }, new Map<string, { id: string; name: string; totalRevenue: number }>()).values()]
+    .sort((a, b) => b.totalRevenue - a.totalRevenue)
+    .slice(0, 10);
   return (
     <Shell admin>
+      <div className="admin-dashboard">
       <div className="page-head overview-head">
         <div>
           <p className="eyebrow">Painel do negócio</p>
@@ -75,7 +88,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <p>Dados reais das vendas registradas</p>
             <span className="hero-tag">Sem dados mockados</span>
           </div>
-          <div className="stats-grid">
+            <div className="stats-grid admin-stats-grid">
             <StatCard label="Criadoras" value={String(creators.length)} icon="users" />
             <StatCard
               label="Vendas"
@@ -149,26 +162,28 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         </strong>
         <span>Comissão Shopee menos repasses e anúncios.</span>
       </div>
-      <div className="ranking-card">
-        <SectionTitle
-          icon="chart"
-          action={
-            <button className="button button-light">Melhores criadoras⌄</button>
-          }
-        >
-          Top 10
-        </SectionTitle>
-        {top10Creators.map((creator, index) => (
-          <div className="ranking-row" key={creator.id}>
-            <b>{String(index + 1).padStart(2, "0")}</b>
-            <span>{creator.name || "Criadora sem nome"}</span>
-            <strong>
-              <MoneyValue value={`R$ ${creator.totalRevenue.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}`} />
-            </strong>
-          </div>
-        ))}
+      <div className="admin-rankings-grid">
+        <div className="ranking-card">
+          <SectionTitle icon="chart">Top 10 Criadoras</SectionTitle>
+          {top10Creators.map((creator, index) => (
+            <div className="ranking-row" key={creator.id}>
+              <b>{String(index + 1).padStart(2, "0")}</b>
+              <span>{creator.name || "Criadora sem nome"}</span>
+              <strong><MoneyValue value={`R$ ${creator.totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} /></strong>
+            </div>
+          ))}
+        </div>
+        <div className="ranking-card">
+          <SectionTitle icon="cart">Top 10 Produtos</SectionTitle>
+          {top10Products.map((product, index) => (
+            <div className="ranking-row" key={product.id}>
+              <b>{String(index + 1).padStart(2, "0")}</b>
+              <span>{product.name}</span>
+              <strong><MoneyValue value={`R$ ${product.totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} /></strong>
+            </div>
+          ))}
+        </div>
+      </div>
       </div>
     </Shell>
   );
