@@ -1,8 +1,9 @@
 import Icon from "./Icon";
+import type { ReactNode } from "react";
 
-type Props = { title: string; description: string; action: string };
+type Props = { title: string; description: string; action: string; children?: ReactNode };
 
-export default function NoticeBar({ title, description, action }: Props) {
+export default function NoticeBar({ title, description, action, children }: Props) {
   return (
     <div className="notice-bar">
       <div className="notice-icon">
@@ -12,7 +13,10 @@ export default function NoticeBar({ title, description, action }: Props) {
         <strong>{title}</strong>
         <span>{description}</span>
       </div>
-      <button className="button button-light">{action} →</button>
+      <div className="notice-actions">
+        <button className="button button-light">{action} →</button>
+        {children}
+      </div>
     </div>
   );
 }

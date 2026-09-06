@@ -36,8 +36,9 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
               title={temProgressoSaque ? "Seu próximo pagamento está quase lá" : "Comece a gravar para ganhar"}
               description={temProgressoSaque ? (disponivelParaSaque ? "Seu saldo já atingiu o mínimo para saque." : `Continue criando: faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para completar o próximo ciclo.`) : "Envie seu primeiro vídeo e comece a receber comissões."}
               action="Ver ganhos"
-            />
-            <div className="mobile-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} compact /></div>
+            >
+              <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
+            </NoticeBar>
           </div>
           <div className="creator-hero">
             <div>
@@ -82,7 +83,6 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           </span>
           <Icon name="arrow" size={18} />
         </Link>
-        <div className="desktop-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
       </div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>
       <div className="withdraw-card">
