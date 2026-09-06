@@ -4213,6 +4213,13 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
   font-weight: 700;
 }
 
+/* Keep the balance CTA compact and aligned with the card content. */
+.creator-hero > .button,
+.hero > .button {
+  align-self: flex-start;
+  width: auto;
+}
+
 /* Carousel slides must occupy the same box as the min-height-bearing card. */
 .promo-slide {
   box-sizing: border-box;
