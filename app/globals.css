@@ -2540,83 +2540,6 @@ footer {
 footer code {
   font-size: 10px;
 }
-.login-page {
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  min-height: 100vh;
-}
-.login-photo {
-  background:
-    linear-gradient(180deg, transparent, var(--login-overlay)),
-    url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=85")
-      center/cover;
-  position: relative;
-}
-.login-copy {
-  bottom: 11%;
-  color: var(--text-on-inverse);
-  left: 11%;
-  position: absolute;
-}
-.login-copy p {
-  font: 600 54px/1.02 var(--font-sans);
-  letter-spacing: -0.06em;
-  margin: 22px 0;
-}
-.login-copy p b {
-  color: var(--brand-light);
-}
-.login-copy small {
-  color: var(--login-copy);
-  font-size: 14px;
-}
-.login-side {
-  align-items: center;
-  background: #ffffff;
-  color: #1a1a1a;
-  display: grid;
-  justify-items: center;
-  padding: 30px;
-}
-.login-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 24px;
-  color: #1a1a1a;
-  max-width: 410px;
-  padding: 42px;
-}
-.login-card h1 {
-  color: #1a1a1a;
-  font: 600 35px/1.05 var(--font-sans);
-  letter-spacing: -0.05em;
-  margin: 30px 0 15px;
-}
-.login-card h1 em {
-  color: var(--brand);
-  font-style: normal;
-}
-.login-card p {
-  color: rgba(255,255,255,.8);
-  font-size: 14px;
-  line-height: 1.6;
-}
-.login-card .button-primary {
-  background: var(--surface);
-  color: var(--brand-deep);
-}
-.login-card .button-ghost {
-  background: transparent;
-  border-color: var(--overlay-border);
-  color: var(--text-on-inverse);
-}
-.login-card small {
-  color: rgba(255,255,255,.7);
-  display: block;
-  font-size: 10px;
-  margin-top: 22px;
-  text-align: center;
-}
 .oauth-login { align-items: center; background: #fffaf7; display: grid; min-height: 100vh; justify-items: center; padding: 24px; }
 .oauth-login-card { background: var(--surface); border: 1px solid var(--border-card); border-radius: 24px; box-shadow: 0 18px 50px rgba(91, 45, 25, .1); max-width: 430px; padding: 42px; width: 100%; }
 .oauth-logo { align-items: center; color: var(--text-main); display: flex; font-size: 17px; font-weight: 500; gap: 10px; margin-bottom: 62px; }
@@ -2715,18 +2638,6 @@ footer code {
   }
   .login-page {
     grid-template-columns: 1fr;
-  }
-  .login-photo {
-    display: none;
-  }
-  .login-side {
-    min-height: 100vh;
-  }
-  .login-card {
-    padding: 30px 24px;
-  }
-  .login-card h1 {
-    font-size: 31px;
   }
 }
 
@@ -4060,8 +3971,6 @@ footer code {
 [data-theme="dark"] .auth-card h1 { color: var(--text-main); }
 [data-theme="dark"] .login-intro h1 { color: #1a1a1a; }
 [data-theme="dark"] .login-intro > p:last-child { background: #ff6b26; color: #ffffff; }
-[data-theme="dark"] .login-terms { color: rgba(255, 255, 255, 0.6); }
-[data-theme="dark"] .login-terms a { color: #ff6b26; }
 [data-theme="dark"] .auth-description { color: var(--text-muted); }
 [data-theme="dark"] .auth-form label { color: var(--text-muted); }
 [data-theme="dark"] .auth-form input, [data-theme="dark"] .auth-form select { background: var(--surface-muted); border-color: var(--divider); color: var(--text-main); }
