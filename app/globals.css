@@ -1331,6 +1331,7 @@
   transform: translateY(-2px);
 }
 .new-video-card > svg { color: var(--brand); margin-left: auto; }
+.creator-new-video-card { margin-top: 24px; }
 .new-video-icon {
   align-items: center;
   background: var(--brand-light);
