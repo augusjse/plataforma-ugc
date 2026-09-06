@@ -1310,6 +1310,7 @@
   box-shadow: var(--shadow-hero);
   color: var(--text-on-inverse);
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   padding: 30px 32px;
 }
@@ -4218,6 +4219,26 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
 .hero > .button {
   align-self: flex-start;
   width: auto;
+}
+
+/* Keep the creator balance content and its compact CTA on one desktop row. */
+@media (min-width: 801px) {
+  .creator-hero {
+    align-items: center;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: space-between;
+  }
+
+  .creator-hero > div:first-child {
+    min-width: 0;
+  }
+
+  .creator-hero > .button {
+    align-self: center;
+    flex: 0 0 auto;
+    width: auto;
+  }
 }
 
 /* Carousel slides must occupy the same box as the min-height-bearing card. */
