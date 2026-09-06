@@ -83,6 +83,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           title="Aprenda como usar"
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
+          href="/admin/ajuda"
         />
       </div>
       <div className="overview-top">

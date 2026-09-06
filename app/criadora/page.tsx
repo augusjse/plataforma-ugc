@@ -77,6 +77,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           title="Aprenda como usar"
           description="Veja em 2 minutos como acompanhar seus resultados."
           action="Ver guia"
+          href="/criadora/academy"
         />
         <GuideCard
           title="Produtos novos"
