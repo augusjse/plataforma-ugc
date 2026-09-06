@@ -8,7 +8,7 @@ export default function NoticeBar({ title, description, action }: Props) {
       <div className="notice-icon">
         <Icon name="bell" size={18} />
       </div>
-      <div>
+      <div className="notice-copy">
         <strong>{title}</strong>
         <span>{description}</span>
       </div>

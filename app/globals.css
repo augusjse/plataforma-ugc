@@ -4231,3 +4231,69 @@ h3, .suggestion-product h3, .chart-head h3 { font: var(--text-h3); }
   font-size: 13px;
   font-weight: 700;
 }
+
+/* Carousel slides must occupy the same box as the min-height-bearing card. */
+.promo-slide {
+  box-sizing: border-box;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-end;
+  min-height: 100%;
+  width: 100%;
+}
+.promo-slide .promo-content {
+  flex: 0 0 auto;
+}
+.notice-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Final admin mobile overrides (must follow the legacy responsive blocks above). */
+@media (max-width: 767px) {
+  .admin-dashboard .admin-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-dashboard .dashboard-tools .guide-card {
+    flex: 0 0 auto;
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .admin-dashboard .dashboard-tools .guide-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .admin-dashboard .dashboard-tools .guide-copy strong {
+    font-size: 14px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .admin-notice-period-row > .notice-bar {
+    align-items: start;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    row-gap: 8px;
+  }
+
+  .admin-notice-period-row > .notice-bar .notice-icon {
+    height: 30px;
+    width: 30px;
+  }
+
+  .admin-notice-period-row > .notice-bar .notice-copy {
+    min-width: 0;
+  }
+
+  .admin-notice-period-row > .notice-bar .button-light {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 30px;
+    padding: 6px 10px;
+  }
+}
