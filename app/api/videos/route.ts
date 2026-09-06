@@ -2,7 +2,8 @@ import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase";
 
-const fail = (error: string, status: number) => NextResponse.json({ success: false, error }, { status });
+const ATTEMPT_LIMIT = 4;
+const fail = (error: string, status: number, details: Record<string, unknown> = {}) => NextResponse.json({ success: false, error, ...details }, { status });
 function isUrl(value: unknown) { try { const u = new URL(String(value)); return u.protocol === "http:" || u.protocol === "https:"; } catch { return false; } }
 
 export async function GET(request: NextRequest) {
@@ -47,6 +48,21 @@ export async function POST(request: NextRequest) {
   const videoUrl = String(body.video_url ?? "").trim();
   if (!creatorId || !productId || !isUrl(videoUrl)) return fail("criadora_id, product_id e video_url são obrigatórios", 400);
   if (!isUrl(productLinkBase) && !isUrl(affiliateOverride)) return fail("Informe product_link_base (link do produto na Shopee) ou affiliate_link_bruto", 400);
+
+  // Count every submission, irrespective of its moderation status. This must
+  // remain server-side because the client check can be bypassed or become stale.
+  const { count: attemptCount, error: attemptCountError } = await supabaseAdmin
+    .from("videos_ugc")
+    .select("id", { count: "exact", head: true })
+    .eq("creator_id", creatorId)
+    .eq("product_id", productId);
+  if (attemptCountError) return fail(attemptCountError.message, 500);
+  if ((attemptCount ?? 0) >= ATTEMPT_LIMIT) {
+    return fail("Limite de tentativas atingido para este produto", 409, {
+      attempt_count: attemptCount,
+      attempt_limit: ATTEMPT_LIMIT,
+    });
+  }
 
   const videoId = crypto.randomUUID();
   const affiliate = isUrl(productLinkBase)

@@ -18,8 +18,18 @@ export default async function Enviar({ searchParams }: EnviarProps) {
     }
   }
   const account = await currentAccount();
+  const creatorId = account?.id ?? "demo-creator";
+  let attemptCount = 0;
+  if (product?.id) {
+    const { count } = await supabaseAdmin
+      .from("videos_ugc")
+      .select("id", { count: "exact", head: true })
+      .eq("creator_id", creatorId)
+      .eq("product_id", product.id);
+    attemptCount = count ?? 0;
+  }
   const commissionPerSale = product?.creatorCommissionValue ?? 0;
   const salesScenarios = [2, 5, 20];
   const formatCurrency = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  return <Shell><div className="page-head"><div><p className="eyebrow">Novo conteúdo</p><h1>Envie seu vídeo</h1><p>Mostre o produto do seu jeito. O vídeo passa por uma análise rápida.</p></div></div><div className="card"><div className="rule-callout">Você ganha uma parte da comissão gerada pelas vendas do seu vídeo durante 30 dias, a contar da primeira venda.</div><SectionTitle icon="cart">Produto escolhido</SectionTitle><div className="selected-product">{product ? <img src={product.image} alt="" /> : <div />}<div><strong>{product?.name ?? "Nenhum produto disponível"}</strong><span>Você ganha R$ {commissionPerSale.toFixed(2).replace(".", ",")} por venda</span><div className="sales-projection"><small>Veja o quanto você pode ganhar:</small><div className="sales-projection-chips">{salesScenarios.map((sales) => <span className="sales-projection-chip" key={sales}><small>{sales} vendas</small><strong>{formatCurrency(commissionPerSale * sales)}</strong></span>)}</div></div></div></div><EnviarForm product={product ?? null} creatorId={account?.id ?? "demo-creator"} /></div></Shell>;
+  return <Shell><div className="page-head"><div><p className="eyebrow">Novo conteúdo</p><h1>Envie seu vídeo</h1><p>Mostre o produto do seu jeito. O vídeo passa por uma análise rápida.</p></div></div><div className="card"><div className="rule-callout">Você ganha uma parte da comissão gerada pelas vendas do seu vídeo durante 30 dias, a contar da primeira venda.</div><SectionTitle icon="cart">Produto escolhido</SectionTitle><div className="selected-product">{product ? <img src={product.image} alt="" /> : <div />}<div><strong>{product?.name ?? "Nenhum produto disponível"}</strong><span>Você ganha R$ {commissionPerSale.toFixed(2).replace(".", ",")} por venda</span><div className="sales-projection"><small>Veja o quanto você pode ganhar:</small><div className="sales-projection-chips">{salesScenarios.map((sales) => <span className="sales-projection-chip" key={sales}><small>{sales} vendas</small><strong>{formatCurrency(commissionPerSale * sales)}</strong></span>)}</div></div></div></div><EnviarForm product={product ?? null} creatorId={creatorId} initialAttemptCount={attemptCount} /></div></Shell>;
 }

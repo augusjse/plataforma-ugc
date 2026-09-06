@@ -11,6 +11,7 @@ export async function GET() {
 
   return NextResponse.json({
     account: {
+      id: account.id,
       name: account.name,
       email: account.email,
       avatarUrl: account.avatarUrl,
