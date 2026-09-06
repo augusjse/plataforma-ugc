@@ -2493,7 +2493,7 @@ button {
 .upload-progress-bar { background: var(--brand-light); border-radius: 999px; height: 7px; overflow: hidden; position: relative; }
 .upload-progress-bar::after { animation: upload-progress 1.5s ease-in-out infinite; background: var(--brand); border-radius: inherit; content: ""; height: 100%; left: 0; position: absolute; width: 35%; }
 @keyframes upload-progress { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
-.approval-video { aspect-ratio: 9 / 16; background: #111; border-radius: 10px; display: block; max-height: 460px; max-width: 260px; object-fit: contain; width: min(100%, 260px); }
+.approval-video { aspect-ratio: 9 / 16; background: #111; border-radius: 10px; display: block; height: 400px; max-width: 220px; width: 100%; }
 .form-label { color: var(--text-muted); font-size: 12px; font-weight: 700; }
 .text-input { background: var(--surface); border: 1px solid var(--border-card); border-radius: 10px; color: var(--text-main); font: inherit; min-height: 48px; padding: 0 13px; width: 100%; }
 .text-input:focus { border-color: var(--brand); outline: 2px solid rgba(255,107,38,.15); }
