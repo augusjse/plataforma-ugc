@@ -736,7 +736,7 @@
   padding: 30px 34px;
   position: relative;
 }
-.referral-slide { align-items: center; box-sizing: border-box; display: flex; height: 100%; inset: 0; justify-content: space-between; min-height: 100%; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
+.referral-slide { align-items: center; box-sizing: border-box; display: flex; inset: 0; justify-content: space-between; opacity: 0; padding: 30px 34px; pointer-events: none; position: absolute; transition: opacity .8s ease; }
 .referral-slide::before { background: linear-gradient(115deg, rgba(20, 15, 13, .72), rgba(20, 15, 13, .52)), var(--referral-image) center/cover; content: ""; inset: 0; position: absolute; transform: scale(1); transform-origin: center; }
 .referral-slide-image { height: 100%; inset: 0; object-fit: cover; opacity: 0; pointer-events: none; position: absolute; width: 100%; }
 .referral-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; }
@@ -1315,7 +1315,7 @@
   padding: 30px 32px;
 }
 .creator-top-layout {
-  align-items: stretch;
+  align-items: start;
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr);
@@ -1336,8 +1336,9 @@
 }
 .creator-top-right .referral-banner {
   flex: 0 0 auto;
+  height: 460px;
   margin-top: 0;
-  min-height: 320px;
+  min-height: 0;
 }
 .new-video-card {
   align-items: center;
@@ -3089,10 +3090,10 @@ footer code {
   position: relative;
 }
 
-/* Admin overview: the promo occupies the same two grid rows as the revenue
-   hero and stat cards, without introducing an independent desktop height. */
+/* Admin overview: explicit heights keep absolutely positioned carousel slides
+   from affecting CSS Grid track sizing. */
 .overview-top {
-  align-items: stretch;
+  align-items: start;
   display: grid;
   gap: 36px;
   grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
@@ -3104,13 +3105,14 @@ footer code {
   min-width: 0;
 }
 .overview-top > .promo-card {
-  align-self: stretch;
-  grid-row: span 2;
-  min-height: 320px;
+  height: 460px;
 }
 
 @media (min-width: 768px) and (max-width: 1100px) {
   .overview-top { gap: 20px; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr); }
+  .overview-top > .promo-card { height: 400px; }
+  .creator-top-layout { align-items: start; }
+  .creator-top-right .referral-banner { height: 400px; min-height: 0; }
   .creator-top-layout { gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); }
   .creator-revenue-layout { grid-template-columns: minmax(0, 1.4fr) minmax(250px, 1fr); }
   .dashboard-tools { flex-wrap: wrap; }
@@ -3119,7 +3121,9 @@ footer code {
 
 @media (max-width: 767px) {
   .overview-top { gap: 16px; grid-template-columns: 1fr; }
-  .overview-top > .promo-card { grid-row: auto; height: auto; min-height: 280px; }
+  .overview-top > .promo-card { height: 320px; min-height: 0; }
+  .creator-top-layout { align-items: start; }
+  .creator-top-right .referral-banner { height: 300px; min-height: 0; }
 }
 .promo-card::before {
   background: transparent;
