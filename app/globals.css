@@ -83,15 +83,17 @@
 
 /* Studio UGC authentication */
 .login-page { background: #ffffff; display: grid; grid-template-columns: 60% 40%; min-height: 100svh; }
-.login-hero { background: url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=85") center/cover; color: #fff; min-height: 100svh; position: relative; overflow: hidden; }
-.login-hero::after { background: radial-gradient(circle, rgba(255,107,38,.75) 0 2px, transparent 3px) 0 0/28px 28px; content: ""; inset: 0; opacity: .18; pointer-events: none; position: absolute; }
+.login-hero { background: url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=85") center/cover; color: #fff; min-height: 100svh; overflow: hidden; position: relative; }
+.login-hero::before { background: linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.4) 50%, transparent 100%); content: ""; inset: 0; pointer-events: none; position: absolute; z-index: 0; }
+.login-hero::after { background: radial-gradient(circle, rgba(255,107,38,.8) 0 1px, transparent 1.5px) 0 0/4px 4px; content: ""; inset: 0; opacity: .18; pointer-events: none; position: absolute; z-index: 0; }
 .login-hero-content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; padding: clamp(28px, 5vw, 72px); position: relative; z-index: 1; }
 .brand { align-items: center; display: flex; font-size: 18px; gap: 10px; letter-spacing: -.03em; }
 .brand b { font-weight: 800; }
 .brand-on-dark { color: #fff; }
 .brand-on-light { color: #1a1a1a; }
 .brand-mark { align-items: center; background: var(--brand); border-radius: 11px; color: #fff; display: inline-flex; font-size: 20px; font-weight: 900; height: 38px; justify-content: center; width: 38px; }
-.login-hero-copy { max-width: 530px; padding-bottom: 5vh; }
+.login-hero-copy { max-width: 530px; padding-bottom: clamp(48px, 8vh, 96px); }
+.login-hero-accent { background: #ff6b26; border-radius: 999px; box-shadow: 0 0 15px rgba(255,107,38,.6); display: block; height: 6px; margin-bottom: 32px; width: 96px; }
 .login-kicker { color: var(--brand); font-size: 10px; font-weight: 800; letter-spacing: .16em; margin: 0 0 18px; }
 .login-intro .login-kicker { color: #ff6b26; }
 .login-hero .login-kicker { color: #ffb08a; }

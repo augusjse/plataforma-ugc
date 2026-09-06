@@ -19,7 +19,7 @@ export default function LoginPage() {
   return <main className="login-page">
     <section className="login-hero" aria-label="Sobre o Studio UGC"><div className="login-hero-content">
       <div className="brand brand-on-dark"><span className="brand-mark">S</span><span>Studio <b>UGC</b></span></div>
-      <div className="login-hero-copy"><p className="login-kicker">PARA QUEM CRIA COM VERDADE</p><h2>Conteúdo real.<br /><em>Resultados reais.</em></h2><p>Conectamos criadoras a produtos que merecem ser descobertos.</p></div>
+      <div className="login-hero-copy"><span className="login-hero-accent" aria-hidden="true" /><p className="login-kicker">PARA QUEM CRIA COM VERDADE</p><h2>Conteúdo real.<br /><em>Resultados reais.</em></h2><p>Conectamos criadoras a produtos que merecem ser descobertos.</p></div>
       <span className="login-hero-dot" aria-hidden="true" />
     </div></section>
     <section className="login-side"><div className="login-card">
