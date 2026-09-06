@@ -6,6 +6,7 @@ import NavGroups from "./NavGroups";
 import ProfileMenu from "./ProfileMenu";
 import ThemeToggle from "./ThemeToggle";
 import MobileDrawer from "./MobileDrawer";
+import InstallPrompt from "./InstallPrompt";
 import { useValuesVisibility, ValuesVisibilityProvider } from "./ValuesVisibilityContext";
 type Props = { children: React.ReactNode; admin?: boolean };
 export default function Shell({ children, admin = false }: Props) {
@@ -54,6 +55,7 @@ export default function Shell({ children, admin = false }: Props) {
         <span>© 2025 · Termos · Privacidade</span>
         <code>v0.1.0 mock</code>
       </footer>
+      <InstallPrompt />
     </div>
     </ValuesVisibilityProvider>
   );

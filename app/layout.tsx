@@ -11,6 +11,18 @@ const inter = Inter({
 export const metadata = {
   title: "Studio UGC",
   description: "Plataforma de criadoras de conteúdo",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "Studio UGC",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icon-192.png",
+  },
+};
+export const viewport = {
+  themeColor: "#ff6b26",
 };
 export default function RootLayout({
   children,

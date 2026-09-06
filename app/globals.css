@@ -1935,6 +1935,64 @@ button {
   border: 1px solid var(--divider);
   color: var(--text-main);
 }
+
+.install-prompt {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border-card);
+  border-radius: 18px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  box-shadow: 0 16px 45px rgba(45, 27, 18, .2);
+  display: flex;
+  gap: 14px;
+  left: 50%;
+  max-width: 620px;
+  padding: 15px 42px 15px 15px;
+  position: fixed;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  z-index: 120;
+}
+.install-prompt-icon,
+.ios-install-modal > .install-prompt-icon {
+  align-items: center;
+  background: linear-gradient(135deg, var(--brand-grad-start), var(--brand-grad-end));
+  border-radius: 13px;
+  color: #fff;
+  display: grid;
+  flex: 0 0 54px;
+  font-size: 31px;
+  font-weight: 800;
+  height: 54px;
+  place-items: center;
+}
+.install-prompt-content { min-width: 0; }
+.install-prompt-content h2,
+.ios-install-modal h2 { color: var(--text-main); font-size: 16px; margin: 0; }
+.install-prompt-content p,
+.ios-install-modal > p { color: var(--text-muted); font-size: 12px; line-height: 1.45; margin: 4px 0 10px; }
+.install-prompt-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 10px 14px; }
+.install-prompt-button { background: #111; border: 0; border-radius: 9px; color: #fff; cursor: pointer; font-size: 12px; font-weight: 700; padding: 10px 14px; }
+.install-prompt-button:hover { background: #2b2b2b; }
+.install-prompt-check { align-items: center; color: var(--text-muted); display: inline-flex; font-size: 11px; gap: 6px; }
+.install-prompt-check input { accent-color: var(--brand); height: 14px; width: 14px; }
+.install-prompt-close { align-items: center; background: transparent; border: 0; color: var(--text-muted); cursor: pointer; display: grid; padding: 4px; place-items: center; }
+.install-prompt > .install-prompt-close,
+.ios-install-modal > .install-prompt-close { position: absolute; right: 11px; top: 11px; }
+.ios-install-backdrop { align-items: center; background: rgba(20, 14, 12, .58); display: flex; inset: 0; justify-content: center; padding: 20px; position: fixed; z-index: 130; }
+.ios-install-modal { background: var(--surface); border: 1px solid var(--border-card); border-radius: 20px; box-shadow: 0 20px 70px rgba(0,0,0,.25); max-width: 420px; padding: 27px 24px 24px; position: relative; width: 100%; }
+.ios-install-modal > .install-prompt-icon { margin-bottom: 14px; }
+.ios-install-steps { display: grid; gap: 14px; list-style: none; margin: 18px 0 0; padding: 0; }
+.ios-install-steps li { align-items: center; color: var(--text-muted); display: flex; font-size: 12px; gap: 12px; line-height: 1.4; }
+.ios-install-steps strong { color: var(--text-main); display: block; font-size: 11px; margin-bottom: 2px; }
+.ios-step-icon { align-items: center; background: var(--brand-light); border-radius: 10px; color: var(--brand-deep); display: grid; flex: 0 0 38px; font-weight: 800; height: 38px; place-items: center; }
+.ios-share-icon { font-size: 24px; line-height: 1; }
+.ios-plus-icon { font-size: 26px; }
+.ios-add-icon { font-size: 10px; }
+@media (max-width: 540px) {
+  .install-prompt { align-items: flex-start; }
+  .install-prompt-actions { align-items: flex-start; flex-direction: column; gap: 8px; }
+}
 .full {
   margin-top: 17px;
   width: 100%;
