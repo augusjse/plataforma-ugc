@@ -3,7 +3,7 @@ const DRIVE_FILE_ID_PATTERNS = [
   /[?&]id=([a-zA-Z0-9_-]+)/,
 ];
 
-function getGoogleDriveFileId(url: string): string | null {
+export function getGoogleDriveFileId(url: string): string | null {
   try {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
@@ -27,4 +27,10 @@ function getGoogleDriveFileId(url: string): string | null {
 export function getDriveEmbedUrl(videoUrl: string): string {
   const fileId = getGoogleDriveFileId(videoUrl);
   return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : videoUrl;
+}
+
+/** Returns Drive's small preview image when the source URL points to a Drive file. */
+export function getDriveThumbnailUrl(videoUrl: string): string | null {
+  const fileId = getGoogleDriveFileId(videoUrl);
+  return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w96-h96` : null;
 }
