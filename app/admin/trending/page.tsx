@@ -2,6 +2,7 @@
 
 import Shell from "@/components/Shell";
 import { useState, useEffect } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 type TrendingProduct = {
   id: string;
@@ -13,24 +14,24 @@ type TrendingProduct = {
   status: "pending" | "approved" | "rejected";
 };
 
+type TrendingApiProduct = {
+  id: string;
+  name: string;
+  price?: number | null;
+  image?: string | null;
+  shop_link: string;
+  vendor_commission?: number | string | null;
+  status: TrendingProduct["status"];
+};
+
 export default function TrendingPage() {
+  const { showToast } = useToast();
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [minCommission, setMinCommission] = useState(5);
   const [subIds, setSubIds] = useState<string[]>(["", "", "", "", ""]);
   const [copied, setCopied] = useState<string | null>(null);
   const [usingMock, setUsingMock] = useState(false);
-
-  useEffect(() => {
-    const loadSettings = () => {
-      const saved = localStorage.getItem("admin_min_commission");
-      if (saved) setMinCommission(parseInt(saved));
-      const savedSubIds = localStorage.getItem("admin_sub_ids");
-      if (savedSubIds) setSubIds(JSON.parse(savedSubIds));
-    };
-    loadSettings();
-    fetchTrendingProducts();
-  }, []);
 
   async function fetchTrendingProducts() {
     try {
@@ -41,7 +42,7 @@ export default function TrendingPage() {
       if (!data.products?.length) throw new Error("TRENDING_EMPTY");
       setUsingMock(false);
       setProducts(
-        (data.products || []).map((p: any) => ({
+        (data.products || []).map((p: TrendingApiProduct) => ({
           id: p.id,
           name: p.name,
           price: p.price ?? 0,
@@ -89,9 +90,19 @@ export default function TrendingPage() {
     }
   }
 
+  useEffect(() => {
+    const settingsTimer = window.setTimeout(() => {
+      const saved = localStorage.getItem("admin_min_commission");
+      if (saved) setMinCommission(parseInt(saved));
+      const savedSubIds = localStorage.getItem("admin_sub_ids");
+      if (savedSubIds) setSubIds(JSON.parse(savedSubIds));
+      void fetchTrendingProducts();
+    }, 0);
+    return () => window.clearTimeout(settingsTimer);
+  }, []);
+
   function generateAffiliateLink(baseLink: string): string {
     let link = baseLink;
-    const separator = baseLink.includes("?") ? "&" : "?";
 
     const activeSubIds = subIds.filter(id => id.trim());
     if (activeSubIds.length > 0) {
@@ -115,35 +126,53 @@ export default function TrendingPage() {
   }
 
   async function approveProduct(id: string) {
+    if (usingMock) {
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
+      showToast({ title: "Produto aprovado", description: "A decisão foi aplicada ao produto de demonstração.", type: "info" });
+      return;
+    }
     try {
       const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/approve`, { method: "POST" });
       if (!response.ok) throw new Error("Não foi possível aprovar o produto.");
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
+      showToast({ title: "Produto aprovado", description: "O produto trending foi liberado para as criadoras.", type: "success" });
     } catch (error) {
       console.error("Erro ao aprovar:", error);
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
+      showToast({ title: "Erro ao aprovar", description: error instanceof Error ? error.message : "Não foi possível aprovar o produto.", type: "error" });
     }
   }
 
   async function rejectProduct(id: string) {
+    if (usingMock) {
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
+      showToast({ title: "Produto rejeitado", description: "A decisão foi aplicada ao produto de demonstração.", type: "info" });
+      return;
+    }
     try {
       const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/reject`, { method: "POST" });
       if (!response.ok) throw new Error("Não foi possível rejeitar o produto.");
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
+      showToast({ title: "Produto rejeitado", description: "O produto trending foi retirado da fila de aprovação.", type: "success" });
     } catch (error) {
       console.error("Erro ao rejeitar:", error);
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "rejected" } : p)));
+      showToast({ title: "Erro ao rejeitar", description: error instanceof Error ? error.message : "Não foi possível rejeitar o produto.", type: "error" });
     }
   }
 
   async function resetToPending(id: string) {
+    if (usingMock) {
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+      showToast({ title: "Decisão desfeita", description: "O produto de demonstração voltou para pendente.", type: "info" });
+      return;
+    }
     try {
       const response = await fetch(`/api/shopee/trending/${encodeURIComponent(id)}/reset`, { method: "POST" });
       if (!response.ok) throw new Error("Não foi possível desfazer a decisão do produto.");
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+      setProducts((current) => current.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+      showToast({ title: "Decisão desfeita", description: "O produto voltou para a fila de pendentes.", type: "info" });
     } catch (error) {
       console.error("Erro ao desfazer decisão:", error);
-      setProducts(products.map((p) => (p.id === id ? { ...p, status: "pending" } : p)));
+      showToast({ title: "Erro ao desfazer", description: error instanceof Error ? error.message : "Não foi possível desfazer a decisão.", type: "error" });
     }
   }
 

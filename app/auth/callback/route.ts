@@ -25,5 +25,6 @@ export async function GET(request: Request) {
     if (insertError) return NextResponse.redirect(new URL("/login?error=account", requestUrl.origin));
     return NextResponse.redirect(new URL("/sign-up", requestUrl.origin));
   }
-  return NextResponse.redirect(new URL((existing?.role ?? "criadora") === "admin" ? "/admin" : "/criadora", requestUrl.origin));
+  const destination = (existing?.role ?? "criadora") === "admin" ? "/admin" : "/criadora";
+  return NextResponse.redirect(new URL(`${destination}?welcome=1`, requestUrl.origin));
 }

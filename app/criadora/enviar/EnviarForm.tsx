@@ -4,12 +4,14 @@ import { FormEvent, useRef, useState } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import type { DashboardProduct } from "@/lib/dashboard-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { useToast } from "@/components/ToastProvider";
 
 const MAX_SOURCE_VIDEO_BYTES = 500 * 1024 * 1024;
 const MIN_VIDEO_BYTES = 10 * 1024;
 const UPLOAD_WEBHOOK_URL = "https://automacoes-n8n.jnyzmx.easypanel.host/webhook/upload-video-criadora";
 
 export default function EnviarForm({ product, creatorId }: { product: DashboardProduct | null; creatorId: string }) {
+  const { showToast } = useToast();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [affiliate, setAffiliate] = useState("");
@@ -46,9 +48,11 @@ export default function EnviarForm({ product, creatorId }: { product: DashboardP
       if (!videoUrl) throw new Error("O serviço de armazenamento não retornou o link do vídeo.");
       const response = await fetch("/api/videos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ creator_id: creatorId, product_id: product.id, product_link_base: product.shopeeLink, video_url: videoUrl }) });
       const body = await response.json(); if (!response.ok) throw new Error(body.error ?? "Não foi possível enviar o vídeo.");
-      setAffiliate(body.affiliate_link_bruto); setMessage("Vídeo enviado com sucesso e encaminhado para análise."); setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = "";
+      setAffiliate(body.affiliate_link_bruto); setMessage("Vídeo enviado com sucesso e encaminhado para análise."); setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; showToast({ title: "Vídeo enviado", description: "Seu vídeo foi recebido e encaminhado para análise.", type: "success" });
     } catch (error) {
-      setMessage(error instanceof TypeError ? "Não foi possível conectar ao serviço de armazenamento. Verifique sua conexão e tente novamente." : error instanceof Error ? error.message : "Não foi possível enviar o vídeo. Verifique sua conexão e tente novamente.");
+      const description = error instanceof TypeError ? "Não foi possível conectar ao serviço de armazenamento. Verifique sua conexão e tente novamente." : error instanceof Error ? error.message : "Não foi possível enviar o vídeo. Verifique sua conexão e tente novamente.";
+      setMessage(description);
+      showToast({ title: "Erro no envio", description, type: "error" });
     } finally { setLoading(false); }
   }
 

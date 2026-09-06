@@ -1,13 +1,15 @@
 "use client";
 import { useState } from "react";
 import type { ModerationVideo } from "@/lib/dashboard-data";
+import { useToast } from "@/components/ToastProvider";
 
 export default function ApprovalQueue({ initialVideos }: { initialVideos: ModerationVideo[] }) {
+  const { showToast } = useToast();
   const [videos, setVideos] = useState(initialVideos); const [error, setError] = useState(""); const [busy, setBusy] = useState<string | null>(null); const [rejecting, setRejecting] = useState<string | null>(null); const [reason, setReason] = useState("");
   async function moderate(id: string, action: "aprovar" | "reprovar", motivo?: string) {
     setBusy(id); setError("");
-    try { const response = await fetch(`/api/videos/${id}/${action}`, { method: "POST", headers: action === "reprovar" ? { "Content-Type": "application/json" } : undefined, body: action === "reprovar" ? JSON.stringify({ motivo }) : undefined }); const body = await response.json(); if (!response.ok) throw new Error(body.error ?? "Não foi possível atualizar o vídeo."); setVideos((current) => current.filter((video) => video.id !== id)); setRejecting(null); setReason(""); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : "Não foi possível atualizar o vídeo."); } finally { setBusy(null); }
+    try { const response = await fetch(`/api/videos/${id}/${action}`, { method: "POST", headers: action === "reprovar" ? { "Content-Type": "application/json" } : undefined, body: action === "reprovar" ? JSON.stringify({ motivo }) : undefined }); const body = await response.json(); if (!response.ok) throw new Error(body.error ?? "Não foi possível atualizar o vídeo."); setVideos((current) => current.filter((video) => video.id !== id)); setRejecting(null); setReason(""); showToast({ title: action === "aprovar" ? "Vídeo aprovado" : "Vídeo reprovado", description: action === "aprovar" ? "O vídeo foi aprovado e já pode seguir no catálogo." : "A recusa e o motivo foram enviados para a criadora.", type: "success" }); }
+    catch (cause) { const description = cause instanceof Error ? cause.message : "Não foi possível atualizar o vídeo."; setError(description); showToast({ title: "Erro na moderação", description, type: "error" }); } finally { setBusy(null); }
   }
   function openReject(id: string) { setRejecting(id); setReason(""); setError(""); }
   function cancelReject() { setRejecting(null); setReason(""); }

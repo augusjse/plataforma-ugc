@@ -18,7 +18,7 @@ export default function SignUpPage() {
     try {
       const response = await fetch("/api/auth/complete-signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, countryCode, phone }) });
       if (!response.ok) { const body = await response.json().catch(() => null); setError(body?.error ?? "Não foi possível salvar seus dados. Tente novamente."); return; }
-      router.replace("/criadora");
+      window.location.replace("/criadora?welcome=1");
     } catch { setError("Não foi possível salvar seus dados. Tente novamente."); }
     finally { setLoading(false); }
   }

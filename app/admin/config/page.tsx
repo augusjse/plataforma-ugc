@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
+import { useToast } from "@/components/ToastProvider";
 
 type Config = { repasse_organico_percent: number; repasse_impulsionado_percent: number; custo_anuncio_por_venda: number; saque_minimo: number };
 const defaults: Config = { repasse_organico_percent: 50, repasse_impulsionado_percent: 10, custo_anuncio_por_venda: 9, saque_minimo: 50 };
 
 export default function Config() {
+  const { showToast } = useToast();
   const [config, setConfig] = useState<Config>(defaults);
   const [status, setStatus] = useState("Carregando...");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,7 +36,12 @@ export default function Config() {
         const response = await fetch("/api/admin/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
         if (!response.ok) throw new Error((await response.json()).error);
         setStatus("Salvo");
-      } catch (error) { setStatus(error instanceof Error ? error.message : "Erro ao salvar"); }
+        showToast({ title: "Configurações salvas", description: "Os valores financeiros foram atualizados com sucesso.", type: "success" });
+      } catch (error) {
+        const description = error instanceof Error ? error.message : "Erro ao salvar";
+        setStatus(description);
+        showToast({ title: "Erro ao salvar", description, type: "error" });
+      }
     }, 400);
   }
 
