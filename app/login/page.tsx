@@ -24,7 +24,7 @@ export default function LoginPage() {
     </div></section>
     <section className="login-side"><div className="login-card">
       <div className="brand brand-on-light"><span className="brand-mark">S</span><span>Studio <b>UGC</b></span></div>
-      <div className="login-intro"><p className="login-kicker">BEM-VINDA AO STUDIO</p><h1>Seu talento pode <em>virar renda.</em></h1><p>Entre no Studio UGC e comece a criar vídeos para produtos que você já ama.</p></div>
+      <div className="login-intro"><p className="login-kicker">BEM-VINDA AO STUDIO</p><h1>Seu produtinho da Shopee pode <em>virar renda.</em></h1><p>Entre no Studio UGC e comece a criar vídeos para produtos que você já ama.</p></div>
       <button className="button login-google-button" type="button" onClick={signInWithGoogle} disabled={loading}><span className="google-g" aria-hidden="true">G</span>{loading ? "Conectando..." : "Entrar com Google"}</button>
       {visibleError && <p className="oauth-error" role="alert">{visibleError}</p>}
       <p className="login-terms">Ao continuar, você concorda com nossos <a href="#termos">Termos</a> e <a href="#privacidade">Privacidade</a>.</p>
