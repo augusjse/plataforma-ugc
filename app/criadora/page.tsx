@@ -59,14 +59,6 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         </div>
         <div className="creator-top-right">
           <ReferralBanner />
-          <Link href="/criadora/catalogo" className="new-video-card">
-            <span className="new-video-icon"><Icon name="plus" size={21} /></span>
-            <span className="new-video-copy">
-              <strong>Subir novo vídeo</strong>
-              <small>Escolha um produto para gravar</small>
-            </span>
-            <Icon name="arrow" size={18} />
-          </Link>
         </div>
       </div>
       <div className="dashboard-tools">
@@ -82,6 +74,14 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
           href="/criadora/catalogo"
           icon="cart"
         />
+        <Link href="/criadora/catalogo" className="new-video-card creator-new-video-card">
+          <span className="new-video-icon"><Icon name="plus" size={21} /></span>
+          <span className="new-video-copy">
+            <strong>Subir novo vídeo</strong>
+            <small>Escolha um produto para gravar</small>
+          </span>
+          <Icon name="arrow" size={18} />
+        </Link>
         <div className="desktop-period-selector"><PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} /></div>
       </div>
       <SectionTitle icon="wallet">Até o próximo saque</SectionTitle>

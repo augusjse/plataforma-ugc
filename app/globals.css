@@ -3612,22 +3612,25 @@ footer code {
 }
 .dashboard-tools {
   align-items: center;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  justify-content: space-between;
   margin: 24px 0 20px;
 }
 .dashboard-tools .guide-card {
-  flex: 0 0 270px;
   min-height: 78px;
   padding: 14px 18px;
+}
+.dashboard-tools .creator-new-video-card {
+  min-height: 78px;
+  min-width: 0;
 }
 .dashboard-tools .guide-card p {
   display: none;
 }
 .dashboard-tools .period-selector {
-  margin-left: auto;
+  grid-column: 1 / -1;
+  justify-self: end;
 }
 .period-selector select {
   -moz-appearance: none;
@@ -3658,12 +3661,16 @@ footer code {
   }
 
   .dashboard-tools .guide-card {
-    flex: none;
     min-width: 0;
     overflow: hidden;
     padding: 10px;
     min-height: 0;
     width: auto;
+  }
+
+  .dashboard-tools .creator-new-video-card {
+    grid-column: 1 / -1;
+    min-height: 72px;
   }
 
   .dashboard-tools .period-selector {
