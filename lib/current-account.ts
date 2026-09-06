@@ -14,6 +14,7 @@ export type CurrentAccount = {
   instagram: string;
   youtube: string;
   tiktok: string;
+  pixKey: string;
   metaDiaria: number;
   metaSemanal: number;
   metaMensal: number;
@@ -35,7 +36,7 @@ export async function getCurrentAccount(): Promise<CurrentAccount | null> {
 
   const { data: extendedAccount, error: extendedError } = await supabaseAdmin
     .from("users")
-    .select("id, name, email, phone, instagram, youtube, tiktok, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal, role, status")
+    .select("id, name, email, phone, instagram, youtube, tiktok, pix_key, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal, role, status")
     .eq("email", user.email)
     .maybeSingle();
 
@@ -61,6 +62,7 @@ export async function getCurrentAccount(): Promise<CurrentAccount | null> {
     instagram: String(extendedAccount?.instagram ?? metadata.instagram ?? ""),
     youtube: String(extendedAccount?.youtube ?? metadata.youtube ?? ""),
     tiktok: String(extendedAccount?.tiktok ?? metadata.tiktok ?? ""),
+    pixKey: String(extendedAccount?.pix_key ?? ""),
     metaDiaria: Number(extendedAccount?.meta_diaria ?? 0),
     metaSemanal: Number(extendedAccount?.meta_semanal ?? 0),
     metaMensal: Number(extendedAccount?.meta_mensal ?? 0),

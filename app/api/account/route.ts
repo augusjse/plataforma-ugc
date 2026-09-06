@@ -38,15 +38,16 @@ export async function PUT(request: Request) {
   }
 
   const input = body as Record<string, unknown>;
-  const fields = ["name", "phone", "instagram", "youtube", "tiktok"] as const;
+  const fields = ["name", "phone", "instagram", "youtube", "tiktok", "pix_key"] as const;
   const financialFields = ["meta_diaria", "meta_semanal", "meta_mensal", "bonus_diario", "bonus_semanal", "bonus_mensal"] as const;
-  const limits = { name: 120, phone: 30, instagram: 160, youtube: 160, tiktok: 160 };
+  const limits = { name: 120, phone: 30, instagram: 160, youtube: 160, tiktok: 160, pix_key: 200 };
   const updates: Record<(typeof fields)[number], string> = {
     name: "",
     phone: "",
     instagram: "",
     youtube: "",
     tiktok: "",
+    pix_key: "",
   };
 
   for (const field of fields) {
@@ -75,12 +76,12 @@ export async function PUT(request: Request) {
     .from("users")
     .update({ ...updates, ...financialUpdates })
     .eq("id", account.id)
-    .select("name, phone, instagram, youtube, tiktok, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal")
+    .select("name, phone, instagram, youtube, tiktok, pix_key, meta_diaria, meta_semanal, meta_mensal, bonus_diario, bonus_semanal, bonus_mensal")
     .single();
 
   const missingSocialColumns = error?.code === "42703" || error?.code === "PGRST204";
   if (missingSocialColumns) {
-    if (error?.message.includes("meta_") || error?.message.includes("bonus_")) {
+    if (error?.message.includes("meta_") || error?.message.includes("bonus_") || error?.message.includes("pix_key")) {
       return NextResponse.json({ error: "As metas financeiras ainda precisam da migration do banco de dados" }, { status: 503 });
     }
     const basicUpdate = await supabaseAdmin
@@ -95,7 +96,7 @@ export async function PUT(request: Request) {
     }
 
     data = basicUpdate.data
-      ? { ...basicUpdate.data, instagram: updates.instagram, youtube: updates.youtube, tiktok: updates.tiktok, ...financialUpdates }
+      ? { ...basicUpdate.data, instagram: updates.instagram, youtube: updates.youtube, tiktok: updates.tiktok, pix_key: updates.pix_key, ...financialUpdates }
       : null;
     error = null;
 

@@ -193,6 +193,7 @@ comment on column public.admin_config.saque_minimo is
 
 -- 20260906_metas_financeiras_criadora.sql
 alter table public.users
+  add column if not exists pix_key text,
   add column if not exists meta_diaria numeric(10,2) not null default 0 check (meta_diaria >= 0),
   add column if not exists meta_semanal numeric(10,2) not null default 0 check (meta_semanal >= 0),
   add column if not exists meta_mensal numeric(10,2) not null default 0 check (meta_mensal >= 0),

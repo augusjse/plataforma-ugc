@@ -24,6 +24,7 @@ export default async function Criadoras() {
               <th>Vendas</th>
               <th>Janelas ativas</th>
               <th>Comissão devida</th>
+              <th>Chave PIX</th>
             </tr>
           </thead>
           <tbody>
@@ -46,6 +47,7 @@ export default async function Criadoras() {
                 <td className="money">
                   R$ {mySales.reduce((sum, sale) => sum + sale.creatorCommission, 0).toFixed(2).replace(".", ",")}
                 </td>
+                <td>{c.pix_key ? <span title={String(c.pix_key)}>{String(c.pix_key)}</span> : <span className="muted">Não cadastrada</span>}</td>
               </tr>;
             })}
           </tbody>

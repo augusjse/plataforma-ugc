@@ -31,6 +31,7 @@ export default async function ContaPage({ searchParams }: Props) {
           instagram: account.instagram,
           youtube: account.youtube,
           tiktok: account.tiktok,
+          pixKey: account.pixKey,
           metaDiaria: account.metaDiaria,
           metaSemanal: account.metaSemanal,
           metaMensal: account.metaMensal,

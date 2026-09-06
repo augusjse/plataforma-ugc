@@ -12,6 +12,7 @@ type Account = {
   instagram: string;
   youtube: string;
   tiktok: string;
+  pixKey: string;
   metaDiaria: number;
   metaSemanal: number;
   metaMensal: number;
@@ -50,6 +51,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
     instagram: account.instagram,
     youtube: account.youtube,
     tiktok: account.tiktok,
+    pix_key: account.pixKey,
     meta_diaria: String(account.metaDiaria),
     meta_semanal: String(account.metaSemanal),
     meta_mensal: String(account.metaMensal),
@@ -172,6 +174,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
             <label>NOME<input required maxLength={120} value={form.name} onChange={(event) => change("name", event.target.value)} /></label>
             <label>E-MAIL<div className="account-locked-input"><input value={account.email} readOnly aria-readonly="true" /><Icon name="lock" size={16} /></div><small>Vinculado à sua conta Google</small></label>
             <label>WHATSAPP<input type="tel" maxLength={30} placeholder="+55 11 99999-9999" value={form.phone} onChange={(event) => change("phone", event.target.value)} /></label>
+            {account.role === "criadora" && <label>CHAVE PIX<input maxLength={200} placeholder="CPF, e-mail, telefone ou chave aleatória" value={form.pix_key} onChange={(event) => change("pix_key", event.target.value)} /><small>Usada para receber seus pagamentos.</small></label>}
             <label>INSTAGRAM<input maxLength={160} placeholder="@seuusuario" value={form.instagram} onChange={(event) => change("instagram", event.target.value)} /></label>
             <label>YOUTUBE<input maxLength={160} placeholder="Canal ou URL" value={form.youtube} onChange={(event) => change("youtube", event.target.value)} /></label>
             <label>TIKTOK<input maxLength={160} placeholder="@seuusuario" value={form.tiktok} onChange={(event) => change("tiktok", event.target.value)} /></label>

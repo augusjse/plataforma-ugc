@@ -18,7 +18,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
   const query = await searchParams;
   const customRange = normalizeDashboardRange(query.from, query.to);
   const periodDays = customRange?.days ?? normalizeDashboardPeriod(query.period);
-  const { products, videos, sales, saldoDisponivel, saqueMinimo, metaMensalCriadora } = await getCreatorDashboard(customRange ?? periodDays);
+  const { account, products, videos, sales, saldoDisponivel, saqueMinimo, metaMensalCriadora } = await getCreatorDashboard(customRange ?? periodDays);
   const receitaReal = sales.reduce((sum, sale) => sum + sale.creatorCommission, 0);
   const temMetaMensal = metaMensalCriadora > 0;
   const progressoMetaReceita = temMetaMensal ? Math.min(100, Math.round(receitaReal / metaMensalCriadora * 100)) : 0;
@@ -68,6 +68,11 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         </div>
       </div>
       <div className="dashboard-tools">
+        {!account?.pix_key && <Link href="/conta" className="new-video-card creator-pix-reminder">
+          <span className="new-video-icon"><Icon name="wallet" size={21} /></span>
+          <span className="new-video-copy"><strong>Cadastre sua chave PIX</strong><small>Configure para receber seus pagamentos</small></span>
+          <Icon name="arrow" size={18} />
+        </Link>}
         <GuideCard
           title="Aprenda como usar"
           description="Veja em 2 minutos como acompanhar seus resultados."
