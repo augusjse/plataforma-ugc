@@ -33,6 +33,7 @@ export default async function CreatorHome({ searchParams }: { searchParams: Prom
         <div className="creator-top-left">
           <div className="notice-period-row">
             <NoticeBar
+              icon="coin"
               title={temProgressoSaque ? "Seu próximo pagamento está quase lá" : "Comece a gravar para ganhar"}
               description={temProgressoSaque ? (disponivelParaSaque ? "Seu saldo já atingiu o mínimo para saque." : `Continue criando: faltam R$ ${faltaSaque.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} para completar o próximo ciclo.`) : "Envie seu primeiro vídeo e comece a receber comissões."}
               action="Ver ganhos"

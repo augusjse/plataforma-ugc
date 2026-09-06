@@ -2989,6 +2989,38 @@ footer code {
   place-items: center;
   width: 38px;
 }
+.notice-icon--coin {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.22) 0%, rgba(255, 183, 0, 0.08) 58%, transparent 74%);
+  color: inherit;
+  position: relative;
+}
+.notice-icon--coin::before {
+  background: rgba(255, 207, 64, 0.42);
+  border-radius: 50%;
+  content: "";
+  filter: blur(7px);
+  inset: 5px;
+  position: absolute;
+  animation: coin-glow 2.8s ease-in-out infinite;
+}
+.coin-icon {
+  display: block;
+  position: relative;
+  z-index: 1;
+  animation: coin-pulse 2.8s ease-in-out infinite;
+}
+@keyframes coin-glow {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
+@keyframes coin-pulse {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255, 215, 0, 0.45)); }
+  50% { filter: drop-shadow(0 0 4px rgba(255, 238, 157, 0.85)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notice-icon--coin::before,
+  .coin-icon { animation: none; }
+}
 .notice-bar div:nth-child(2) {
   display: grid;
   flex: 1;
@@ -3848,8 +3880,8 @@ footer code {
 [data-theme="dark"] .auth-card h1 { color: var(--text-main); }
 [data-theme="dark"] .login-intro h1 { color: #1a1a1a; }
 [data-theme="dark"] .login-intro > p:last-child { background: #ff6b26; color: #ffffff; }
-[data-theme="dark"] .login-terms { color: #666666; }
-[data-theme="dark"] .login-terms a { color: #1a1a1a; }
+[data-theme="dark"] .login-terms { color: rgba(255, 255, 255, 0.6); }
+[data-theme="dark"] .login-terms a { color: #ff6b26; }
 [data-theme="dark"] .auth-description { color: var(--text-muted); }
 [data-theme="dark"] .auth-form label { color: var(--text-muted); }
 [data-theme="dark"] .auth-form input, [data-theme="dark"] .auth-form select { background: var(--surface-muted); border-color: var(--divider); color: var(--text-main); }
