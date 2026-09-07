@@ -10,7 +10,7 @@ const REQUEST_TIMEOUT_MS = 15_000;
 const pages = [
   "/conta", "/criadora", "/criadora/catalogo", "/criadora/enviar", "/criadora/meus-videos",
   "/criadora/ganhos", "/criadora/academy", "/admin", "/admin/aprovacoes",
-  "/admin/trending", "/admin/config", "/admin/links", "/admin/usuarios", "/admin/criadoras",
+  "/admin/trending", "/admin/links", "/admin/usuarios", "/admin/criadoras",
 ];
 const apiPaths = [
   "/api/shopee/trending", "/api/shopee/trending-list", "/api/shopee/trending-approved", "/api/videos",
@@ -132,10 +132,19 @@ async function testVideoFlow() {
 async function testConfig() {
   try {
     const { response, body } = await request("/api/admin/config");
-    const value = body?.config?.repasse_organico_percent;
-    record("Config financeira", response.status === 200 && value !== undefined, `HTTP ${response.status}${value !== undefined ? `, repasse_organico_percent=${value}` : ""}`);
+    const value = body?.config?.repasse_impulsionado_percent;
+    record("Config financeira", response.status === 200 && value !== undefined, `HTTP ${response.status}${value !== undefined ? `, repasse_impulsionado_percent=${value}` : ""}`);
   } catch (error) {
     record("Config financeira", false, error instanceof Error ? error.message : String(error));
+  }
+}
+
+async function testLegacyConfigRedirect() {
+  try {
+    const { response } = await request("/admin/config");
+    record("Redirecionamento de /admin/config", response.status === 200 && new URL(response.url).pathname === "/conta", `HTTP ${response.status}, destino ${new URL(response.url).pathname}`, true);
+  } catch (error) {
+    record("Redirecionamento de /admin/config", false, error instanceof Error ? error.message : String(error), true);
   }
 }
 
@@ -169,6 +178,7 @@ async function main() {
   await testApis();
   await testVideoFlow();
   await testConfig();
+  await testLegacyConfigRedirect();
   await testTrendingFlow();
   const passed = results.filter((result) => result.passed).length;
   const failed = results.length - passed;

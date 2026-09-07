@@ -3538,6 +3538,43 @@ footer code {
   top: 5px;
   width: 9px;
 }
+.notification-count {
+  background: var(--brand);
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 15px;
+  min-width: 15px;
+  padding: 0 3px;
+  position: absolute;
+  right: -5px;
+  text-align: center;
+  top: -5px;
+}
+.admin-notifications-list { padding: 0; overflow: hidden; }
+.admin-notification-item { align-items: center; color: inherit; display: flex; gap: 14px; padding: 17px 22px; text-decoration: none; transition: background .15s ease; }
+.admin-notification-item + .admin-notification-item { border-top: 1px solid var(--divider); }
+.admin-notification-item:hover { background: var(--surface-muted); }
+.admin-notification-icon { align-items: center; background: var(--brand-light); border-radius: 13px; color: var(--brand); display: flex; flex: 0 0 42px; height: 42px; justify-content: center; }
+.admin-notification-icon-trending { background: #f0edff; color: #7463cf; }
+.admin-notification-icon-creator { background: #e8f7ef; color: #1b9d70; }
+.admin-notification-icon-sale { background: #eef4ff; color: #4f7cff; }
+.admin-notification-copy { display: grid; flex: 1; gap: 4px; min-width: 0; }
+.admin-notification-copy strong { font-size: 13px; }
+.admin-notification-copy small { color: var(--text-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-notification-item time { color: var(--text-subtle); font-size: 11px; white-space: nowrap; }
+.admin-notification-item > svg { color: var(--text-subtle); flex: 0 0 auto; }
+.admin-notifications-empty { align-items: center; display: flex; flex-direction: column; gap: 7px; justify-content: center; min-height: 220px; text-align: center; }
+.notifications-empty-icon { align-items: center; background: var(--success-bg); border-radius: 50%; color: var(--success-text); display: flex; height: 52px; justify-content: center; margin-bottom: 7px; width: 52px; }
+.admin-notifications-empty strong { font-size: 16px; }
+.admin-notifications-empty p { color: var(--text-muted); font-size: 13px; margin: 0; }
+@media (max-width: 600px) {
+  .admin-notification-item { align-items: flex-start; padding: 15px 16px; }
+  .admin-notification-item time { margin-left: auto; }
+  .admin-notification-item > svg { display: none; }
+}
 @media (max-width: 800px) {
   .hero {
     min-height: 230px;

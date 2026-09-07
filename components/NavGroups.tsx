@@ -38,7 +38,7 @@ export const adminGroups: Group[] = [
     ],
   },
   {
-    href: "/admin/config",
+    href: "/admin/produtos",
     label: "Operação",
     icon: "settings",
     items: [
@@ -46,7 +46,6 @@ export const adminGroups: Group[] = [
       { href: "/admin/pagamentos", label: "Pagamentos", icon: "wallet" },
       { href: "/admin/links", label: "Links", icon: "arrow" },
       { href: "/admin/videos", label: "Vídeos", icon: "play" },
-      { href: "/admin/config", label: "Distribuição", icon: "settings" },
     ],
   },
 ];

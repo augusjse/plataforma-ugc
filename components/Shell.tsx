@@ -11,6 +11,7 @@ import { useValuesVisibility, ValuesVisibilityProvider } from "./ValuesVisibilit
 type Props = { children: React.ReactNode; admin?: boolean };
 export default function Shell({ children, admin = false }: Props) {
   const [menu, setMenu] = useState<string | null>(null);
+  const [adminNotificationCount, setAdminNotificationCount] = useState<number | null>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   useEffect(() => {
@@ -20,6 +21,15 @@ export default function Shell({ children, admin = false }: Props) {
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
+  useEffect(() => {
+    if (!admin) return;
+    let active = true;
+    fetch("/api/admin/notifications/summary")
+      .then((response) => response.ok ? response.json() : { count: 0 })
+      .then((body: { count?: number }) => { if (active) setAdminNotificationCount(Number(body.count ?? 0)); })
+      .catch(() => { if (active) setAdminNotificationCount(0); });
+    return () => { active = false; };
+  }, [admin]);
   return (
     <ValuesVisibilityProvider>
     <div className="app-shell" ref={shellRef}>
@@ -40,7 +50,7 @@ export default function Shell({ children, admin = false }: Props) {
               aria-label="Abrir notificações"
             >
               <Icon name="bell" size={18} />
-              <i />
+              {admin && adminNotificationCount !== null && adminNotificationCount > 0 && <><i /><span className="notification-count">{adminNotificationCount > 99 ? "99+" : adminNotificationCount}</span></>}
             </Link>
             <ThemeToggle />
             <ProfileMenu admin={admin} menu={menu} setMenu={setMenu} />

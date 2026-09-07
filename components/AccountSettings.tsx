@@ -27,18 +27,14 @@ type Account = {
 const futureItems = ["Segurança", "Meu Plano", "Integrações", "Legendas AI", "Limpeza"];
 
 type AdminConfig = {
-  repasse_organico_percent: number;
   repasse_impulsionado_percent: number;
-  custo_anuncio_por_venda: number;
   saque_minimo: number;
   imposto_meta_ads_percent: number;
   imposto_nota_fiscal_percent: number;
 };
 
 const defaultAdminConfig: AdminConfig = {
-  repasse_organico_percent: 50,
   repasse_impulsionado_percent: 10,
-  custo_anuncio_por_venda: 9,
   saque_minimo: 50,
   imposto_meta_ads_percent: 13,
   imposto_nota_fiscal_percent: 0,
@@ -74,20 +70,25 @@ export default function AccountSettings({ account, initials }: { account: Accoun
   const [financialSaving, setFinancialSaving] = useState(false);
   const [financialError, setFinancialError] = useState("");
   const [adminConfig, setAdminConfig] = useState<AdminConfig>(defaultAdminConfig);
-  const [taxForm, setTaxForm] = useState({ imposto_meta_ads_percent: "13", imposto_nota_fiscal_percent: "0" });
-  const [taxSaving, setTaxSaving] = useState(false);
-  const [taxMessage, setTaxMessage] = useState("");
-  const [taxError, setTaxError] = useState("");
+  const [adminConfigForm, setAdminConfigForm] = useState<Record<keyof AdminConfig, string>>({
+    repasse_impulsionado_percent: "10",
+    saque_minimo: "50",
+    imposto_meta_ads_percent: "13",
+    imposto_nota_fiscal_percent: "0",
+  });
+  const [adminConfigSaving, setAdminConfigSaving] = useState(false);
+  const [adminConfigMessage, setAdminConfigMessage] = useState("");
+  const [adminConfigError, setAdminConfigError] = useState("");
 
   useEffect(() => {
     if (account.role !== "admin") return;
     fetch("/api/admin/config").then(async (response) => {
       const body = await response.json() as { config?: AdminConfig; error?: string };
-      if (!response.ok) throw new Error(body.error || "Não foi possível carregar os impostos");
+      if (!response.ok) throw new Error(body.error || "Não foi possível carregar a configuração financeira");
       const config = { ...defaultAdminConfig, ...body.config };
       setAdminConfig(config);
-      setTaxForm({ imposto_meta_ads_percent: String(config.imposto_meta_ads_percent), imposto_nota_fiscal_percent: String(config.imposto_nota_fiscal_percent) });
-    }).catch((loadError: Error) => setTaxError(loadError.message));
+      setAdminConfigForm(Object.fromEntries(Object.entries(config).map(([key, value]) => [key, String(value)])) as Record<keyof AdminConfig, string>);
+    }).catch((loadError: Error) => setAdminConfigError(loadError.message));
   }, [account.role]);
 
   function change(field: keyof typeof form, value: string) {
@@ -157,39 +158,38 @@ export default function AccountSettings({ account, initials }: { account: Accoun
     }
   }
 
-  function changeTax(field: keyof typeof taxForm, value: string) {
-    setTaxForm((current) => ({ ...current, [field]: value }));
-    setTaxMessage("");
-    setTaxError("");
+  function changeAdminConfig(field: keyof AdminConfig, value: string) {
+    setAdminConfigForm((current) => ({ ...current, [field]: value }));
+    setAdminConfigMessage("");
+    setAdminConfigError("");
   }
 
-  async function saveTaxes(event: FormEvent<HTMLFormElement>) {
+  async function saveAdminConfig(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const imposto_meta_ads_percent = Number(taxForm.imposto_meta_ads_percent.replace(",", "."));
-    const imposto_nota_fiscal_percent = Number(taxForm.imposto_nota_fiscal_percent.replace(",", "."));
-    if (!Number.isFinite(imposto_meta_ads_percent) || imposto_meta_ads_percent < 0 || imposto_meta_ads_percent > 100 || !Number.isFinite(imposto_nota_fiscal_percent) || imposto_nota_fiscal_percent < 0 || imposto_nota_fiscal_percent > 100) {
-      setTaxError("Informe percentuais entre 0 e 100.");
+    const nextConfig = Object.fromEntries(Object.entries(adminConfigForm).map(([key, value]) => [key, Number(value.replace(",", "."))])) as AdminConfig;
+    const percentages: Array<keyof AdminConfig> = ["repasse_impulsionado_percent", "imposto_meta_ads_percent", "imposto_nota_fiscal_percent"];
+    if (Object.values(nextConfig).some((value) => !Number.isFinite(value) || value < 0) || percentages.some((field) => nextConfig[field] > 100)) {
+      setAdminConfigError("Informe valores positivos e percentuais entre 0 e 100.");
       return;
     }
-    setTaxSaving(true);
-    setTaxMessage("");
-    setTaxError("");
+    setAdminConfigSaving(true);
+    setAdminConfigMessage("");
+    setAdminConfigError("");
     try {
-      const nextConfig = { ...adminConfig, imposto_meta_ads_percent, imposto_nota_fiscal_percent };
       const response = await fetch("/api/admin/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(nextConfig) });
       const body = await response.json() as { config?: AdminConfig; error?: string };
-      if (!response.ok) throw new Error(body.error || "Não foi possível salvar os impostos");
+      if (!response.ok) throw new Error(body.error || "Não foi possível salvar a configuração financeira");
       setAdminConfig({ ...defaultAdminConfig, ...body.config });
-      setTaxMessage("Configuração de impostos salva com sucesso.");
+      setAdminConfigMessage("Configuração financeira salva com sucesso.");
     } catch (saveError) {
-      setTaxError(saveError instanceof Error ? saveError.message : "Não foi possível salvar os impostos");
+      setAdminConfigError(saveError instanceof Error ? saveError.message : "Não foi possível salvar a configuração financeira");
     } finally {
-      setTaxSaving(false);
+      setAdminConfigSaving(false);
     }
   }
 
-  const metaAdsPercent = Number(taxForm.imposto_meta_ads_percent.replace(",", ".")) || 0;
-  const notaFiscalPercent = Number(taxForm.imposto_nota_fiscal_percent.replace(",", ".")) || 0;
+  const metaAdsPercent = Number(adminConfigForm.imposto_meta_ads_percent.replace(",", ".")) || 0;
+  const notaFiscalPercent = Number(adminConfigForm.imposto_nota_fiscal_percent.replace(",", ".")) || 0;
   const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
@@ -198,7 +198,7 @@ export default function AccountSettings({ account, initials }: { account: Accoun
         <h2>Configurações</h2>
         <a className="active" href="#perfil"><Icon name="users" size={17} /> Meus Dados</a>
         {account.role === "criadora" && <a href="#metas"><Icon name="chart" size={17} /> Metas Financeiras</a>}
-        {account.role === "admin" && <a href="#impostos"><Icon name="wallet" size={17} /> Impostos</a>}
+        {account.role === "admin" && <a href="#configuracao-financeira"><Icon name="wallet" size={17} /> Configuração financeira</a>}
         <a href="#seguranca"><Icon name="settings" size={17} /> Segurança</a>
         <a href="#preferencias"><Icon name="eye" size={17} /> Preferências</a>
         {futureItems.slice(1).map((item) => (
@@ -247,21 +247,23 @@ export default function AccountSettings({ account, initials }: { account: Accoun
           </form>
         </section>}
 
-        {account.role === "admin" && <section className="card account-settings-section account-tax-section" id="impostos">
-          <header className="account-section-header"><div><p className="eyebrow">Configuração financeira</p><h2>Configuração de Impostos</h2><p>Defina as alíquotas para cálculo automático dos custos.</p></div></header>
-          <form className="account-tax-form" onSubmit={saveTaxes}>
+        {account.role === "admin" && <section className="card account-settings-section account-tax-section" id="configuracao-financeira">
+          <header className="account-section-header"><div><p className="eyebrow">Configuração financeira</p><h2>Distribuição, custos e impostos</h2><p>Defina os valores usados nos cálculos de comissão, custos e pagamentos da plataforma.</p></div></header>
+          <form className="account-tax-form" onSubmit={saveAdminConfig}>
             <div className="account-tax-fields">
-              <label>IMPOSTO META ADS <small>13% sugerido</small><div className="account-percent-input"><input type="number" min="0" max="100" step="0.01" inputMode="decimal" value={taxForm.imposto_meta_ads_percent} onChange={(event) => changeTax("imposto_meta_ads_percent", event.target.value)} /><span>%</span></div></label>
-              <label>IMPOSTO NOTA FISCAL<div className="account-percent-input"><input type="number" min="0" max="100" step="0.01" inputMode="decimal" value={taxForm.imposto_nota_fiscal_percent} onChange={(event) => changeTax("imposto_nota_fiscal_percent", event.target.value)} /><span>%</span></div></label>
+              <AdminConfigField label="REPASSE PARA CRIADORAS" field="repasse_impulsionado_percent" suffix="%" form={adminConfigForm} change={changeAdminConfig} />
+              <AdminConfigField label="SAQUE MÍNIMO" field="saque_minimo" suffix="R$" form={adminConfigForm} change={changeAdminConfig} />
+              <AdminConfigField label="IMPOSTO META ADS" field="imposto_meta_ads_percent" suffix="%" hint="13% sugerido" form={adminConfigForm} change={changeAdminConfig} />
+              <AdminConfigField label="IMPOSTO NOTA FISCAL" field="imposto_nota_fiscal_percent" suffix="%" form={adminConfigForm} change={changeAdminConfig} />
             </div>
             <div className="account-tax-simulation">
-              <p>SIMULAÇÃO DE IMPOSTOS <span>(BASE: R$ 100,00 DE COMISSÃO RECEBIDA)</span></p>
+              <p>SIMULAÇÃO DE IMPOSTOS <span>(BASE: R$ 100,00 DE COMISSÃO)</span></p>
               <div><span>Imposto Meta ADS <small>{metaAdsPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre a comissão recebida</small></span><strong>{formatCurrency(100 * metaAdsPercent / 100)}</strong></div>
               <div><span>Imposto Nota Fiscal <small>{notaFiscalPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre a comissão recebida</small></span><strong>{formatCurrency(100 * notaFiscalPercent / 100)}</strong></div>
             </div>
-            {taxError && <p className="form-error" role="alert">{taxError}</p>}
-            {taxMessage && <p className="form-success" role="status"><Icon name="check" size={16} />{taxMessage}</p>}
-            <footer className="account-form-actions"><span /><button className="button button-primary" disabled={taxSaving} type="submit">{taxSaving ? "Salvando..." : "Salvar impostos"}</button></footer>
+            {adminConfigError && <p className="form-error" role="alert">{adminConfigError}</p>}
+            {adminConfigMessage && <p className="form-success" role="status"><Icon name="check" size={16} />{adminConfigMessage}</p>}
+            <footer className="account-form-actions"><span /><button className="button button-primary" disabled={adminConfigSaving} type="submit">{adminConfigSaving ? "Salvando..." : "Salvar configuração"}</button></footer>
           </form>
         </section>}
 
@@ -293,4 +295,9 @@ type FinancialForm = {
 
 function GoalField({ label, hint, goalField, bonusField, form, change }: { label: string; hint: string; goalField: "meta_diaria" | "meta_semanal" | "meta_mensal"; bonusField: "bonus_diario" | "bonus_semanal" | "bonus_mensal"; form: FinancialForm; change: (field: keyof FinancialForm, value: string) => void }) {
   return <fieldset className="account-goal-field"><legend>{label} <small>{hint}</small></legend><label>Valor (R$)<input type="number" min="0" step="0.01" inputMode="decimal" value={form[goalField]} onChange={(event) => change(goalField, event.target.value)} /></label><label>Bônus (R$) <small>opcional</small><input type="number" min="0" step="0.01" inputMode="decimal" value={form[bonusField]} onChange={(event) => change(bonusField, event.target.value)} /></label></fieldset>;
+}
+
+function AdminConfigField({ label, field, suffix, hint, form, change }: { label: string; field: keyof AdminConfig; suffix: "%" | "R$"; hint?: string; form: Record<keyof AdminConfig, string>; change: (field: keyof AdminConfig, value: string) => void }) {
+  const isPercent = suffix === "%";
+  return <label>{label} {hint && <small>{hint}</small>}<div className="account-percent-input"><input type="number" min="0" max={isPercent ? "100" : undefined} step="0.01" inputMode="decimal" value={form[field]} onChange={(event) => change(field, event.target.value)} /><span>{suffix}</span></div></label>;
 }

@@ -1,20 +1,16 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { calculateSaleFinancials, ORGANIC_SHARE, PAID_AD_COST_PER_SALE, PAID_SHARE, type SaleOrigin } from "@/lib/mock/finance";
+import { calculateSaleFinancials, PAID_SHARE, type SaleOrigin } from "@/lib/mock/finance";
 
 export type AdminConfig = {
-  repasse_organico_percent: number;
   repasse_impulsionado_percent: number;
-  custo_anuncio_por_venda: number;
   saque_minimo: number;
   imposto_meta_ads_percent: number;
   imposto_nota_fiscal_percent: number;
 };
 
 const defaultAdminConfig: AdminConfig = {
-  repasse_organico_percent: ORGANIC_SHARE,
   repasse_impulsionado_percent: PAID_SHARE,
-  custo_anuncio_por_venda: PAID_AD_COST_PER_SALE,
   saque_minimo: 50,
   imposto_meta_ads_percent: 13,
   imposto_nota_fiscal_percent: 0,
@@ -93,11 +89,9 @@ export async function currentAccount() {
 
 export async function getAdminConfig(): Promise<AdminConfig> {
   try {
-    const { data } = await supabaseAdmin.from("admin_config").select("repasse_organico_percent,repasse_impulsionado_percent,custo_anuncio_por_venda,saque_minimo,imposto_meta_ads_percent,imposto_nota_fiscal_percent").eq("id", true).maybeSingle();
+    const { data } = await supabaseAdmin.from("admin_config").select("repasse_impulsionado_percent,saque_minimo,imposto_meta_ads_percent,imposto_nota_fiscal_percent").eq("id", true).maybeSingle();
     return {
-      repasse_organico_percent: Number(data?.repasse_organico_percent ?? defaultAdminConfig.repasse_organico_percent),
       repasse_impulsionado_percent: Number(data?.repasse_impulsionado_percent ?? defaultAdminConfig.repasse_impulsionado_percent),
-      custo_anuncio_por_venda: Number(data?.custo_anuncio_por_venda ?? defaultAdminConfig.custo_anuncio_por_venda),
       saque_minimo: Number(data?.saque_minimo ?? defaultAdminConfig.saque_minimo),
       imposto_meta_ads_percent: Number(data?.imposto_meta_ads_percent ?? defaultAdminConfig.imposto_meta_ads_percent),
       imposto_nota_fiscal_percent: Number(data?.imposto_nota_fiscal_percent ?? defaultAdminConfig.imposto_nota_fiscal_percent),
@@ -226,9 +220,8 @@ export async function getSales(videoIds?: string[], periodDays: number | Dashboa
       const commissionPercent = Number(row.commission_percent ?? 0) * (Number(row.commission_percent ?? 0) <= 1 ? 100 : 1);
       const origem: SaleOrigin = row.origem === "pago" || row.origin === "paid" ? "pago" : "organico";
       const financials = calculateSaleFinancials(value, commissionPercent, origem, true, {
-        organicShare: config.repasse_organico_percent,
-        paidShare: config.repasse_impulsionado_percent,
-        paidAdCost: config.custo_anuncio_por_venda,
+        creatorShare: config.repasse_impulsionado_percent,
+        metaAdsTaxPercent: config.imposto_meta_ads_percent,
       });
       return { id: String(row.id), videoId: String(row.video_id), date: String(row.sale_date), quantity: 1, revenue: value, platformCommission: financials.platformCommission, creatorCommission: financials.creatorCommission, netMargin: financials.netMargin, origem };
     });

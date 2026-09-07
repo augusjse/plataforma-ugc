@@ -38,9 +38,9 @@ export async function POST(request: Request) {
             commission_creator:
               conversion.sale_value *
               conversion.commission_percent *
-              config.repasse_organico_percent / 100,
+              config.repasse_impulsionado_percent / 100,
             commission_platform:
-              conversion.sale_value * conversion.commission_percent * (1 - config.repasse_organico_percent / 100),
+              conversion.sale_value * conversion.commission_percent * (1 - config.repasse_impulsionado_percent / 100),
             sale_date: new Date(conversion.timestamp * 1000).toISOString(),
             external_sale_id: conversion.order_id,
           })
