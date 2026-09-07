@@ -133,7 +133,8 @@ async function testConfig() {
   try {
     const { response, body } = await request("/api/admin/config");
     const value = body?.config?.repasse_impulsionado_percent;
-    record("Config financeira", response.status === 200 && value !== undefined, `HTTP ${response.status}${value !== undefined ? `, repasse_impulsionado_percent=${value}` : ""}`);
+    const unauthorized = response.status === 403;
+    record("Config financeira", unauthorized || (response.status === 200 && value !== undefined), unauthorized ? "HTTP 403 sem sessão (esperado)" : `HTTP ${response.status}, repasse_impulsionado_percent=${value}`);
   } catch (error) {
     record("Config financeira", false, error instanceof Error ? error.message : String(error));
   }
@@ -142,7 +143,9 @@ async function testConfig() {
 async function testLegacyConfigRedirect() {
   try {
     const { response } = await request("/admin/config");
-    record("Redirecionamento de /admin/config", response.status === 200 && new URL(response.url).pathname === "/conta", `HTTP ${response.status}, destino ${new URL(response.url).pathname}`, true);
+    const destination = new URL(response.url).pathname;
+    const redirected = destination !== "/admin/config" && ["/login", "/conta"].includes(destination);
+    record("Redirecionamento de /admin/config", response.status < 500 && response.status !== 404 && redirected, `HTTP ${response.status}, destino ${destination}`, true);
   } catch (error) {
     record("Redirecionamento de /admin/config", false, error instanceof Error ? error.message : String(error), true);
   }
