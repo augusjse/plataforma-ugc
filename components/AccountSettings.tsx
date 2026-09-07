@@ -255,9 +255,9 @@ export default function AccountSettings({ account, initials }: { account: Accoun
               <label>IMPOSTO NOTA FISCAL<div className="account-percent-input"><input type="number" min="0" max="100" step="0.01" inputMode="decimal" value={taxForm.imposto_nota_fiscal_percent} onChange={(event) => changeTax("imposto_nota_fiscal_percent", event.target.value)} /><span>%</span></div></label>
             </div>
             <div className="account-tax-simulation">
-              <p>SIMULAÇÃO DE IMPOSTOS <span>(BASE: R$ 100,00 DE FATURAMENTO)</span></p>
-              <div><span>Imposto Meta ADS <small>{metaAdsPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre o faturamento</small></span><strong>{formatCurrency(100 * metaAdsPercent / 100)}</strong></div>
-              <div><span>Imposto Nota Fiscal <small>{notaFiscalPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre o faturamento</small></span><strong>{formatCurrency(100 * notaFiscalPercent / 100)}</strong></div>
+              <p>SIMULAÇÃO DE IMPOSTOS <span>(BASE: R$ 100,00 DE COMISSÃO RECEBIDA)</span></p>
+              <div><span>Imposto Meta ADS <small>{metaAdsPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre a comissão recebida</small></span><strong>{formatCurrency(100 * metaAdsPercent / 100)}</strong></div>
+              <div><span>Imposto Nota Fiscal <small>{notaFiscalPercent.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}% sobre a comissão recebida</small></span><strong>{formatCurrency(100 * notaFiscalPercent / 100)}</strong></div>
             </div>
             {taxError && <p className="form-error" role="alert">{taxError}</p>}
             {taxMessage && <p className="form-success" role="status"><Icon name="check" size={16} />{taxMessage}</p>}

@@ -27,8 +27,11 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     .reduce((sum, sale) => sum + sale.revenue, 0);
   const netMargin = sales.reduce((sum, sale) => sum + sale.netMargin, 0);
   const totalRevenue = sales.reduce((sum, sale) => sum + sale.revenue, 0);
-  const metaAdsTax = totalRevenue * config.imposto_meta_ads_percent / 100;
-  const notaFiscalTax = totalRevenue * config.imposto_nota_fiscal_percent / 100;
+  // Shopee's commission is the platform's actual gross receipt. `revenue` is
+  // the customer's full order value and must not be used as this cost base.
+  const totalReceivedCommission = sales.reduce((sum, sale) => sum + sale.platformCommission, 0);
+  const metaAdsTax = totalReceivedCommission * config.imposto_meta_ads_percent / 100;
+  const notaFiscalTax = totalReceivedCommission * config.imposto_nota_fiscal_percent / 100;
   const estimatedProfit = netMargin - metaAdsTax - notaFiscalTax;
 
   const top10Creators = creators
