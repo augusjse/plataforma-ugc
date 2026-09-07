@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Icon from "./Icon";
 import CoinIcon from "./CoinIcon";
 import type { ReactNode } from "react";
@@ -6,11 +7,12 @@ type Props = {
   title: string;
   description: string;
   action: string;
+  href?: string;
   icon?: "bell" | "coin";
   children?: ReactNode;
 };
 
-export default function NoticeBar({ title, description, action, icon = "bell", children }: Props) {
+export default function NoticeBar({ title, description, action, href, icon = "bell", children }: Props) {
   return (
     <div className="notice-bar">
       <div className={`notice-icon${icon === "coin" ? " notice-icon--coin" : ""}`}>
@@ -21,7 +23,11 @@ export default function NoticeBar({ title, description, action, icon = "bell", c
         <span>{description}</span>
       </div>
       <div className="notice-actions">
-        <button className="button button-light">{action} →</button>
+        {href ? (
+          <Link href={href} className="button button-light">{action} →</Link>
+        ) : (
+          <button className="button button-light">{action} →</button>
+        )}
         {children}
       </div>
     </div>

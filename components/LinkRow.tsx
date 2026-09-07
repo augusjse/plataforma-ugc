@@ -1,3 +1,5 @@
+import CopyButton from "./CopyButton";
+
 type Props = { title: string; url: string; action?: string };
 export default function LinkRow({ title, url, action = "Copiar link" }: Props) {
   return (
@@ -6,7 +8,7 @@ export default function LinkRow({ title, url, action = "Copiar link" }: Props) {
         <strong>{title}</strong>
         <span>{url}</span>
       </div>
-      <button className="button button-light">{action}</button>
+      <CopyButton text={url}>{action}</CopyButton>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import GerarLinkForm from "@/components/GerarLinkForm";
+import CopyButton from "@/components/CopyButton";
 import { getAdminDashboard } from "@/lib/dashboard-data";
 
 export default async function Links() {
@@ -54,7 +55,7 @@ export default async function Links() {
                   R$ {link.commission.toFixed(2).replace(".", ",")}
                 </td>
                 <td>
-                  <button className="button button-light">Copiar</button>
+                  <CopyButton text={link.url}>Copiar</CopyButton>
                 </td>
               </tr>
             ))}

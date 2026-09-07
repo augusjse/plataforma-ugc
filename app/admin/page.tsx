@@ -74,6 +74,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           title={`${pendingVideosCount.toLocaleString("pt-BR")} vídeos esperam sua aprovação`}
           description="Uma fila organizada ajuda as melhores criadoras a começarem mais rápido."
           action="Revisar agora"
+          href="/admin/aprovacoes"
         >
           <PeriodSelector periodDays={periodDays} from={customRange?.from} to={customRange?.to} />
         </NoticeBar>

@@ -2,6 +2,7 @@ import Shell from "@/components/Shell";
 import SectionTitle from "@/components/SectionTitle";
 import StatCard from "@/components/StatCard";
 import VideoRow from "@/components/VideoRow";
+import CopyButton from "@/components/CopyButton";
 import { getCreatorDashboard } from "@/lib/dashboard-data";
 export default async function Ganhos() {
   const { sales, videos } = await getCreatorDashboard();
@@ -84,7 +85,7 @@ export default async function Ganhos() {
               <strong>{l.video}</strong>
               <span>{l.url}</span>
             </div>
-            <button className="button button-light">Copiar link</button>
+            <CopyButton text={l.url}>Copiar link</CopyButton>
           </div>
         ))}
       </div>
